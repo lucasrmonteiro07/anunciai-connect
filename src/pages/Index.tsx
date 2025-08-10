@@ -9,6 +9,8 @@ import constructionLogo from '@/assets/construction-logo.jpg';
 import musicLogo from '@/assets/music-logo.jpg';
 import cateringLogo from '@/assets/catering-logo.jpg';
 
+import SEO from '@/components/SEO';
+
 // Mock data for demonstration
 const mockServices: ServiceData[] = [
   {
@@ -95,6 +97,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO 
+        title="Anunciai - Serviços e Empreendimentos Cristãos"
+        description="Encontre prestadores cristãos qualificados e empreendimentos com destaque VIP. Busca por categoria e localização."
+        canonical="https://anunciai.app.br/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Anunciai",
+          url: "https://anunciai.app.br/"
+        }}
+      />
       <Header />
       <HeroSection />
       
