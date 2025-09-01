@@ -10,7 +10,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <img 
-              src="/lovable-uploads/20f10db9-a2bf-456a-bf1f-ff62bbc82c29.png" 
+              src="/lovable-uploads/11c20994-40cf-41e8-a06d-0598619f15dd.png" 
               alt="Anunciai Logo" 
               className="w-10 h-10 object-contain"
             />
