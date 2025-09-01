@@ -13,16 +13,25 @@ export interface ServiceData {
   location: {
     city: string;
     uf: string;
+    latitude?: number;
+    longitude?: number;
+    address?: string;
   };
   contact: {
     phone: string;
     email: string;
+    whatsapp?: string;
   };
   logo: string;
   images: string[];
   isVip: boolean;
   denomination: string;
   ownerName: string;
+  socialMedia?: {
+    instagram?: string;
+    facebook?: string;
+    website?: string;
+  };
 }
 
 interface ServiceCardProps {

@@ -9,9 +9,11 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
-              <Crown className="h-6 w-6 text-primary-foreground font-bold" />
-            </div>
+            <img 
+              src="/src/assets/anunciai-logo.png" 
+              alt="Anunciai Logo" 
+              className="w-10 h-10 object-contain"
+            />
             <div>
               <div className="text-2xl font-bold leading-tight">
                 <Link to="/" aria-label="Ir para a página inicial" className="inline-flex items-baseline gap-1">

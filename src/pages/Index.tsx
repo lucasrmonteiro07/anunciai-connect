@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import HeroSection from '@/components/ui/hero-section';
 import SearchBar from '@/components/ui/search-bar';
@@ -8,7 +9,6 @@ import { Filter } from 'lucide-react';
 import constructionLogo from '@/assets/construction-logo.jpg';
 import musicLogo from '@/assets/music-logo.jpg';
 import cateringLogo from '@/assets/catering-logo.jpg';
-
 import SEO from '@/components/SEO';
 
 // Mock data for demonstration
@@ -58,6 +58,7 @@ const mockServices: ServiceData[] = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -147,7 +148,7 @@ const Index = () => {
               <ServiceCard 
                 key={service.id} 
                 service={service}
-                onClick={() => console.log('View service:', service.id)}
+                onClick={() => navigate(`/anuncio/${service.id}`)}
               />
             ))}
           </div>

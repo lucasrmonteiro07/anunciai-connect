@@ -13,10 +13,11 @@ const Login = () => (
       canonical="https://anunciai.app.br/login"
     />
     <Header />
-    <main className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-6">Entrar</h1>
-
-      <form className="max-w-md space-y-4" onSubmit={(e) => e.preventDefault()}>
+    <main className="container mx-auto px-4 py-12 flex justify-center items-center min-h-[calc(100vh-200px)]">
+      <div className="w-full max-w-md space-y-6">
+        <h1 className="text-3xl font-bold text-center mb-6">Entrar</h1>
+        
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
         <div className="space-y-2">
           <Label htmlFor="email">E-mail</Label>
           <Input id="email" type="email" placeholder="seu@email.com" />
@@ -31,7 +32,8 @@ const Login = () => (
             Esqueci minha senha
           </Button>
         </div>
-      </form>
+        </form>
+      </div>
     </main>
   </div>
 );
