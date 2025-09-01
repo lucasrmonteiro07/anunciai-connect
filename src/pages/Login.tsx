@@ -72,7 +72,7 @@ const Login = () => {
     setLoading(true);
     setError("");
 
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/perfil`;
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -87,6 +87,8 @@ const Login = () => {
       toast.error("Erro ao criar conta: " + error.message);
     } else {
       toast.success("Conta criada! Verifique seu email para confirmar.");
+      // Redirect to profile after signup
+      navigate('/perfil');
     }
 
     setLoading(false);

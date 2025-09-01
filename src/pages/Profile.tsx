@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import MiniMap from "@/components/ui/mini-map";
-import { Camera, Facebook, Instagram, Globe, MapPin } from "lucide-react";
+import { Camera, Facebook, Instagram, Globe, MapPin, User } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
-const Anunciar = () => {
+const Profile = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Form states
+  const [nomeNegocio, setNomeNegocio] = useState("");
   const [tipoAnuncio, setTipoAnuncio] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [denominacao, setDenominacao] = useState("");
+  const [membroCrie, setMembroCrie] = useState(false);
+  const [descontoCrie, setDescontoCrie] = useState("");
   const [cep, setCep] = useState("");
   const [endereco, setEndereco] = useState({
     logradouro: "",
@@ -19,8 +34,13 @@ const Anunciar = () => {
     latitude: -23.5505,
     longitude: -46.6333
   });
-  const [membroCrie, setMembroCrie] = useState(false);
-  const [fotos, setFotos] = useState<File[]>([]);
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [website, setWebsite] = useState("");
+  const [aceitoTermos, setAceitoTermos] = useState(false);
+  const [aceitoConteudo, setAceitoConteudo] = useState(false);
 
   const estabelecimentos = [
     "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria",
@@ -47,6 +67,73 @@ const Anunciar = () => {
     "Motorista", "Entregador", "Carregador", "Mudanças", "Frete"
   ];
 
+  const denominacoes = [
+    "Assembleia de Deus",
+    "Igreja Batista",
+    "Igreja Universal do Reino de Deus",
+    "Igreja do Evangelho Quadrangular",
+    "Congregação Cristã no Brasil",
+    "Igreja Pentecostal Deus é Amor",
+    "Igreja Mundial do Poder de Deus",
+    "Igreja Adventista do Sétimo Dia",
+    "Igreja Presbiteriana",
+    "Igreja Metodista",
+    "Igreja Luterana",
+    "Igreja Católica Apostólica Romana",
+    "Igreja Evangélica",
+    "Igreja Pentecostal",
+    "Igreja Neopentecostal",
+    "Igreja Protestante",
+    "Igreja Carismática",
+    "Igreja Renovada",
+    "Igreja Internacional da Graça de Deus",
+    "Igreja Cristã Maranata",
+    "Sem Denominação"
+  ];
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (!session) {
+          navigate('/login');
+        }
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (!session) {
+        navigate('/login');
+      } else {
+        setEmail(session.user.email || "");
+        loadProfile(session.user.id);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const loadProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (data) {
+        // Load existing profile data
+        setNomeNegocio(data.first_name || "");
+      }
+    } catch (error) {
+      console.error("Erro ao carregar perfil:", error);
+    }
+  };
+
   const buscarCep = async (cepValue: string) => {
     if (cepValue.length === 8) {
       try {
@@ -58,7 +145,7 @@ const Anunciar = () => {
             bairro: data.bairro,
             cidade: data.localidade,
             uf: data.uf,
-            latitude: -23.5505, // Coordenadas padrão, idealmente buscar via geocoding
+            latitude: -23.5505,
             longitude: -46.6333
           });
         }
@@ -76,31 +163,59 @@ const Anunciar = () => {
     }
   };
 
-  const handleFotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFotos = Array.from(e.target.files).slice(0, 3 - fotos.length);
-      setFotos(prev => [...prev, ...newFotos]);
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    const formattedCpf = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    setCpf(formattedCpf);
+  };
+
+  const handleSave = async () => {
+    if (!aceitoTermos) {
+      toast.error("Você deve aceitar os termos de uso");
+      return;
+    }
+
+    try {
+      // Save profile data
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user?.id,
+          first_name: nomeNegocio,
+          email: email
+        });
+
+      if (error) throw error;
+
+      toast.success("Perfil salvo com sucesso!");
+      navigate('/');
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+      toast.error("Erro ao salvar perfil");
     }
   };
 
-  const removeFoto = (index: number) => {
-    setFotos(prev => prev.filter((_, i) => i !== index));
-  };
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">Carregando...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Anunciar - Anunciai"
-        description="Cadastre seu anúncio e alcance a comunidade cristã."
-        canonical="https://anunciai.app.br/anunciar"
+        title="Perfil - Anunciai"
+        description="Complete seu perfil na plataforma cristã Anunciai."
+        canonical="https://anunciai.app.br/perfil"
       />
       <Header />
       <main className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-4">Anunciar</h1>
+        <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
+          <User className="h-8 w-8" />
+          Meu Perfil
+        </h1>
         <div className="bg-card rounded-lg p-8 border shadow-sm max-w-4xl">
-          <h2 className="text-xl font-semibold mb-4">Cadastre seu Anúncio</h2>
+          <h2 className="text-xl font-semibold mb-4">Complete suas Informações</h2>
           <p className="text-muted-foreground mb-6">
-            Preencha as informações abaixo para cadastrar seu prestador de serviço ou empreendimento na plataforma cristã Anunciai.
+            Preencha suas informações para completar seu perfil na plataforma cristã Anunciai.
           </p>
           
           <div className="space-y-6">
@@ -109,7 +224,21 @@ const Anunciar = () => {
               <label className="block text-sm font-medium mb-2">Nome do Negócio ou Estabelecimento</label>
               <Input 
                 type="text" 
+                value={nomeNegocio}
+                onChange={(e) => setNomeNegocio(e.target.value)}
                 placeholder="Digite o nome do seu negócio ou estabelecimento"
+              />
+            </div>
+
+            {/* CPF */}
+            <div>
+              <label className="block text-sm font-medium mb-2">CPF</label>
+              <Input 
+                type="text" 
+                value={cpf}
+                onChange={handleCpfChange}
+                placeholder="000.000.000-00"
+                maxLength={14}
               />
             </div>
 
@@ -159,13 +288,19 @@ const Anunciar = () => {
               </div>
             )}
 
-            {/* Descrição */}
+            {/* Denominação */}
             <div>
-              <label className="block text-sm font-medium mb-2">Descrição</label>
-              <Textarea 
-                placeholder="Descreva seu negócio e serviços oferecidos"
-                className="h-24"
-              />
+              <label className="block text-sm font-medium mb-2">Denominação (Opcional)</label>
+              <select 
+                value={denominacao}
+                onChange={(e) => setDenominacao(e.target.value)}
+                className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+              >
+                <option value="">Selecione sua denominação</option>
+                {denominacoes.map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
             </div>
 
             {/* Endereço Completo */}
@@ -241,6 +376,8 @@ const Anunciar = () => {
                 <label className="block text-sm font-medium mb-2">Telefone/WhatsApp</label>
                 <Input 
                   type="tel" 
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
                   placeholder="(11) 99999-9999"
                 />
               </div>
@@ -248,57 +385,10 @@ const Anunciar = () => {
                 <label className="block text-sm font-medium mb-2">Email</label>
                 <Input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
                 />
-              </div>
-            </div>
-
-            {/* Valor do Serviço */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Valor do Serviço (Opcional)</label>
-              <Input 
-                type="text" 
-                placeholder="R$ 100,00"
-              />
-            </div>
-
-            {/* Fotos */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                <Camera className="inline mr-1 h-4 w-4" />
-                Fotos do Serviço/Estabelecimento (até 3)
-              </label>
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                {fotos.map((foto, index) => (
-                  <div key={index} className="relative">
-                    <img 
-                      src={URL.createObjectURL(foto)} 
-                      alt={`Foto ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg border"
-                    />
-                    <button 
-                      onClick={() => removeFoto(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-                {fotos.length < 3 && (
-                  <label className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary">
-                    <div className="text-center">
-                      <Camera className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Adicionar Foto</span>
-                    </div>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      multiple 
-                      onChange={handleFotoUpload}
-                      className="hidden"
-                    />
-                  </label>
-                )}
               </div>
             </div>
 
@@ -310,6 +400,8 @@ const Anunciar = () => {
                   <Facebook className="h-5 w-5 text-blue-600" />
                   <Input 
                     type="url" 
+                    value={facebook}
+                    onChange={(e) => setFacebook(e.target.value)}
                     placeholder="https://facebook.com/seuPerfil"
                   />
                 </div>
@@ -317,6 +409,8 @@ const Anunciar = () => {
                   <Instagram className="h-5 w-5 text-pink-600" />
                   <Input 
                     type="url" 
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
                     placeholder="https://instagram.com/seuPerfil"
                   />
                 </div>
@@ -324,22 +418,100 @@ const Anunciar = () => {
                   <Globe className="h-5 w-5 text-green-600" />
                   <Input 
                     type="url" 
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
                     placeholder="https://seusite.com.br"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Destaque para Membro CRIE (baseado no perfil do usuário) */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
-                💡 <strong>Dica:</strong> Se você é membro CRIE, configure o desconto no seu perfil. 
-                Seus anúncios aparecerão automaticamente com a tarja de desconto CRIE.
-              </p>
+            {/* Checkbox CRIE */}
+            <div className="flex items-center space-x-2">
+              <input 
+                type="checkbox" 
+                id="membroCrie"
+                checked={membroCrie}
+                onChange={(e) => setMembroCrie(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <label htmlFor="membroCrie" className="text-sm font-medium">
+                Membro CRIE - Ao marcar você condiciona seus anúncios às políticas de desconto do Ministério CRIE
+              </label>
             </div>
 
-            <Button className="w-full">
-              Cadastrar Anúncio
+            {membroCrie && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <label className="block text-sm font-medium mb-2">Selecione o desconto para seus anúncios:</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input 
+                      type="radio" 
+                      name="desconto" 
+                      value="7%"
+                      checked={descontoCrie === "7%"}
+                      onChange={(e) => setDescontoCrie(e.target.value)}
+                      className="mr-2"
+                    />
+                    7%
+                  </label>
+                  <label className="flex items-center">
+                    <input 
+                      type="radio" 
+                      name="desconto" 
+                      value="10%"
+                      checked={descontoCrie === "10%"}
+                      onChange={(e) => setDescontoCrie(e.target.value)}
+                      className="mr-2"
+                    />
+                    10%
+                  </label>
+                  <label className="flex items-center">
+                    <input 
+                      type="radio" 
+                      name="desconto" 
+                      value="20%"
+                      checked={descontoCrie === "20%"}
+                      onChange={(e) => setDescontoCrie(e.target.value)}
+                      className="mr-2"
+                    />
+                    20%
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Checkboxes finais */}
+            <div className="space-y-3 border-t pt-6">
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="aceitoTermos"
+                  checked={aceitoTermos}
+                  onChange={(e) => setAceitoTermos(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="aceitoTermos" className="text-sm font-medium">
+                  Aceito os termos de uso do site
+                </label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="aceitoConteudo"
+                  checked={aceitoConteudo}
+                  onChange={(e) => setAceitoConteudo(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="aceitoConteudo" className="text-sm font-medium">
+                  Aceito receber conteúdo direcionado ao empreendedor Cristão
+                </label>
+              </div>
+            </div>
+
+            <Button className="w-full" onClick={handleSave}>
+              Salvar Perfil
             </Button>
           </div>
         </div>
@@ -348,4 +520,4 @@ const Anunciar = () => {
   );
 };
 
-export default Anunciar;
+export default Profile;
