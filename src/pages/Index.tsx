@@ -186,6 +186,80 @@ const Index = () => {
       <Header />
       <HeroSection />
       
+      {/* Promotional Section */}
+      <section className="py-16 bg-gradient-to-r from-primary/5 to-primary/10">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Anuncie Seu Negócio</h2>
+            <p className="text-xl text-muted-foreground">Conecte-se com a comunidade cristã</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Free Plan */}
+            <div className="bg-card rounded-xl p-8 border-2 border-border hover:border-primary/50 transition-colors">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold mb-2">Anúncio Gratuito</h3>
+                <p className="text-4xl font-bold text-primary mb-4">R$ 0</p>
+                <p className="text-muted-foreground mb-6">Para sempre</p>
+                <ul className="text-left space-y-3 mb-8">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                    Listagem básica
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                    Informações de contato
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                    Localização no mapa
+                  </li>
+                </ul>
+                <Button className="w-full" onClick={() => navigate('/anunciar')}>
+                  Começar Grátis
+                </Button>
+              </div>
+            </div>
+
+            {/* VIP Plan */}
+            <div className="bg-gradient-to-br from-primary to-primary-foreground rounded-xl p-8 border-2 border-primary relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium">
+                Destaque
+              </div>
+              <div className="text-center text-white">
+                <h3 className="text-2xl font-bold mb-2">Seja VIP</h3>
+                <div className="mb-4">
+                  <p className="text-3xl font-bold">R$ 14,90</p>
+                  <p className="text-sm opacity-90">por mês</p>
+                  <p className="text-lg mt-2">ou R$ 11,90/mês no plano anual</p>
+                </div>
+                <ul className="text-left space-y-3 mb-8">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Destaque na busca
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Badge VIP especial
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Múltiplas fotos
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Aparece primeiro
+                  </li>
+                </ul>
+                <Button variant="secondary" className="w-full">
+                  Tornar-se VIP
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Search Section */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">

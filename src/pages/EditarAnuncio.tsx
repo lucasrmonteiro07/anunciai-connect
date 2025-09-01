@@ -25,6 +25,9 @@ const EditarAnuncio = () => {
   const [type, setType] = useState("");
   const [denomination, setDenomination] = useState("");
   const [address, setAddress] = useState("");
+  const [number, setNumber] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [cep, setCep] = useState("");
   const [city, setCity] = useState("");
   const [uf, setUf] = useState("");
   const [phone, setPhone] = useState("");
@@ -148,6 +151,9 @@ const EditarAnuncio = () => {
       setType(data.type || '');
       setDenomination(data.denomination || '');
       setAddress(data.address || '');
+      setNumber(data.number || '');
+      setNeighborhood(data.neighborhood || '');
+      setCep(data.cep || '');
       setCity(data.city || '');
       setUf(data.uf || '');
       setPhone(data.phone || '');
@@ -193,6 +199,9 @@ const EditarAnuncio = () => {
           type,
           denomination,
           address,
+          number,
+          neighborhood,
+          cep,
           city,
           uf,
           phone,
@@ -326,14 +335,42 @@ const EditarAnuncio = () => {
             </div>
 
             {/* Localização */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Endereço</label>
                 <Input 
                   type="text" 
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Rua, número, bairro"
+                  placeholder="Rua ou Avenida"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Número</label>
+                <Input 
+                  type="text" 
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
+                  placeholder="Número"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Bairro</label>
+                <Input 
+                  type="text" 
+                  value={neighborhood}
+                  onChange={(e) => setNeighborhood(e.target.value)}
+                  placeholder="Bairro"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">CEP</label>
+                <Input 
+                  type="text" 
+                  value={cep}
+                  onChange={(e) => setCep(e.target.value)}
+                  placeholder="00000-000"
+                  maxLength={9}
                 />
               </div>
               <div>

@@ -48,6 +48,7 @@ export type Database = {
         Row: {
           address: string | null
           category: string
+          cep: string | null
           city: string
           created_at: string | null
           denomination: string | null
@@ -60,6 +61,8 @@ export type Database = {
           latitude: number | null
           logo_url: string | null
           longitude: number | null
+          neighborhood: string | null
+          number: string | null
           owner_name: string | null
           phone: string | null
           status: string | null
@@ -74,6 +77,7 @@ export type Database = {
         Insert: {
           address?: string | null
           category: string
+          cep?: string | null
           city: string
           created_at?: string | null
           denomination?: string | null
@@ -86,6 +90,8 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          neighborhood?: string | null
+          number?: string | null
           owner_name?: string | null
           phone?: string | null
           status?: string | null
@@ -100,6 +106,7 @@ export type Database = {
         Update: {
           address?: string | null
           category?: string
+          cep?: string | null
           city?: string
           created_at?: string | null
           denomination?: string | null
@@ -112,6 +119,8 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          neighborhood?: string | null
+          number?: string | null
           owner_name?: string | null
           phone?: string | null
           status?: string | null
