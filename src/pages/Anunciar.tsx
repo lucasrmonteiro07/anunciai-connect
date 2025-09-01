@@ -240,8 +240,8 @@ const Anunciar = () => {
                   <input 
                     type="radio" 
                     name="tipo" 
-                    value="estabelecimento"
-                    checked={formData.tipoAnuncio === "estabelecimento"}
+                    value="empreendimento"
+                    checked={formData.tipoAnuncio === "empreendimento"}
                     onChange={(e) => handleInputChange("tipoAnuncio", e.target.value)}
                     className="mr-2"
                     required
@@ -279,7 +279,7 @@ const Anunciar = () => {
                   required
                 >
                   <option value="">Selecione uma categoria</option>
-                  {(formData.tipoAnuncio === "estabelecimento" ? estabelecimentos : prestadorServicos).map((item) => (
+                  {(formData.tipoAnuncio === "empreendimento" ? estabelecimentos : prestadorServicos).map((item) => (
                     <option key={item} value={item}>{item}</option>
                   ))}
                 </select>
