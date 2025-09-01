@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import MiniMap from "@/components/ui/mini-map";
-import { Camera, Facebook, Instagram, Globe, MapPin, User } from "lucide-react";
+import { Camera, Facebook, Instagram, Globe, MapPin, User, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
@@ -217,6 +218,16 @@ const Profile = () => {
           <p className="text-muted-foreground mb-6">
             Preencha suas informações para completar seu perfil na plataforma cristã Anunciai.
           </p>
+          
+          {/* Email confirmation banner */}
+          {user && !user.email_confirmed_at && (
+            <Alert className="mb-6 border-yellow-500 bg-yellow-50">
+              <AlertCircle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-800">
+                <strong>Confirme seu email:</strong> Verifique sua caixa de entrada e clique no link de confirmação para ativar completamente sua conta.
+              </AlertDescription>
+            </Alert>
+          )}
           
           <div className="space-y-6">
             {/* Nome do Negócio ou Estabelecimento */}
