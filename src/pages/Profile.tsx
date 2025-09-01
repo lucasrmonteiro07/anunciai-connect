@@ -29,6 +29,7 @@ const Profile = () => {
   const [cep, setCep] = useState("");
   const [endereco, setEndereco] = useState({
     logradouro: "",
+    numero: "",
     bairro: "",
     cidade: "",
     uf: "",
@@ -141,13 +142,18 @@ const Profile = () => {
         const response = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`);
         const data = await response.json();
         if (!data.erro) {
-          setEndereco({
-            logradouro: data.logradouro,
-            bairro: data.bairro,
-            cidade: data.localidade,
-            uf: data.uf,
-            latitude: -23.5505,
-            longitude: -46.6333
+          // Get coordinates for the address
+          const fullAddress = `${data.logradouro}, ${data.localidade}, ${data.uf}, Brasil`;
+          getCoordinates(fullAddress).then(coords => {
+            setEndereco({
+              logradouro: data.logradouro,
+              numero: endereco.numero, // Keep existing number
+              bairro: data.bairro,
+              cidade: data.localidade,
+              uf: data.uf,
+              latitude: coords.lat,
+              longitude: coords.lng
+            });
           });
         }
       } catch (error) {
@@ -164,6 +170,22 @@ const Profile = () => {
     }
   };
 
+  const getCoordinates = async (address: string) => {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lng: parseFloat(data[0].lon)
+        };
+      }
+    } catch (error) {
+      console.error("Erro ao buscar coordenadas:", error);
+    }
+    return { lat: -23.5505, lng: -46.6333 }; // Default São Paulo coordinates
+  };
+
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
     const formattedCpf = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
@@ -178,7 +200,7 @@ const Profile = () => {
 
     try {
       // Save profile data
-      const { error } = await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: user?.id,
@@ -186,13 +208,37 @@ const Profile = () => {
           email: email
         });
 
-      if (error) throw error;
+      if (profileError) throw profileError;
+
+      // Save service data
+      const { error: serviceError } = await supabase
+        .from('services')
+        .upsert({
+          user_id: user?.id,
+          title: nomeNegocio,
+          type: tipoAnuncio,
+          category: categoria,
+          denomination: denominacao,
+          address: `${endereco.logradouro}, ${endereco.numero}`,
+          city: endereco.cidade,
+          uf: endereco.uf,
+          latitude: endereco.latitude,
+          longitude: endereco.longitude,
+          phone: telefone,
+          email: email,
+          facebook: facebook,
+          instagram: instagram,
+          website: website,
+          description: `${tipoAnuncio} - ${categoria}${denominacao ? ` - ${denominacao}` : ''}`
+        });
+
+      if (serviceError) throw serviceError;
 
       toast.success("Perfil salvo com sucesso!");
       navigate('/');
     } catch (error) {
       console.error("Erro ao salvar perfil:", error);
-      toast.error("Erro ao salvar perfil");
+      toast.error("Erro ao salvar perfil: " + (error as any).message);
     }
   };
 
@@ -201,7 +247,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       <SEO
         title="Perfil - Anunciai"
         description="Complete seu perfil na plataforma cristã Anunciai."
@@ -315,7 +361,7 @@ const Profile = () => {
             </div>
 
             {/* Endereço Completo */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">CEP</label>
                 <Input 
@@ -333,6 +379,15 @@ const Profile = () => {
                   value={endereco.logradouro}
                   onChange={(e) => setEndereco(prev => ({...prev, logradouro: e.target.value}))}
                   placeholder="Rua, Avenida, etc."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Número</label>
+                <Input 
+                  type="text" 
+                  value={endereco.numero}
+                  onChange={(e) => setEndereco(prev => ({...prev, numero: e.target.value}))}
+                  placeholder="123"
                 />
               </div>
               <div>
