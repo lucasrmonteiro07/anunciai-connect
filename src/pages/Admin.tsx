@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Users, FileText, Crown, Trash2, Eye, Edit } from 'lucide-react';
@@ -42,6 +45,8 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [editingUser, setEditingUser] = useState<Profile | null>(null);
+  const [editForm, setEditForm] = useState({ first_name: '', last_name: '' });
 
   useEffect(() => {
     // Check authentication and admin role
@@ -188,6 +193,42 @@ const Admin = () => {
     }
   };
 
+  const openEditUser = (profile: Profile) => {
+    setEditingUser(profile);
+    setEditForm({
+      first_name: profile.first_name || '',
+      last_name: profile.last_name || ''
+    });
+  };
+
+  const updateUserName = async () => {
+    if (!editingUser) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          first_name: editForm.first_name.trim() || null,
+          last_name: editForm.last_name.trim() || null
+        })
+        .eq('id', editingUser.id);
+
+      if (error) throw error;
+
+      setProfiles(profiles.map(p => 
+        p.id === editingUser.id 
+          ? { ...p, first_name: editForm.first_name.trim() || null, last_name: editForm.last_name.trim() || null }
+          : p
+      ));
+      
+      setEditingUser(null);
+      toast.success('Nome do usuário atualizado com sucesso');
+    } catch (error) {
+      console.error('Error updating user name:', error);
+      toast.error('Erro ao atualizar nome do usuário');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -276,9 +317,59 @@ const Admin = () => {
                             <Button variant="outline" size="sm">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => openEditUser(profile)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Editar Nome do Usuário</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <Label htmlFor="first_name">Primeiro Nome</Label>
+                                    <Input
+                                      id="first_name"
+                                      value={editForm.first_name}
+                                      onChange={(e) => setEditForm(prev => ({
+                                        ...prev,
+                                        first_name: e.target.value
+                                      }))}
+                                      placeholder="Digite o primeiro nome"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="last_name">Sobrenome</Label>
+                                    <Input
+                                      id="last_name"
+                                      value={editForm.last_name}
+                                      onChange={(e) => setEditForm(prev => ({
+                                        ...prev,
+                                        last_name: e.target.value
+                                      }))}
+                                      placeholder="Digite o sobrenome"
+                                    />
+                                  </div>
+                                  <div className="flex gap-2 justify-end">
+                                    <Button 
+                                      variant="outline" 
+                                      onClick={() => setEditingUser(null)}
+                                    >
+                                      Cancelar
+                                    </Button>
+                                    <Button onClick={updateUserName}>
+                                      Salvar
+                                    </Button>
+                                  </div>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                         </TableCell>
                       </TableRow>
