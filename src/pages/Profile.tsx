@@ -5,8 +5,7 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import MiniMap from "@/components/ui/mini-map";
-import { Camera, Facebook, Instagram, Globe, MapPin, User, AlertCircle } from "lucide-react";
+import { Camera, Facebook, Instagram, Globe, User, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -164,7 +163,8 @@ const Profile = () => {
 
   const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
-    setCep(value);
+    const formattedCep = value.replace(/(\d{5})(\d{3})/, '$1-$2');
+    setCep(formattedCep);
     if (value.length === 8) {
       buscarCep(value);
     }
@@ -276,14 +276,14 @@ const Profile = () => {
           )}
           
           <div className="space-y-6">
-            {/* Nome do Negócio ou Estabelecimento */}
+            {/* Nome Completo */}
             <div>
-              <label className="block text-sm font-medium mb-2">Nome do Negócio ou Estabelecimento</label>
+              <label className="block text-sm font-medium mb-2">Nome Completo</label>
               <Input 
                 type="text" 
                 value={nomeNegocio}
                 onChange={(e) => setNomeNegocio(e.target.value)}
-                placeholder="Digite o nome do seu negócio ou estabelecimento"
+                placeholder="Digite seu nome completo"
               />
             </div>
 
@@ -299,51 +299,20 @@ const Profile = () => {
               />
             </div>
 
-            {/* Tipo de Anúncio */}
+            {/* Categoria */}
             <div>
-              <label className="block text-sm font-medium mb-2">Tipo de Anúncio</label>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input 
-                    type="radio" 
-                    name="tipo" 
-                    value="estabelecimento"
-                    checked={tipoAnuncio === "estabelecimento"}
-                    onChange={(e) => setTipoAnuncio(e.target.value)}
-                    className="mr-2"
-                  />
-                  Estabelecimento
-                </label>
-                <label className="flex items-center">
-                  <input 
-                    type="radio" 
-                    name="tipo" 
-                    value="prestador"
-                    checked={tipoAnuncio === "prestador"}
-                    onChange={(e) => setTipoAnuncio(e.target.value)}
-                    className="mr-2"
-                  />
-                  Prestador de Serviço
-                </label>
-              </div>
+              <label className="block text-sm font-medium mb-2">Categoria</label>
+              <select 
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value)}
+                className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+              >
+                <option value="">Selecione uma categoria</option>
+                {estabelecimentos.concat(prestadorServicos).map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))}
+              </select>
             </div>
-
-            {/* Categoria Dinâmica */}
-            {tipoAnuncio && (
-              <div>
-                <label className="block text-sm font-medium mb-2">Categoria</label>
-                <select 
-                  value={categoria}
-                  onChange={(e) => setCategoria(e.target.value)}
-                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
-                >
-                  <option value="">Selecione uma categoria</option>
-                  {(tipoAnuncio === "estabelecimento" ? estabelecimentos : prestadorServicos).map((item) => (
-                    <option key={item} value={item}>{item}</option>
-                  ))}
-                </select>
-              </div>
-            )}
 
             {/* Denominação */}
             <div>
@@ -364,13 +333,13 @@ const Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2">CEP</label>
-                <Input 
-                  type="text" 
-                  value={cep}
-                  onChange={handleCepChange}
-                  placeholder="00000-000"
-                  maxLength={8}
-                />
+                 <Input 
+                   type="text" 
+                   value={cep}
+                   onChange={handleCepChange}
+                   placeholder="00000-000"
+                   maxLength={9}
+                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Logradouro</label>
@@ -420,21 +389,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Mapa */}
-            {endereco.cidade && (
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  <MapPin className="inline mr-1 h-4 w-4" />
-                  Localização
-                </label>
-                <MiniMap 
-                  latitude={endereco.latitude}
-                  longitude={endereco.longitude}
-                  title={endereco.logradouro}
-                  address={`${endereco.bairro}, ${endereco.cidade} - ${endereco.uf}`}
-                />
-              </div>
-            )}
 
             {/* Contato */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -507,10 +461,10 @@ const Profile = () => {
             </div>
 
             {membroCrie && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <label className="block text-sm font-medium mb-2">Selecione o desconto para seus anúncios:</label>
+              <div className="bg-black border border-gray-600 rounded-lg p-4">
+                <label className="block text-sm font-medium mb-2 text-white">Selecione o desconto para seus anúncios:</label>
                 <div className="flex gap-4">
-                  <label className="flex items-center">
+                  <label className="flex items-center text-white">
                     <input 
                       type="radio" 
                       name="desconto" 
@@ -521,7 +475,7 @@ const Profile = () => {
                     />
                     7%
                   </label>
-                  <label className="flex items-center">
+                  <label className="flex items-center text-white">
                     <input 
                       type="radio" 
                       name="desconto" 
@@ -532,7 +486,7 @@ const Profile = () => {
                     />
                     10%
                   </label>
-                  <label className="flex items-center">
+                  <label className="flex items-center text-white">
                     <input 
                       type="radio" 
                       name="desconto" 
