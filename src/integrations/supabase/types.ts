@@ -148,7 +148,69 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      services_public: {
+        Row: {
+          category: string | null
+          city: string | null
+          created_at: string | null
+          denomination: string | null
+          description: string | null
+          facebook: string | null
+          id: string | null
+          images: string[] | null
+          instagram: string | null
+          is_vip: boolean | null
+          latitude: number | null
+          logo_url: string | null
+          longitude: number | null
+          title: string | null
+          type: string | null
+          uf: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          denomination?: string | null
+          description?: string | null
+          facebook?: string | null
+          id?: string | null
+          images?: string[] | null
+          instagram?: string | null
+          is_vip?: boolean | null
+          latitude?: number | null
+          logo_url?: string | null
+          longitude?: number | null
+          title?: string | null
+          type?: string | null
+          uf?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          denomination?: string | null
+          description?: string | null
+          facebook?: string | null
+          id?: string | null
+          images?: string[] | null
+          instagram?: string | null
+          is_vip?: boolean | null
+          latitude?: number | null
+          logo_url?: string | null
+          longitude?: number | null
+          title?: string | null
+          type?: string | null
+          uf?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
