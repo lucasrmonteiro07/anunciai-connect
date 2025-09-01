@@ -198,6 +198,16 @@ const Profile = () => {
       return;
     }
 
+    if (!tipoAnuncio) {
+      toast.error("Selecione o tipo de anúncio");
+      return;
+    }
+
+    if (!categoria) {
+      toast.error("Selecione uma categoria");
+      return;
+    }
+
     try {
       // Save profile data
       const { error: profileError } = await supabase
@@ -286,6 +296,37 @@ const Profile = () => {
                 placeholder="Digite seu nome completo"
               />
             </div>
+
+            {/* Tipo de Anúncio */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Tipo de Anúncio</label>
+              <select 
+                value={tipoAnuncio}
+                onChange={(e) => setTipoAnuncio(e.target.value)}
+                className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+              >
+                <option value="">Selecione o tipo</option>
+                <option value="prestador">Prestador de Serviços</option>
+                <option value="empreendimento">Empreendimento</option>
+              </select>
+            </div>
+
+            {/* Categoria */}
+            {tipoAnuncio && (
+              <div>
+                <label className="block text-sm font-medium mb-2">Categoria</label>
+                <select 
+                  value={categoria}
+                  onChange={(e) => setCategoria(e.target.value)}
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+                >
+                  <option value="">Selecione a categoria</option>
+                  {(tipoAnuncio === "prestador" ? prestadorServicos : estabelecimentos).map((item) => (
+                    <option key={item} value={item}>{item}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* CPF */}
             <div>
