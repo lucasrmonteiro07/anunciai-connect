@@ -251,9 +251,15 @@ const Index = () => {
                     Aparece primeiro
                   </li>
                 </ul>
-                <Button variant="secondary" className="w-full">
-                  Tornar-se VIP
-                </Button>
+                <div className="space-y-2">
+                  <Button 
+                    variant="secondary" 
+                    className="w-full"
+                    onClick={() => navigate('/vip')}
+                  >
+                    Tornar-se VIP
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
