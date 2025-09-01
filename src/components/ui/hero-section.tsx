@@ -51,7 +51,7 @@ const HeroSection = () => {
               className="px-8 py-4 text-lg bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
             >
               <Search className="mr-2 h-5 w-5" />
-              Buscar Serviços
+              Buscar Anúncios
             </Button>
             <Button 
               variant="outline" 
