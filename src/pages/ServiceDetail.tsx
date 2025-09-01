@@ -209,14 +209,23 @@ const ServiceDetail = () => {
           </Button>
 
           {isOwner && (
-            <Button 
-              variant="destructive" 
-              size="sm"
-              onClick={handleDelete}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Excluir Anúncio
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/perfil')}
+              >
+                Editar Anúncio
+              </Button>
+              <Button 
+                variant="destructive" 
+                size="sm"
+                onClick={handleDelete}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Excluir Anúncio
+              </Button>
+            </div>
           )}
         </div>
 

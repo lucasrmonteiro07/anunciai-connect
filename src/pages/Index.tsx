@@ -267,7 +267,7 @@ const Index = () => {
       <footer className="bg-card border-t border-border py-8">
         <div className="container mx-auto px-4 text-center space-y-2">
           <p className="text-muted-foreground">
-            © 2024 Anunciai.app.br - Conectando a comunidade cristã através de serviços de qualidade
+            © 2025 Anunciai.app.br - Conectando a comunidade Cristã
           </p>
           <p className="text-sm text-muted-foreground">
             Feito por <span className="font-semibold">AURORA BUSINESS INTELLIGENCE</span>

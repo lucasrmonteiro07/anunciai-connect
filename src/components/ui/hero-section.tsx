@@ -25,7 +25,7 @@ const HeroSection = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full mb-6">
             <Crown className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium text-primary">
-              Plataforma Cristã de Serviços
+              Plataforma Cristã de Anúncios
             </span>
           </div>
 
