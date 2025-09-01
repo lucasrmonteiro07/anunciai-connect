@@ -213,7 +213,7 @@ const ServiceDetail = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => navigate('/perfil')}
+                onClick={() => navigate(`/editar-anuncio/${service.id}`)}
               >
                 Editar Anúncio
               </Button>

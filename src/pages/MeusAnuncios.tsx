@@ -201,8 +201,7 @@ const MeusAnuncios = () => {
                     variant="secondary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Future: navigate to edit page
-                      toast.info('Funcionalidade de edição em desenvolvimento');
+                      navigate(`/editar-anuncio/${service.id}`);
                     }}
                     className="h-8 w-8 p-0"
                   >
