@@ -181,7 +181,13 @@ const Anunciar = () => {
 
     } catch (error) {
       console.error('Erro ao cadastrar anúncio:', error);
-      toast.error("Erro ao cadastrar anúncio. Tente novamente.");
+      console.error('Error details:', {
+        message: error?.message,
+        code: error?.code,
+        details: error?.details,
+        hint: error?.hint
+      });
+      toast.error(`Erro ao cadastrar anúncio: ${error?.message || 'Tente novamente.'}`);
     } finally {
       setLoading(false);
     }
