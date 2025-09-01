@@ -114,15 +114,28 @@ const Header = () => {
             </Button>
             
             {user ? (
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="border-primary/30 hover:border-primary hover:bg-primary/10"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                <span className="hidden md:inline">Sair</span>
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button 
+                  asChild
+                  variant="outline" 
+                  size="sm"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/10"
+                >
+                  <Link to="/perfil">
+                    <User className="h-4 w-4 mr-2" />
+                    <span className="hidden md:inline">Perfil</span>
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/10"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  <span className="hidden md:inline">Sair</span>
+                </Button>
+              </div>
             ) : (
               <Button 
                 asChild
