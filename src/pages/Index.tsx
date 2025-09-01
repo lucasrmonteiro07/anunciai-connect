@@ -75,10 +75,10 @@ const Index = () => {
 
   const loadServices = async () => {
     try {
+      // Use the secure services_public view that excludes sensitive contact information
       const { data, error } = await supabase
-        .from('services')
+        .from('services_public')
         .select('*')
-        .eq('status', 'active')
         .order('is_vip', { ascending: false })
         .order('created_at', { ascending: false });
 
@@ -90,7 +90,8 @@ const Index = () => {
         return;
       }
 
-      // Transform Supabase data to ServiceData format
+      // Transform Supabase data to ServiceData format  
+      // Note: Using services_public view which excludes sensitive contact information for security
       const transformedServices: ServiceData[] = (data || []).map(service => ({
         id: service.id,
         title: service.title,
@@ -102,18 +103,21 @@ const Index = () => {
           uf: service.uf,
           latitude: service.latitude ? Number(service.latitude) : undefined,
           longitude: service.longitude ? Number(service.longitude) : undefined,
-          address: service.address || undefined
+          // address is not available in public view for privacy
+          address: undefined
         },
         contact: { 
-          phone: service.phone || '', 
-          email: service.email || '',
-          whatsapp: service.whatsapp || undefined
+          // Contact info is not available in public view for privacy protection
+          phone: '', 
+          email: '',
+          whatsapp: undefined
         },
         logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
         images: service.images || [],
         isVip: service.is_vip,
         denomination: service.denomination || '',
-        ownerName: service.owner_name || '',
+        // owner_name is not available in public view for privacy
+        ownerName: '',
         socialMedia: {
           instagram: service.instagram || undefined,
           facebook: service.facebook || undefined,
