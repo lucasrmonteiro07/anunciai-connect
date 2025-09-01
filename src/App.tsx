@@ -8,6 +8,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Anunciar from "./pages/Anunciar";
 import Profile from "./pages/Profile";
+import MeusAnuncios from "./pages/MeusAnuncios";
 import NotFound from "./pages/NotFound";
 import ServiceDetail from "./pages/ServiceDetail";
 import Admin from "./pages/Admin";
@@ -26,6 +27,7 @@ const App = () => (
         <Route path="/login" element={<Login />} />
         <Route path="/anunciar" element={<Anunciar />} />
         <Route path="/perfil" element={<Profile />} />
+        <Route path="/meus-anuncios" element={<MeusAnuncios />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/anuncio/:id" element={<ServiceDetail />} />
         <Route path="*" element={<NotFound />} />

@@ -106,7 +106,7 @@ const ServiceDetail = () => {
         },
         logo: data.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
         images: data.images || [],
-        isVip: data.is_vip || false,
+        isVip: false, // VIP is now from user profile
         denomination: data.denomination || '',
         ownerName: data.owner_name || '',
         userId: data.user_id,

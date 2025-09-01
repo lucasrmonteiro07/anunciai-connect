@@ -32,7 +32,6 @@ interface Service {
   city: string;
   uf: string;
   owner_name: string;
-  is_vip: boolean;
   status: string;
   created_at: string;
 }
@@ -136,24 +135,6 @@ const Admin = () => {
     }
   };
 
-  const toggleServiceVip = async (serviceId: string, currentVip: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('services')
-        .update({ is_vip: !currentVip })
-        .eq('id', serviceId);
-
-      if (error) throw error;
-
-      setServices(services.map(s => 
-        s.id === serviceId ? { ...s, is_vip: !currentVip } : s
-      ));
-      toast.success(`Status VIP do anúncio ${!currentVip ? 'ativado' : 'desativado'} com sucesso`);
-    } catch (error) {
-      console.error('Error updating service VIP status:', error);
-      toast.error('Erro ao atualizar status VIP do anúncio');
-    }
-  };
 
   const updateServiceStatus = async (serviceId: string, newStatus: string) => {
     try {
@@ -404,7 +385,6 @@ const Admin = () => {
                       <TableHead>Localização</TableHead>
                       <TableHead>Proprietário</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>VIP</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -412,12 +392,7 @@ const Admin = () => {
                     {services.map((service) => (
                       <TableRow key={service.id}>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            {service.title}
-                            {service.is_vip && (
-                              <Crown className="h-4 w-4 text-vip" />
-                            )}
-                          </div>
+                          {service.title}
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary">{service.category}</Badge>
@@ -430,12 +405,6 @@ const Admin = () => {
                           >
                             {service.status}
                           </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={service.is_vip}
-                            onCheckedChange={() => toggleServiceVip(service.id, service.is_vip)}
-                          />
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">

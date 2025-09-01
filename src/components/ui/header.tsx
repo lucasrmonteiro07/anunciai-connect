@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Menu, User, Plus, LogOut, Settings } from 'lucide-react';
+import { Crown, Menu, User, Plus, LogOut, Settings, FileText } from 'lucide-react';
 import { Button } from './button';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -115,6 +115,17 @@ const Header = () => {
             
             {user ? (
               <div className="flex items-center space-x-2">
+                <Button 
+                  asChild
+                  variant="outline" 
+                  size="sm"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/10"
+                >
+                  <Link to="/meus-anuncios">
+                    <FileText className="h-4 w-4 mr-2" />
+                    <span className="hidden md:inline">Meus Anúncios</span>
+                  </Link>
+                </Button>
                 <Button 
                   asChild
                   variant="outline" 
