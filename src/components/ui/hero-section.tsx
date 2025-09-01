@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, Users, ShieldCheck, Crown } from 'lucide-react';
 import { Button } from './button';
+import { Link } from 'react-router-dom';
 import heroBanner from '@/assets/hero-banner.jpg';
 
 const HeroSection = () => {
@@ -56,9 +57,12 @@ const HeroSection = () => {
               variant="outline" 
               size="lg"
               className="px-8 py-4 text-lg border-primary/30 hover:border-primary hover:bg-primary/10"
+              asChild
             >
-              <Users className="mr-2 h-5 w-5" />
-              Cadastrar Serviço
+              <Link to="/anunciar">
+                <Users className="mr-2 h-5 w-5" />
+                Cadastrar Anúncio
+              </Link>
             </Button>
           </div>
 
