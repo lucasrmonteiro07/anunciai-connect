@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import HeroSection from '@/components/ui/hero-section';
@@ -6,13 +6,11 @@ import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
-// Using placeholder images for demonstration
-const constructionLogo = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
-const musicLogo = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop';
-const cateringLogo = 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop';
 import SEO from '@/components/SEO';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-// Mock data for demonstration
+// Mock data as fallback
 const mockServices: ServiceData[] = [
   {
     id: '1',
@@ -22,7 +20,7 @@ const mockServices: ServiceData[] = [
     type: 'empreendimento',
     location: { city: 'São Paulo', uf: 'SP' },
     contact: { phone: '(11) 99999-9999', email: 'contato@silvafilhos.com.br' },
-    logo: constructionLogo,
+    logo: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
     images: [],
     isVip: true,
     denomination: 'Igreja Batista',
@@ -36,7 +34,7 @@ const mockServices: ServiceData[] = [
     type: 'prestador',
     location: { city: 'Rio de Janeiro', uf: 'RJ' },
     contact: { phone: '(21) 88888-8888', email: 'louvor@eventos.com.br' },
-    logo: musicLogo,
+    logo: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
     images: [],
     isVip: false,
     denomination: 'Lagoinha',
@@ -50,7 +48,7 @@ const mockServices: ServiceData[] = [
     type: 'empreendimento',
     location: { city: 'Belo Horizonte', uf: 'MG' },
     contact: { phone: '(31) 77777-7777', email: 'contato@buffetmana.com.br' },
-    logo: cateringLogo,
+    logo: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop',
     images: [],
     isVip: true,
     denomination: 'Assembleia de Deus',
@@ -63,10 +61,81 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const [filteredServices, setFilteredServices] = useState(mockServices);
+  const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
+  const [services, setServices] = useState<ServiceData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  useEffect(() => {
+    handleSearch();
+  }, [services, searchTerm, selectedCategory, selectedLocation]);
+
+  const loadServices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('status', 'active')
+        .order('is_vip', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching services:', error);
+        // Use mock data as fallback
+        setServices(mockServices);
+        setFilteredServices(mockServices);
+        return;
+      }
+
+      // Transform Supabase data to ServiceData format
+      const transformedServices: ServiceData[] = (data || []).map(service => ({
+        id: service.id,
+        title: service.title,
+        description: service.description || '',
+        category: service.category,
+        type: service.type as 'prestador' | 'empreendimento',
+        location: { 
+          city: service.city, 
+          uf: service.uf,
+          latitude: service.latitude ? Number(service.latitude) : undefined,
+          longitude: service.longitude ? Number(service.longitude) : undefined,
+          address: service.address || undefined
+        },
+        contact: { 
+          phone: service.phone || '', 
+          email: service.email || '',
+          whatsapp: service.whatsapp || undefined
+        },
+        logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+        images: service.images || [],
+        isVip: service.is_vip,
+        denomination: service.denomination || '',
+        ownerName: service.owner_name || '',
+        socialMedia: {
+          instagram: service.instagram || undefined,
+          facebook: service.facebook || undefined,
+          website: service.website || undefined
+        }
+      }));
+
+      // Combine real data with mock data for demonstration
+      const allServices = [...transformedServices, ...mockServices];
+      setServices(allServices);
+      setFilteredServices(allServices);
+    } catch (error) {
+      console.error('Error loading services:', error);
+      setServices(mockServices);
+      setFilteredServices(mockServices);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = () => {
-    let filtered = mockServices;
+    let filtered = services;
 
     if (searchTerm) {
       filtered = filtered.filter(service => 
@@ -145,13 +214,27 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredServices.map((service) => (
-              <ServiceCard 
-                key={service.id} 
-                service={service}
-                onClick={() => navigate(`/anuncio/${service.id}`)}
-              />
-            ))}
+            {loading ? (
+              // Loading skeleton
+              Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-muted h-48 rounded-t-lg"></div>
+                  <div className="p-6 space-y-3">
+                    <div className="h-4 bg-muted rounded w-3/4"></div>
+                    <div className="h-3 bg-muted rounded w-1/2"></div>
+                    <div className="h-3 bg-muted rounded w-full"></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              filteredServices.map((service) => (
+                <ServiceCard 
+                  key={service.id} 
+                  service={service}
+                  onClick={() => navigate(`/anuncio/${service.id}`)}
+                />
+              ))
+            )}
           </div>
 
           {filteredServices.length === 0 && (
@@ -166,7 +249,7 @@ const Index = () => {
                   setSearchTerm('');
                   setSelectedCategory('all');
                   setSelectedLocation('all');
-                  setFilteredServices(mockServices);
+                  setFilteredServices(services);
                 }}
               >
                 Limpar Filtros
