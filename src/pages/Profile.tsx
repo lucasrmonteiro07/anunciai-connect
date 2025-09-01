@@ -5,7 +5,7 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, Facebook, Instagram, Globe, User, AlertCircle } from "lucide-react";
+import { Camera, User, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -299,20 +299,6 @@ const Profile = () => {
               />
             </div>
 
-            {/* Categoria */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Categoria</label>
-              <select 
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
-                className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
-              >
-                <option value="">Selecione uma categoria</option>
-                {estabelecimentos.concat(prestadorServicos).map((item) => (
-                  <option key={item} value={item}>{item}</option>
-                ))}
-              </select>
-            </div>
 
             {/* Denominação */}
             <div>
@@ -412,39 +398,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Redes Sociais */}
-            <div>
-              <label className="block text-sm font-medium mb-2">Redes Sociais</label>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Facebook className="h-5 w-5 text-blue-600" />
-                  <Input 
-                    type="url" 
-                    value={facebook}
-                    onChange={(e) => setFacebook(e.target.value)}
-                    placeholder="https://facebook.com/seuPerfil"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Instagram className="h-5 w-5 text-pink-600" />
-                  <Input 
-                    type="url" 
-                    value={instagram}
-                    onChange={(e) => setInstagram(e.target.value)}
-                    placeholder="https://instagram.com/seuPerfil"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-green-600" />
-                  <Input 
-                    type="url" 
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
-                    placeholder="https://seusite.com.br"
-                  />
-                </div>
-              </div>
-            </div>
 
             {/* Checkbox CRIE */}
             <div className="flex items-center space-x-2">
