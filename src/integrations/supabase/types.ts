@@ -68,7 +68,7 @@ export type Database = {
           type: string
           uf: string
           updated_at: string | null
-          user_id: string | null
+          user_id: string
           website: string | null
           whatsapp: string | null
         }
@@ -95,7 +95,7 @@ export type Database = {
           type: string
           uf: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
           website?: string | null
           whatsapp?: string | null
         }
@@ -122,7 +122,7 @@ export type Database = {
           type?: string
           uf?: string
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
           website?: string | null
           whatsapp?: string | null
         }
