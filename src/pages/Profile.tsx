@@ -144,15 +144,15 @@ const Profile = () => {
           // Get coordinates for the address
           const fullAddress = `${data.logradouro}, ${data.localidade}, ${data.uf}, Brasil`;
           getCoordinates(fullAddress).then(coords => {
-            setEndereco({
+            setEndereco(prev => ({
+              ...prev,
               logradouro: data.logradouro,
-              numero: endereco.numero, // Keep existing number
               bairro: data.bairro,
               cidade: data.localidade,
               uf: data.uf,
               latitude: coords.lat,
               longitude: coords.lng
-            });
+            }));
           });
         }
       } catch (error) {
@@ -172,9 +172,13 @@ const Profile = () => {
 
   const getCoordinates = async (address: string) => {
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
+      // Encode the address properly for the API
+      const encodedAddress = encodeURIComponent(address);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=br`);
       const data = await response.json();
+      
       if (data && data.length > 0) {
+        console.log('Coordinates found:', { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
         return {
           lat: parseFloat(data[0].lat),
           lng: parseFloat(data[0].lon)
@@ -183,7 +187,10 @@ const Profile = () => {
     } catch (error) {
       console.error("Erro ao buscar coordenadas:", error);
     }
-    return { lat: -23.5505, lng: -46.6333 }; // Default São Paulo coordinates
+    
+    // Default coordinates for Brazil center if not found
+    console.log('Using default Brazil coordinates');
+    return { lat: -14.2350, lng: -51.9253 };
   };
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -229,7 +236,7 @@ const Profile = () => {
           type: tipoAnuncio,
           category: categoria,
           denomination: denominacao,
-          address: `${endereco.logradouro}, ${endereco.numero}`,
+          address: `${endereco.logradouro}${endereco.numero ? `, ${endereco.numero}` : ''}${endereco.bairro ? ` - ${endereco.bairro}` : ''}`,
           city: endereco.cidade,
           uf: endereco.uf,
           latitude: endereco.latitude,
