@@ -27,8 +27,8 @@ const mockService = {
     email: "contato@construcoesgospel.com",
     whatsapp: "5511999999999"
   },
-  logo: "/src/assets/construction-logo.jpg",
-  images: ["/src/assets/construction-logo.jpg"],
+  logo: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop",
+  images: ["https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop"],
   isVip: true,
   denomination: "Assembleia de Deus",
   ownerName: "João Silva",
