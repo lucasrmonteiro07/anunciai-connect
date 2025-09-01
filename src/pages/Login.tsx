@@ -18,6 +18,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showResendEmail, setShowResendEmail] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
 
@@ -51,6 +53,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setShowResendEmail(false);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -59,12 +62,42 @@ const Login = () => {
 
     if (error) {
       setError(error.message);
+      // Show resend email option if email not confirmed
+      if (error.message.includes("Email not confirmed")) {
+        setShowResendEmail(true);
+      }
       toast.error("Erro ao fazer login: " + error.message);
     } else {
       toast.success("Login realizado com sucesso!");
     }
 
     setLoading(false);
+  };
+
+  const handleResendEmail = async () => {
+    if (!email) {
+      toast.error("Por favor, digite seu e-mail primeiro");
+      return;
+    }
+
+    setResendingEmail(true);
+    
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/perfil`
+      }
+    });
+
+    if (error) {
+      toast.error("Erro ao reenviar email: " + error.message);
+    } else {
+      toast.success("Email de confirmação reenviado! Verifique sua caixa de entrada.");
+      setShowResendEmail(false);
+    }
+
+    setResendingEmail(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -153,6 +186,22 @@ const Login = () => {
                     {loading ? "Entrando..." : "Entrar"}
                   </Button>
                 </form>
+                
+                {showResendEmail && (
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Não recebeu o email de confirmação?
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleResendEmail}
+                      disabled={resendingEmail}
+                    >
+                      {resendingEmail ? "Reenviando..." : "Reenviar email de confirmação"}
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
               
               <TabsContent value="signup" className="space-y-4">
