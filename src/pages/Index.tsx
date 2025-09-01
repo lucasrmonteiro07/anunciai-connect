@@ -6,9 +6,10 @@ import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
-import constructionLogo from '@/assets/construction-logo.jpg';
-import musicLogo from '@/assets/music-logo.jpg';
-import cateringLogo from '@/assets/catering-logo.jpg';
+// Using placeholder images for demonstration
+const constructionLogo = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+const musicLogo = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop';
+const cateringLogo = 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop';
 import SEO from '@/components/SEO';
 
 // Mock data for demonstration
