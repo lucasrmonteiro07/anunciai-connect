@@ -317,59 +317,68 @@ const Admin = () => {
                             <Button variant="outline" size="sm">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => openEditUser(profile)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Editar Nome do Usuário</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                  <div>
-                                    <Label htmlFor="first_name">Primeiro Nome</Label>
-                                    <Input
-                                      id="first_name"
-                                      value={editForm.first_name}
-                                      onChange={(e) => setEditForm(prev => ({
-                                        ...prev,
-                                        first_name: e.target.value
-                                      }))}
-                                      placeholder="Digite o primeiro nome"
-                                    />
+                              <Dialog
+                                open={editingUser?.id === profile.id}
+                                onOpenChange={(open) => {
+                                  if (open) {
+                                    openEditUser(profile)
+                                  } else {
+                                    setEditingUser(null)
+                                  }
+                                }}
+                              >
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => openEditUser(profile)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Editar Nome do Usuário</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    <div>
+                                      <Label htmlFor="first_name">Primeiro Nome</Label>
+                                      <Input
+                                        id="first_name"
+                                        value={editForm.first_name}
+                                        onChange={(e) => setEditForm(prev => ({
+                                          ...prev,
+                                          first_name: e.target.value
+                                        }))}
+                                        placeholder="Digite o primeiro nome"
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label htmlFor="last_name">Sobrenome</Label>
+                                      <Input
+                                        id="last_name"
+                                        value={editForm.last_name}
+                                        onChange={(e) => setEditForm(prev => ({
+                                          ...prev,
+                                          last_name: e.target.value
+                                        }))}
+                                        placeholder="Digite o sobrenome"
+                                      />
+                                    </div>
+                                    <div className="flex gap-2 justify-end">
+                                      <Button 
+                                        variant="outline" 
+                                        onClick={() => setEditingUser(null)}
+                                      >
+                                        Cancelar
+                                      </Button>
+                                      <Button onClick={updateUserName}>
+                                        Salvar
+                                      </Button>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <Label htmlFor="last_name">Sobrenome</Label>
-                                    <Input
-                                      id="last_name"
-                                      value={editForm.last_name}
-                                      onChange={(e) => setEditForm(prev => ({
-                                        ...prev,
-                                        last_name: e.target.value
-                                      }))}
-                                      placeholder="Digite o sobrenome"
-                                    />
-                                  </div>
-                                  <div className="flex gap-2 justify-end">
-                                    <Button 
-                                      variant="outline" 
-                                      onClick={() => setEditingUser(null)}
-                                    >
-                                      Cancelar
-                                    </Button>
-                                    <Button onClick={updateUserName}>
-                                      Salvar
-                                    </Button>
-                                  </div>
-                                </div>
-                              </DialogContent>
-                            </Dialog>
+                                </DialogContent>
+                              </Dialog>
                           </div>
                         </TableCell>
                       </TableRow>
