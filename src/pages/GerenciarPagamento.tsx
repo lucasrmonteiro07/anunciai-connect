@@ -59,7 +59,18 @@ const GerenciarPagamento = () => {
   const checkSubscription = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Sessão expirada. Faça login novamente.');
+        navigate('/login');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
       
       if (error) {
         console.error('Erro ao verificar assinatura:', error);
@@ -67,7 +78,14 @@ const GerenciarPagamento = () => {
         return;
       }
 
-      setSubscriptionData(data);
+      console.log('Subscription data received:', data);
+      if (data) {
+        setSubscriptionData({
+          subscribed: data.subscribed || false,
+          subscription_tier: data.subscription_tier || null,
+          subscription_end: data.subscription_end || null
+        });
+      }
     } catch (error) {
       console.error('Erro:', error);
       toast.error('Erro ao verificar assinatura');
