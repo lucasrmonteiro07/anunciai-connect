@@ -142,7 +142,7 @@ const GerenciarPagamento = () => {
 
   const getStatusText = () => {
     if (subscriptionData.subscribed) {
-      return 'Ativo';
+      return 'FOGARÉU';
     }
     return 'Inativo';
   };
