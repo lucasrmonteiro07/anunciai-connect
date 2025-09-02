@@ -5,8 +5,9 @@ import Footer from '@/components/ui/footer';
 import HeroSection from '@/components/ui/hero-section';
 import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
+import MapFilter from '@/components/ui/map-filter';
 import { Button } from '@/components/ui/button';
-import { Filter } from 'lucide-react';
+import { Filter, Map as MapIcon } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -65,6 +66,7 @@ const Index = () => {
   const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
   const [services, setServices] = useState<ServiceData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     loadServices();
@@ -213,13 +215,17 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
+            {/* Plano Benção (Free) */}
             <div className="bg-card rounded-xl p-8 border-2 border-border hover:border-primary/50 transition-colors">
               <div className="text-center">
-                <h3 className="text-2xl font-bold mb-2">Anúncio Gratuito</h3>
+                <h3 className="text-2xl font-bold mb-2 text-primary">Plano Benção (Free)</h3>
                 <p className="text-4xl font-bold text-primary mb-4">R$ 0</p>
                 <p className="text-muted-foreground mb-6">Para sempre</p>
                 <ul className="text-left space-y-3 mb-8">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                    1 foto do seu negócio
+                  </li>
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     Listagem básica
@@ -232,6 +238,10 @@ const Index = () => {
                     <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     Localização no mapa
                   </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-muted rounded-full mr-3"></div>
+                    <span className="text-muted-foreground">Sem destaque nas pesquisas</span>
+                  </li>
                 </ul>
                 <Button className="w-full" onClick={() => navigate('/anunciar')}>
                   Começar Grátis
@@ -239,13 +249,13 @@ const Index = () => {
               </div>
             </div>
 
-            {/* VIP Plan */}
-            <div className="bg-gradient-to-br from-primary to-primary-foreground rounded-xl p-8 border-2 border-primary relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium">
-                Destaque
+            {/* Plano Fogaréu (Destaque) */}
+            <div className="fogareu-card bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-8 border-2 border-orange-400 relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-white text-orange-600 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                🔥 FOGARÉU
               </div>
               <div className="text-center text-white">
-                <h3 className="text-2xl font-bold mb-2">Seja VIP</h3>
+                <h3 className="text-2xl font-bold mb-2">Plano Fogaréu (Destaque)</h3>
                 <div className="mb-4">
                   <p className="text-3xl font-bold">R$ 14,90</p>
                   <p className="text-sm opacity-90">por mês</p>
@@ -254,28 +264,32 @@ const Index = () => {
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Destaque na busca
+                    5 fotos do seu negócio
                   </li>
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Badge VIP especial
+                    Destaque nas pesquisas
                   </li>
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Múltiplas fotos
+                    Contorno dourado nos anúncios
                   </li>
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Aparece primeiro
+                    Badge Fogaréu especial
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Aparece primeiro na busca
                   </li>
                 </ul>
                 <div className="space-y-2">
                   <Button 
                     variant="secondary" 
-                    className="w-full"
+                    className="w-full bg-white text-orange-600 hover:bg-orange-50"
                     onClick={() => navigate('/vip')}
                   >
-                    Tornar-se VIP
+                    🔥 Tornar-se Fogaréu
                   </Button>
                 </div>
               </div>
@@ -309,11 +323,33 @@ const Index = () => {
                 Encontre profissionais cristãos qualificados em sua região
               </p>
             </div>
-            <Button variant="outline" size="sm" className="hidden md:flex">
-              <Filter className="h-4 w-4 mr-2" />
-              Filtros
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowMap(!showMap)}
+                className={showMap ? "bg-primary text-primary-foreground" : ""}
+              >
+                <MapIcon className="h-4 w-4 mr-2" />
+                {showMap ? 'Ocultar Mapa' : 'Ver no Mapa'}
+              </Button>
+              <Button variant="outline" size="sm" className="hidden md:flex">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros
+              </Button>
+            </div>
           </div>
+
+          {/* Map View */}
+          {showMap && (
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-4">Mapa dos Serviços</h3>
+              <MapFilter 
+                services={filteredServices}
+                onServiceClick={(service) => navigate(`/anuncio/${service.id}`)}
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (

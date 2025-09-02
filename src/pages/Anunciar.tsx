@@ -240,6 +240,7 @@ const Anunciar = () => {
           description: formData.descricao,
           address: `${endereco.logradouro}${formData.numero ? ', ' + formData.numero : ''}, ${endereco.bairro}`,
           number: formData.numero || null,
+          neighborhood: endereco.bairro,
           city: endereco.cidade,
           uf: endereco.uf,
           cep: cep,

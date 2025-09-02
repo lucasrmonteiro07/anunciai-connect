@@ -264,22 +264,34 @@ const ServiceDetail = () => {
             </Card>
 
             {/* Location & Map */}
-            {service.location.latitude && service.location.longitude && (
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">Localização</h2>
-                  <p className="text-muted-foreground mb-4">
-                    {service.location.address} - {service.location.city}, {service.location.uf}
-                  </p>
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Localização</h2>
+                <p className="text-muted-foreground mb-4">
+                  {service.location.address ? `${service.location.address} - ` : ''}{service.location.city}, {service.location.uf}
+                </p>
+                {service.location.latitude && service.location.longitude ? (
                   <MiniMap
                     latitude={service.location.latitude}
                     longitude={service.location.longitude}
                     title={service.title}
                     address={service.location.address}
                   />
-                </CardContent>
-              </Card>
-            )}
+                ) : (
+                  <div className="bg-muted/30 p-6 rounded-lg text-center">
+                    <p className="text-muted-foreground mb-3">
+                      Localização exata não disponível no mapa
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      📍 {service.location.city}, {service.location.uf}
+                    </p>
+                    <div className="mt-4 text-xs text-muted-foreground">
+                      Se você é o proprietário deste anúncio, edite-o para adicionar coordenadas precisas ou permitir localização manual.
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}

@@ -116,23 +116,46 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">
-            © 2024 Anunciai. Todos os direitos reservados.
-          </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <a 
-              href="/termos" 
-              className="text-muted-foreground hover:text-primary transition-colors text-sm"
-            >
-              Termos de Uso
-            </a>
-            <a 
-              href="/privacidade" 
-              className="text-muted-foreground hover:text-primary transition-colors text-sm"
-            >
-              Política de Privacidade
-            </a>
+        <div className="border-t border-border mt-8 pt-8">
+          {/* Contact Information */}
+          <div className="mb-6 text-center">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-4">
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" />
+                <a 
+                  href="mailto:anunciai@anunciai.app.br"
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  anunciai@anunciai.app.br
+                </a>
+              </div>
+              <div className="text-muted-foreground text-sm">
+                CNPJ: 55.897.669/0001-10
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Todas as marcas, logotipos e imagens são propriedade de seus respectivos donos e são utilizadas apenas para identificação dos estabelecimentos e serviços anunciados na plataforma.
+            </p>
+          </div>
+          
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-muted-foreground text-sm">
+              © 2024 Anunciai. Todos os direitos reservados.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <Link 
+                to="/sobre" 
+                className="text-muted-foreground hover:text-primary transition-colors text-sm"
+              >
+                Termos de Uso & LGPD
+              </Link>
+              <Link 
+                to="/sobre" 
+                className="text-muted-foreground hover:text-primary transition-colors text-sm"
+              >
+                Política de Privacidade
+              </Link>
+            </div>
           </div>
         </div>
       </div>
