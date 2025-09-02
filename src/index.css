@@ -37,6 +37,12 @@
     --vip-glow: 45 100% 70%; /* VIP glow effect */
     --vip-border: 45 90% 55%; /* VIP border */
 
+    /* Fogaréu Colors */
+    --fogareu-primary: 16 84% 55%; /* Orange */
+    --fogareu-secondary: 0 85% 55%; /* Red */
+    --fogareu-glow: 16 100% 65%; /* Lighter orange */
+    --fogareu-border: 16 80% 50%; /* Orange border */
+
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 98%;
 
@@ -50,12 +56,14 @@
     /* Gradients */
     --gradient-gold: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-vip: linear-gradient(135deg, hsl(var(--vip-primary)), hsl(var(--vip-glow)));
+    --gradient-fogareu: linear-gradient(135deg, hsl(var(--fogareu-primary)), hsl(var(--fogareu-secondary)));
     --gradient-dark: linear-gradient(180deg, hsl(var(--background)), hsl(var(--card)));
     --gradient-subtle: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
 
     /* Shadows */
     --shadow-gold: 0 10px 30px -10px hsl(var(--primary) / 0.3);
     --shadow-vip: 0 0 30px hsl(var(--vip-glow) / 0.4);
+    --shadow-fogareu: 0 0 30px hsl(var(--fogareu-glow) / 0.4);
     --shadow-card: 0 8px 25px -8px hsl(0 0% 0% / 0.4);
     --shadow-elegant: 0 20px 40px -20px hsl(var(--primary) / 0.2);
 
@@ -111,9 +119,9 @@
 @layer components {
   /* VIP Effects */
   .vip-glow {
-    box-shadow: var(--shadow-vip);
-    border: 2px solid hsl(var(--vip-border));
-    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card)) 50%, hsl(var(--vip-primary) / 0.05));
+    box-shadow: var(--shadow-fogareu);
+    border: 2px solid hsl(var(--fogareu-border));
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card)) 50%, hsl(var(--fogareu-primary) / 0.05));
   }
 
   .vip-border {

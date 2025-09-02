@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Users, FileText, Crown, Trash2, Eye, Edit } from 'lucide-react';
+import { Users, FileText, Crown, Trash2, Eye, Edit, Flame, CreditCard } from 'lucide-react';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface Profile {
@@ -23,6 +23,16 @@ interface Profile {
   last_name: string;
   is_vip: boolean;
   created_at: string;
+}
+
+interface Subscriber {
+  id: string;
+  email: string;
+  user_id: string;
+  subscribed: boolean;
+  subscription_tier: string;
+  subscription_end: string;
+  stripe_customer_id: string;
 }
 
 interface Service {
@@ -44,6 +54,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [editingUser, setEditingUser] = useState<Profile | null>(null);
   const [editForm, setEditForm] = useState({ first_name: '', last_name: '' });
 
@@ -110,6 +121,15 @@ const Admin = () => {
 
       if (servicesError) throw servicesError;
       setServices(servicesData || []);
+
+      // Load subscribers
+      const { data: subscribersData, error: subscribersError } = await supabase
+        .from('subscribers')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (subscribersError) throw subscribersError;
+      setSubscribers(subscribersData || []);
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Erro ao carregar dados');
@@ -128,7 +148,7 @@ const Admin = () => {
       setProfiles(profiles.map(p => 
         p.id === userId ? { ...p, is_vip: !currentVip } : p
       ));
-      toast.success(`Status VIP ${!currentVip ? 'ativado' : 'desativado'} com sucesso`);
+      toast.success(`Status Fogaréu ${!currentVip ? 'ativado' : 'desativado'} com sucesso`);
     } catch (error) {
       console.error('Error updating VIP status:', error);
       toast.error('Erro ao atualizar status VIP');
@@ -241,7 +261,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Usuários
@@ -249,6 +269,10 @@ const Admin = () => {
             <TabsTrigger value="services" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Anúncios
+            </TabsTrigger>
+            <TabsTrigger value="subscriptions" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Assinaturas
             </TabsTrigger>
           </TabsList>
 
@@ -264,7 +288,7 @@ const Admin = () => {
                     <TableRow>
                       <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>VIP</TableHead>
+                      <TableHead>Fogaréu</TableHead>
                       <TableHead>Data de Cadastro</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
@@ -279,7 +303,7 @@ const Admin = () => {
                               'Nome não informado'
                             }
                             {profile.is_vip && (
-                              <Crown className="h-4 w-4 text-vip" />
+                              <Flame className="h-4 w-4 text-orange-500" />
                             )}
                           </div>
                         </TableCell>
@@ -432,6 +456,61 @@ const Admin = () => {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Subscriptions Tab */}
+          <TabsContent value="subscriptions" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gerenciar Assinaturas Fogaréu</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Plano</TableHead>
+                      <TableHead>Vencimento</TableHead>
+                      <TableHead>Stripe ID</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {subscribers.map((subscriber) => (
+                      <TableRow key={subscriber.id}>
+                        <TableCell className="flex items-center gap-2">
+                          {subscriber.email}
+                          {subscriber.subscribed && (
+                            <Flame className="h-4 w-4 text-orange-500" />
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={subscriber.subscribed ? 'default' : 'secondary'}
+                          >
+                            {subscriber.subscribed ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-orange-500">
+                            {subscriber.subscription_tier || 'N/A'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {subscriber.subscription_end ? 
+                            new Date(subscriber.subscription_end).toLocaleDateString('pt-BR') : 
+                            'N/A'
+                          }
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {subscriber.stripe_customer_id || 'N/A'}
                         </TableCell>
                       </TableRow>
                     ))}

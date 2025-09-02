@@ -37,6 +37,42 @@ const About = () => (
           </p>
         </article>
       </section>
+
+      <section className="mt-12">
+        <article className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Política de Privacidade e LGPD</h2>
+          <div className="space-y-4 text-muted-foreground">
+            <p>
+              O Anunciai.app.br está comprometido com a proteção da privacidade e dos dados pessoais de seus usuários, 
+              em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018).
+            </p>
+            <p>
+              <strong>Coleta e Uso de Dados:</strong> Coletamos e utilizamos dados pessoais exclusivamente para facilitar 
+              a busca por serviços e a conexão entre anunciantes e potenciais clientes em nossa plataforma.
+            </p>
+            <p>
+              <strong>Finalidade dos Dados:</strong> Os dados fornecidos são utilizados apenas para:
+            </p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>Permitir que usuários encontrem e contatem prestadores de serviços</li>
+              <li>Facilitar o cadastro e gerenciamento de anúncios</li>
+              <li>Melhorar a experiência de navegação na plataforma</li>
+              <li>Comunicação relacionada aos serviços oferecidos</li>
+            </ul>
+            <p>
+              <strong>Isenção de Responsabilidade:</strong> O Anunciai.app.br atua exclusivamente como plataforma de 
+              divulgação e busca. Não nos responsabilizamos por quaisquer acordos, negociações, contratos ou 
+              transações realizadas diretamente entre anunciantes e clientes. Toda comunicação, contratação de 
+              serviços e acordos comerciais são de responsabilidade exclusiva das partes envolvidas.
+            </p>
+            <p>
+              <strong>Seus Direitos:</strong> Você tem o direito de acessar, corrigir, excluir ou solicitar a 
+              portabilidade de seus dados pessoais. Para exercer esses direitos ou esclarecer dúvidas sobre 
+              nossa política de privacidade, entre em contato através de nossos canais oficiais.
+            </p>
+          </div>
+        </article>
+      </section>
     </main>
   </div>
 );

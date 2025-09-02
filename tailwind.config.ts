@@ -58,6 +58,12 @@ export default {
 					glow: 'hsl(var(--vip-glow))',
 					border: 'hsl(var(--vip-border))'
 				},
+				fogareu: {
+					DEFAULT: 'hsl(var(--fogareu-primary))',
+					secondary: 'hsl(var(--fogareu-secondary))',
+					glow: 'hsl(var(--fogareu-glow))',
+					border: 'hsl(var(--fogareu-border))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

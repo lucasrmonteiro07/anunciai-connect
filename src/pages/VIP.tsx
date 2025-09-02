@@ -5,7 +5,7 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Crown, Check, Star, Zap } from 'lucide-react';
+import { Crown, Check, Star, Zap, Flame } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
@@ -87,8 +87,8 @@ const VIP = () => {
         <main className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
             <div className="bg-gradient-to-br from-primary to-primary-foreground rounded-xl p-8 text-white mb-8">
-              <Crown className="w-16 h-16 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold mb-2">Você é VIP!</h1>
+              <Flame className="w-16 h-16 mx-auto mb-4" />
+              <h1 className="text-3xl font-bold mb-2">Você é Fogaréu!</h1>
               <p className="text-xl opacity-90 mb-4">Sua assinatura está ativa</p>
               <Badge variant="secondary" className="text-lg px-4 py-2">
                 {subscriptionStatus.subscription_tier}
@@ -104,7 +104,7 @@ const VIP = () => {
                 </div>
                 <div className="flex items-center">
                   <Check className="w-5 h-5 text-green-500 mr-3" />
-                  <span>Badge VIP especial</span>
+                  <span>Badge Fogaréu especial</span>
                 </div>
                 <div className="flex items-center">
                   <Check className="w-5 h-5 text-green-500 mr-3" />
@@ -112,7 +112,7 @@ const VIP = () => {
                 </div>
                 <div className="flex items-center">
                   <Check className="w-5 h-5 text-green-500 mr-3" />
-                  <span>Múltiplas fotos nos anúncios</span>
+                  <span>Até 5 fotos nos anúncios</span>
                 </div>
               </div>
             </Card>
@@ -143,8 +143,8 @@ const VIP = () => {
       <main className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Crown className="w-12 h-12 text-primary mr-3" />
-            <h1 className="text-4xl font-bold">Torne-se VIP</h1>
+            <Flame className="w-12 h-12 text-primary mr-3" />
+            <h1 className="text-4xl font-bold">Escolha seu Plano</h1>
           </div>
           <p className="text-xl text-muted-foreground">
             Destaque seus anúncios e apareça primeiro na busca
@@ -152,93 +152,90 @@ const VIP = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Monthly Plan */}
+          {/* Free Plan */}
           <Card className="p-8 border-2 hover:border-primary/50 transition-colors">
             <div className="text-center">
               <div className="flex items-center justify-center mb-4">
-                <Star className="w-8 h-8 text-primary mr-2" />
-                <h3 className="text-2xl font-bold">Plano Mensal</h3>
+                <Star className="w-8 h-8 text-muted-foreground mr-2" />
+                <h3 className="text-2xl font-bold">Plano Benção (Free)</h3>
               </div>
-              <p className="text-4xl font-bold text-primary mb-2">R$ 14,90</p>
-              <p className="text-muted-foreground mb-6">por mês</p>
+              <p className="text-4xl font-bold text-muted-foreground mb-2">Gratuito</p>
+              <p className="text-muted-foreground mb-6">para sempre</p>
               
               <div className="space-y-3 mb-8 text-left">
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>Destaque na busca</span>
+                  <Check className="w-5 h-5 text-green-500 mr-3" />
+                  <span>1 foto por anúncio</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>Badge VIP especial</span>
+                  <Check className="w-5 h-5 text-green-500 mr-3" />
+                  <span>Listagem básica</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>Aparece primeiro</span>
+                  <Check className="w-5 h-5 text-green-500 mr-3" />
+                  <span>Sem destaque na busca</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>Múltiplas fotos</span>
+                  <Check className="w-5 h-5 text-green-500 mr-3" />
+                  <span>Suporte comunidade</span>
                 </div>
               </div>
               
               <Button 
                 className="w-full"
-                onClick={() => handleCheckout('monthly')}
-                disabled={loading || !user}
+                variant="outline"
+                onClick={() => navigate('/anunciar')}
               >
-                {loading ? 'Processando...' : 'Assinar Mensal'}
+                Anunciar Grátis
               </Button>
             </div>
           </Card>
 
-          {/* Annual Plan */}
-          <Card className="p-8 border-2 border-primary bg-gradient-to-br from-primary/5 to-primary/10 relative">
-            <Badge className="absolute top-4 right-4">
+          {/* VIP Plan */}
+          <Card className="p-8 border-2 border-primary bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
+            <Badge className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500">
               Mais Popular
             </Badge>
-            <div className="text-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5 pointer-events-none" />
+            <div className="text-center relative z-10">
               <div className="flex items-center justify-center mb-4">
-                <Crown className="w-8 h-8 text-primary mr-2" />
-                <h3 className="text-2xl font-bold">Plano Anual</h3>
+                <Flame className="w-8 h-8 text-orange-500 mr-2" />
+                <h3 className="text-2xl font-bold">Plano Fogaréu (Destaque)</h3>
               </div>
               <div className="mb-6">
-                <p className="text-4xl font-bold text-primary">R$ 11,90</p>
-                <p className="text-sm text-muted-foreground line-through">R$ 14,90</p>
+                <p className="text-4xl font-bold text-orange-500">R$ 14,90</p>
                 <p className="text-muted-foreground">por mês</p>
-                <Badge variant="secondary" className="mt-2">
-                  Economize 20%
-                </Badge>
               </div>
               
               <div className="space-y-3 mb-8 text-left">
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
+                  <Flame className="w-5 h-5 text-orange-500 mr-3" />
                   <span>Destaque na busca</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>Badge VIP especial</span>
+                  <Flame className="w-5 h-5 text-orange-500 mr-3" />
+                  <span>Badge Fogaréu especial</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
+                  <Flame className="w-5 h-5 text-orange-500 mr-3" />
                   <span>Aparece primeiro</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>Múltiplas fotos</span>
+                  <Flame className="w-5 h-5 text-orange-500 mr-3" />
+                  <span>Até 5 fotos</span>
                 </div>
                 <div className="flex items-center">
-                  <Zap className="w-5 h-5 text-primary mr-3" />
-                  <span>2 meses grátis</span>
+                  <Flame className="w-5 h-5 text-orange-500 mr-3" />
+                  <span>Contorno dourado</span>
                 </div>
               </div>
               
               <Button 
-                className="w-full"
-                onClick={() => handleCheckout('annual')}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
+                onClick={() => handleCheckout('monthly')}
                 disabled={loading || !user}
               >
-                {loading ? 'Processando...' : 'Assinar Anual'}
+                {loading ? 'Processando...' : 'Assinar Fogaréu'}
               </Button>
             </div>
           </Card>
@@ -247,7 +244,7 @@ const VIP = () => {
         {!user && (
           <div className="text-center mt-8">
             <p className="text-muted-foreground mb-4">
-              Você precisa estar logado para assinar o plano VIP
+              Você precisa estar logado para assinar o plano Fogaréu
             </p>
             <Button variant="outline" onClick={() => navigate('/login')}>
               Fazer Login
@@ -256,7 +253,7 @@ const VIP = () => {
         )}
 
         <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold mb-6">Por que ser VIP?</h2>
+          <h2 className="text-2xl font-bold mb-6">Por que ser Fogaréu?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -273,7 +270,7 @@ const VIP = () => {
               </div>
               <h3 className="font-semibold mb-2">Badge Especial</h3>
               <p className="text-sm text-muted-foreground">
-                Badge VIP que transmite confiança e profissionalismo
+                Badge Fogaréu que transmite confiança e profissionalismo
               </p>
             </div>
             <div className="text-center">

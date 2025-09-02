@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import MiniMap from "@/components/ui/mini-map";
+import Chat from "@/components/Chat";
+import Rating from "@/components/Rating";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -308,16 +310,32 @@ const ServiceDetail = () => {
                     </Button>
                   )}
                   
-                  {service.contact.email && (
-                    <Button 
-                      onClick={() => window.open(`mailto:${service.contact.email}`, '_self')}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      Email
-                    </Button>
-                  )}
+                   {service.contact.email && (
+                     <Button 
+                       onClick={() => window.open(`mailto:${service.contact.email}`, '_self')}
+                       className="w-full"
+                       variant="outline"
+                     >
+                       <Mail className="h-4 w-4 mr-2" />
+                       Email
+                     </Button>
+                   )}
+
+                   {!isOwner && currentUser && (
+                     <Chat 
+                       receiverId={service.userId}
+                       receiverName={service.ownerName}
+                       triggerButton={
+                         <Button 
+                           variant="outline" 
+                           className="w-full"
+                         >
+                           <MessageCircle className="h-4 w-4 mr-2" />
+                           Enviar Mensagem
+                         </Button>
+                       }
+                     />
+                   )}
                 </div>
               </CardContent>
             </Card>
@@ -365,6 +383,14 @@ const ServiceDetail = () => {
               </Card>
             )}
           </div>
+        </div>
+
+        {/* Rating Section */}
+        <div className="mt-8">
+          <Rating 
+            serviceId={service.id}
+            serviceName={service.title}
+          />
         </div>
       </main>
       <Footer />

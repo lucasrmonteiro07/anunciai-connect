@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Star, Crown, Phone, Mail } from 'lucide-react';
+import { MapPin, Star, Crown, Phone, Mail, Flame } from 'lucide-react';
 import { Card, CardContent } from './card';
 import { Badge } from './badge';
 import { Button } from './button';
@@ -48,9 +48,9 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
     <Card className={cardClasses} onClick={onClick}>
       {service.isVip && (
         <div className="absolute top-2 right-2 z-10">
-          <Badge className="bg-gradient-to-r from-vip to-vip-glow text-black font-semibold flex items-center gap-1">
-            <Crown className="h-3 w-3" />
-            VIP
+          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold flex items-center gap-1">
+            <Flame className="h-3 w-3" />
+            FOGARÉU
           </Badge>
         </div>
       )}
@@ -136,9 +136,9 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
 
           {service.isVip && (
             <div className="mt-3 text-center">
-              <div className="flex items-center justify-center text-xs text-vip font-medium">
-                <Star className="h-3 w-3 mr-1 fill-current" />
-                Anúncio Premium
+              <div className="flex items-center justify-center text-xs text-orange-500 font-medium">
+                <Flame className="h-3 w-3 mr-1 fill-current" />
+                Anúncio Fogaréu
               </div>
             </div>
           )}
