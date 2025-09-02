@@ -11,8 +11,8 @@ interface FloatingChatProps {
 const FloatingChat = ({ receiverId, receiverName }: FloatingChatProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Só mostrar se tiver receiverId
-  if (!receiverId) {
+  // Só mostrar se tiver receiverId válido
+  if (!receiverId || receiverId.trim() === '') {
     return null;
   }
 

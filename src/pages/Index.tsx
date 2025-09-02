@@ -75,7 +75,7 @@ const Index = () => {
             uf: service.uf,
             latitude: service.latitude ? Number(service.latitude) : undefined,
             longitude: service.longitude ? Number(service.longitude) : undefined,
-            address: undefined
+            address: service.address || undefined
           },
           contact: { 
             phone: '', 
@@ -150,7 +150,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <SEO 
         title="Anunciai - Serviços e Empreendimentos Cristãos"
-        description="Encontre prestadores cristãos qualificados e empreendimentos com destaque VIP. Busca por categoria e localização."
+        description="Encontre prestadores cristãos qualificados e empreendimentos com destaque. Busca por categoria e localização."
         canonical="https://anunciai.app.br/"
         jsonLd={{
           "@context": "https://schema.org",
@@ -213,9 +213,9 @@ const Index = () => {
               <div className="text-center text-white">
                 <h3 className="text-2xl font-bold mb-2">Plano Fogaréu (Destaque)</h3>
                 <div className="mb-4">
-                  <p className="text-3xl font-bold">R$ 11,90</p>
-                  <p className="text-sm opacity-90">por mês</p>
-                  <p className="text-lg mt-2">ou R$ 11,90/mês no plano anual</p>
+                  <p className="text-3xl font-bold text-orange-500">R$ 14,90</p>
+                  <p className="text-sm text-muted-foreground">por mês</p>
+                  <p className="text-sm text-muted-foreground mt-2">ou R$ 11,90/mês no plano anual (R$ 142,80/ano)</p>
                 </div>
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center">

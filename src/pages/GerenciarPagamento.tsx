@@ -104,7 +104,17 @@ const GerenciarPagamento = () => {
 
   const handleManageSubscription = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Sessão expirada. Faça login novamente.');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
       
       if (error) {
         console.error('Erro ao abrir portal do cliente:', error);
@@ -127,15 +137,24 @@ const GerenciarPagamento = () => {
 
   const handleCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {
-      toast.error('Você precisa estar logado para assinar o plano VIP');
+      toast.error('Você precisa estar logado para assinar o plano Destaque');
       navigate('/login');
       return;
     }
 
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Sessão expirada. Faça login novamente.');
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { planType }
+        body: { planType },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       if (error) throw error;
@@ -331,8 +350,8 @@ const GerenciarPagamento = () => {
                     <div className="border rounded-lg p-4 bg-gradient-to-r from-orange-500/5 to-red-500/5 border-orange-200">
                       <div className="flex items-center justify-between mb-2">
                         <div>
-                          <h4 className="font-semibold text-orange-600">Plano Mensal</h4>
-                          <p className="text-2xl font-bold text-orange-500">R$ 11,90</p>
+                          <h3 className="text-2xl font-bold text-orange-600">Plano Mensal</h3>
+                          <p className="text-3xl font-bold text-orange-500">R$ 14,90</p>
                           <p className="text-xs text-muted-foreground">por mês</p>
                         </div>
                         <Flame className="h-6 w-6 text-orange-500" />
@@ -353,8 +372,8 @@ const GerenciarPagamento = () => {
                       </div>
                       <div className="flex items-center justify-between mb-2">
                         <div>
-                          <h4 className="font-semibold text-green-600">Plano Anual</h4>
-                          <p className="text-2xl font-bold text-green-500">R$ 11,90</p>
+                          <h3 className="text-2xl font-bold text-green-600">Plano Anual</h3>
+                          <p className="text-3xl font-bold text-green-500">R$ 11,90</p>
                           <p className="text-xs text-muted-foreground">por mês (R$ 142,80/ano)</p>
                         </div>
                         <Crown className="h-6 w-6 text-green-500" />
@@ -369,7 +388,7 @@ const GerenciarPagamento = () => {
                     </div>
                   </div>
 
-                  {/* Link para página VIP */}
+                  {/* Link para página Destaque */}
                   <div className="text-center pt-2">
                     <Button 
                       onClick={handleSubscribe}

@@ -95,7 +95,7 @@ const Footer = () => {
                 to="/plano" 
                 className="block text-muted-foreground hover:text-primary transition-colors text-sm"
               >
-                Planos VIP
+                Planos Destaque
               </Link>
               <Link 
                 to="/meus-anuncios" 

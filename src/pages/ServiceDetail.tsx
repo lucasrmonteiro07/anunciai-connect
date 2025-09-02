@@ -117,7 +117,7 @@ const ServiceDetail = () => {
           uf: publicData.uf,
           latitude: publicData.latitude ? Number(publicData.latitude) : undefined,
           longitude: publicData.longitude ? Number(publicData.longitude) : undefined,
-          address: undefined // Endereço não está na view pública por segurança
+          address: publicData.address || undefined
         },
         contact: {
           phone: contactInfo?.phone || '',
@@ -129,7 +129,7 @@ const ServiceDetail = () => {
         isVip: publicData.is_vip || false,
         denomination: publicData.denomination || '',
         ownerName: contactInfo?.owner_name || '',
-        userId: publicData.id, // Para compatibilidade, usamos o ID do serviço
+        userId: publicData.user_id || publicData.id, // Usar user_id se disponível, senão ID do serviço
         socialMedia: {
           instagram: publicData.instagram,
           facebook: publicData.facebook,
@@ -153,6 +153,11 @@ const ServiceDetail = () => {
             setIsOwner(true);
             // Atualizar userId com o real
             setService(prev => prev ? { ...prev, userId: fullData.user_id } : prev);
+          } else {
+            // Se não for o dono, usar o user_id da tabela pública se disponível
+            if (publicData.user_id) {
+              setService(prev => prev ? { ...prev, userId: publicData.user_id } : prev);
+            }
           }
         } catch (error) {
           console.log('Cannot access full service data - not owner');
@@ -278,7 +283,7 @@ const ServiceDetail = () => {
                     <div className="flex items-center gap-2 mb-2">
                       <h1 className="text-2xl font-bold">{service.title}</h1>
                       {service.isVip && (
-                        <Badge className="bg-vip text-black">VIP</Badge>
+                        <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">DESTAQUE</Badge>
                       )}
                     </div>
                     <p className="text-muted-foreground">{service.ownerName}</p>
@@ -412,8 +417,8 @@ const ServiceDetail = () => {
         </div>
       </main>
       
-      {/* Floating Chat - Só aparece se não for o dono */}
-      {!isOwner && service.userId && (
+      {/* Floating Chat - Só aparece se não for o dono e tiver userId válido */}
+      {!isOwner && service.userId && service.userId !== service.id && (
         <FloatingChat 
           receiverId={service.userId}
           receiverName={service.ownerName || service.title}

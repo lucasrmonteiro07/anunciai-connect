@@ -582,7 +582,7 @@ const Anunciar = () => {
                 Adicione fotos que mostrem seu trabalho, estabelecimento ou serviços. Imagens atraem mais clientes!
                 {!isVip && (
                   <span className="block text-primary mt-1">
-                    💎 Upgrade para VIP e adicione até 5 fotos!
+                    💎 Upgrade para Destaque e adicione até 5 fotos!
                   </span>
                 )}
               </p>

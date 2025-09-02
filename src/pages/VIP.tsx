@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
-const VIP = () => {
+const Destaque = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -41,7 +41,14 @@ const VIP = () => {
 
   const checkSubscription = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
       if (error) throw error;
       setSubscriptionStatus(data);
     } catch (error) {
@@ -51,15 +58,24 @@ const VIP = () => {
 
   const handleCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {
-      toast.error('Você precisa estar logado para assinar o plano VIP');
+      toast.error('Você precisa estar logado para assinar o plano Destaque');
       navigate('/login');
       return;
     }
 
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Sessão expirada. Faça login novamente.');
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { planType }
+        body: { planType },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       if (error) throw error;
@@ -78,8 +94,8 @@ const VIP = () => {
     return (
       <div className="min-h-screen bg-background">
         <SEO
-          title="VIP Ativo - Anunciai"
-          description="Sua assinatura VIP está ativa. Aproveite todos os benefícios."
+          title="Destaque Ativo - Anunciai"
+          description="Sua assinatura Destaque está ativa. Aproveite todos os benefícios."
           canonical="https://anunciai.app.br/plano"
         />
         <Header />
@@ -134,8 +150,8 @@ const VIP = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Torne-se VIP - Anunciai"
-        description="Destaque seus anúncios com o plano VIP. R$ 11,90/mês."
+        title="Torne-se Destaque - Anunciai"
+        description="Destaque seus anúncios com o plano Destaque. R$ 14,90/mês ou R$ 11,90/mês no plano anual."
         canonical="https://anunciai.app.br/plano"
       />
       <Header />
@@ -191,7 +207,7 @@ const VIP = () => {
             </div>
           </Card>
 
-          {/* VIP Plan */}
+          {/* Destaque Plan */}
           <Card className="p-8 border-2 border-primary bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
             <Badge className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500">
               Mais Popular
@@ -203,8 +219,9 @@ const VIP = () => {
                 <h3 className="text-2xl font-bold">Plano Fogaréu (Destaque)</h3>
               </div>
               <div className="mb-6">
-                <p className="text-4xl font-bold text-orange-500">R$ 11,90</p>
+                <p className="text-3xl font-bold text-orange-500">R$ 14,90</p>
                 <p className="text-muted-foreground">por mês</p>
+                <p className="text-sm text-muted-foreground mt-1">ou R$ 11,90/mês no plano anual (R$ 142,80/ano)</p>
               </div>
               
               <div className="space-y-3 mb-8 text-left">
@@ -244,7 +261,7 @@ const VIP = () => {
         {!user && (
           <div className="text-center mt-8">
             <p className="text-muted-foreground mb-4">
-              Você precisa estar logado para assinar o plano Fogaréu
+              Você precisa estar logado para assinar o plano Destaque
             </p>
             <Button variant="outline" onClick={() => navigate('/login')}>
               Fazer Login
@@ -289,4 +306,4 @@ const VIP = () => {
   );
 };
 
-export default VIP;
+export default Destaque;

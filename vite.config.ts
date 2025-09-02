@@ -19,4 +19,33 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Otimizações para produção
+    target: 'esnext',
+    minify: 'esbuild',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separar vendor chunks para melhor cache
+          vendor: ['react', 'react-dom'],
+          supabase: ['@supabase/supabase-js'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
+          maps: ['leaflet', 'react-leaflet'],
+          charts: ['recharts'],
+        },
+      },
+    },
+    // Otimizar tamanho do bundle
+    chunkSizeWarningLimit: 1000,
+  },
+  // Otimizações para Vercel
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@supabase/supabase-js',
+      'react-router-dom',
+    ],
+  },
 }));

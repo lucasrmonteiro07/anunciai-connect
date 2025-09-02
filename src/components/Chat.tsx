@@ -89,7 +89,7 @@ const Chat = ({ receiverId, receiverName, triggerButton }: ChatProps) => {
   };
 
   const sendMessage = async () => {
-    if (!user || !newMessage.trim()) return;
+    if (!user || !newMessage.trim() || !receiverId) return;
 
     setLoading(true);
     try {
