@@ -69,62 +69,92 @@ const ServiceDetail = () => {
 
   const loadService = async () => {
     try {
-      // Buscar dados completos do serviço (não da view pública)
-      const { data, error } = await supabase
-        .from('services')
+      // Primeiro buscar dados públicos do serviço
+      const { data: publicData, error: publicError } = await supabase
+        .from('services_public')
         .select('*')
         .eq('id', id)
         .single();
 
-      if (error) {
-        console.error('Error fetching service:', error);
+      if (publicError) {
+        console.error('Error fetching service:', publicError);
         toast.error('Serviço não encontrado');
         navigate('/');
         return;
       }
 
-      if (!data) {
+      if (!publicData) {
         toast.error('Serviço não encontrado');
         navigate('/');
         return;
+      }
+
+      // Depois buscar informações de contato de forma segura (apenas para usuários autenticados)
+      let contactInfo = null;
+      if (currentUser) {
+        try {
+          const { data: contactData, error: contactError } = await supabase
+            .rpc('get_service_contact_info', { service_id: id });
+          
+          if (!contactError && contactData && contactData.length > 0) {
+            contactInfo = contactData[0];
+          }
+        } catch (error) {
+          console.log('Contact info not accessible - user may not have permission');
+        }
       }
 
       const transformedService: Service = {
-        id: data.id,
-        title: data.title,
-        description: data.description || '',
-        category: data.category,
-        type: data.type as 'prestador' | 'empreendimento',
+        id: publicData.id,
+        title: publicData.title,
+        description: publicData.description || '',
+        category: publicData.category,
+        type: publicData.type as 'prestador' | 'empreendimento',
         location: {
-          city: data.city,
-          uf: data.uf,
-          latitude: data.latitude ? Number(data.latitude) : undefined,
-          longitude: data.longitude ? Number(data.longitude) : undefined,
-          address: data.address
+          city: publicData.city,
+          uf: publicData.uf,
+          latitude: publicData.latitude ? Number(publicData.latitude) : undefined,
+          longitude: publicData.longitude ? Number(publicData.longitude) : undefined,
+          address: undefined // Endereço não está na view pública por segurança
         },
         contact: {
-          phone: data.phone || '',
-          email: data.email || '',
-          whatsapp: data.whatsapp
+          phone: contactInfo?.phone || '',
+          email: contactInfo?.email || '',
+          whatsapp: contactInfo?.whatsapp || ''
         },
-        logo: data.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-        images: data.images || [],
-        isVip: false, // VIP is now from user profile
-        denomination: data.denomination || '',
-        ownerName: data.owner_name || '',
-        userId: data.user_id,
+        logo: publicData.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+        images: publicData.images || [],
+        isVip: publicData.is_vip || false,
+        denomination: publicData.denomination || '',
+        ownerName: contactInfo?.owner_name || '',
+        userId: publicData.id, // Para compatibilidade, usamos o ID do serviço
         socialMedia: {
-          instagram: data.instagram,
-          facebook: data.facebook,
-          website: data.website
+          instagram: publicData.instagram,
+          facebook: publicData.facebook,
+          website: publicData.website
         }
       };
 
       setService(transformedService);
       
-      // Verificar se o usuário atual é o dono do anúncio
-      if (currentUser && currentUser.id === data.user_id) {
-        setIsOwner(true);
+      // Verificar se é necessário buscar dados completos para o dono
+      if (currentUser && contactInfo) {
+        // Se conseguiu acessar contact info, pode ser o dono - buscar dados completos
+        try {
+          const { data: fullData, error: fullError } = await supabase
+            .from('services')
+            .select('user_id')
+            .eq('id', id)
+            .single();
+
+          if (!fullError && fullData && currentUser.id === fullData.user_id) {
+            setIsOwner(true);
+            // Atualizar userId com o real
+            setService(prev => prev ? { ...prev, userId: fullData.user_id } : prev);
+          }
+        } catch (error) {
+          console.log('Cannot access full service data - not owner');
+        }
       }
 
     } catch (error) {
@@ -326,6 +356,23 @@ const ServiceDetail = () => {
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold mb-4">Entre em contato</h3>
+                
+                {!currentUser && (
+                  <div className="mb-4 p-3 bg-muted/50 rounded-lg border">
+                    <p className="text-sm text-muted-foreground">
+                      🔒 Informações de contato protegidas. 
+                      <Button 
+                        variant="link" 
+                        className="p-0 h-auto text-primary underline ml-1"
+                        onClick={() => navigate('/login')}
+                      >
+                        Faça login
+                      </Button> 
+                      para acessar telefone, email e WhatsApp.
+                    </p>
+                  </div>
+                )}
+                
                 <div className="space-y-3">
                   {service.contact.phone && (
                     <Button 
@@ -357,6 +404,14 @@ const ServiceDetail = () => {
                        <Mail className="h-4 w-4 mr-2" />
                        Email
                      </Button>
+                   )}
+
+                   {!service.contact.phone && !service.contact.email && !service.contact.whatsapp && !currentUser && (
+                     <div className="text-center py-4">
+                       <p className="text-muted-foreground text-sm">
+                         Informações de contato disponíveis após login
+                       </p>
+                     </div>
                    )}
 
                    {!isOwner && currentUser && (

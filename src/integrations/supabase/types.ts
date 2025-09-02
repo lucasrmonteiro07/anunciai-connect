@@ -110,13 +110,6 @@ export type Database = {
             referencedRelation: "services"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "ratings_service_id_fkey"
-            columns: ["service_id"]
-            isOneToOne: false
-            referencedRelation: "services_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       services: {
@@ -209,6 +202,72 @@ export type Database = {
         }
         Relationships: []
       }
+      services_public: {
+        Row: {
+          category: string
+          city: string
+          created_at: string | null
+          denomination: string | null
+          description: string | null
+          facebook: string | null
+          id: string
+          images: string[] | null
+          instagram: string | null
+          is_vip: boolean | null
+          latitude: number | null
+          logo_url: string | null
+          longitude: number | null
+          status: string | null
+          title: string
+          type: string
+          uf: string
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          category: string
+          city: string
+          created_at?: string | null
+          denomination?: string | null
+          description?: string | null
+          facebook?: string | null
+          id: string
+          images?: string[] | null
+          instagram?: string | null
+          is_vip?: boolean | null
+          latitude?: number | null
+          logo_url?: string | null
+          longitude?: number | null
+          status?: string | null
+          title: string
+          type: string
+          uf: string
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          category?: string
+          city?: string
+          created_at?: string | null
+          denomination?: string | null
+          description?: string | null
+          facebook?: string | null
+          id?: string
+          images?: string[] | null
+          instagram?: string | null
+          is_vip?: boolean | null
+          latitude?: number | null
+          logo_url?: string | null
+          longitude?: number | null
+          status?: string | null
+          title?: string
+          type?: string
+          uf?: string
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
@@ -265,31 +324,18 @@ export type Database = {
       }
     }
     Views: {
-      services_public: {
-        Row: {
-          category: string | null
-          city: string | null
-          created_at: string | null
-          denomination: string | null
-          description: string | null
-          facebook: string | null
-          id: string | null
-          images: string[] | null
-          instagram: string | null
-          is_vip: boolean | null
-          latitude: number | null
-          logo_url: string | null
-          longitude: number | null
-          title: string | null
-          type: string | null
-          uf: string | null
-          updated_at: string | null
-          website: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_service_contact_info: {
+        Args: { service_id: string }
+        Returns: {
+          email: string
+          owner_name: string
+          phone: string
+          whatsapp: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
