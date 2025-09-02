@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
+import Footer from '@/components/ui/footer';
 import HeroSection from '@/components/ui/hero-section';
 import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
@@ -75,58 +76,75 @@ const Index = () => {
 
   const loadServices = async () => {
     try {
-      // Use the secure services_public view that excludes sensitive contact information
-      const { data, error } = await supabase
+      // First get services data
+      const { data: servicesData, error: servicesError } = await supabase
         .from('services_public')
         .select('*')
-        .order('is_vip', { ascending: false })
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching services:', error);
-        // Use mock data as fallback
+      if (servicesError) {
+        console.error('Error fetching services:', servicesError);
         setServices(mockServices);
         setFilteredServices(mockServices);
         return;
       }
 
-      // Transform Supabase data to ServiceData format  
-      // Note: Using services_public view which excludes sensitive contact information for security
-      const transformedServices: ServiceData[] = (data || []).map(service => ({
-        id: service.id,
-        title: service.title,
-        description: service.description || '',
-        category: service.category,
-        type: service.type as 'prestador' | 'empreendimento',
-        location: { 
-          city: service.city, 
-          uf: service.uf,
-          latitude: service.latitude ? Number(service.latitude) : undefined,
-          longitude: service.longitude ? Number(service.longitude) : undefined,
-          // address is not available in public view for privacy
-          address: undefined
-        },
-        contact: { 
-          // Contact info is not available in public view for privacy protection
-          phone: '', 
-          email: '',
-          whatsapp: undefined
-        },
-        logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-        images: service.images || [],
-        isVip: service.is_vip,
-        denomination: service.denomination || '',
-        // owner_name is not available in public view for privacy
-        ownerName: '',
-        socialMedia: {
-          instagram: service.instagram || undefined,
-          facebook: service.facebook || undefined,
-          website: service.website || undefined
-        }
-      }));
+      // Get VIP status for each service by checking user profiles
+      let servicesWithVip: ServiceData[] = [];
+      
+      if (servicesData && servicesData.length > 0) {
+        // Get unique user IDs from services
+        const userIds = [...new Set(servicesData.map(s => s.id).filter(Boolean))];
+        
+        // Get VIP status from profiles table (using a separate query due to privacy constraints)
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, is_vip')
+          .in('id', userIds);
+
+        const vipMap = new Map((profilesData || []).map(p => [p.id, p.is_vip]));
+
+        // Transform Supabase data to ServiceData format
+        servicesWithVip = servicesData.map(service => ({
+          id: service.id,
+          title: service.title,
+          description: service.description || '',
+          category: service.category,
+          type: service.type as 'prestador' | 'empreendimento',
+          location: { 
+            city: service.city, 
+            uf: service.uf,
+            latitude: service.latitude ? Number(service.latitude) : undefined,
+            longitude: service.longitude ? Number(service.longitude) : undefined,
+            address: undefined
+          },
+          contact: { 
+            phone: '', 
+            email: '',
+            whatsapp: undefined
+          },
+          logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+          images: service.images || [],
+          isVip: vipMap.get(service.id) || false,
+          denomination: service.denomination || '',
+          ownerName: '',
+          socialMedia: {
+            instagram: service.instagram || undefined,
+            facebook: service.facebook || undefined,
+            website: service.website || undefined
+          }
+        }));
+      }
+
+      // Sort with VIP services first
+      const sortedServices = servicesWithVip.sort((a, b) => {
+        if (a.isVip && !b.isVip) return -1;
+        if (!a.isVip && b.isVip) return 1;
+        return 0;
+      });
 
       // Combine real data with mock data for demonstration
-      const allServices = [...transformedServices, ...mockServices];
+      const allServices = [...sortedServices, ...mockServices];
       setServices(allServices);
       setFilteredServices(allServices);
     } catch (error) {
@@ -343,17 +361,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-card border-t border-border py-8">
-        <div className="container mx-auto px-4 text-center space-y-2">
-          <p className="text-muted-foreground">
-            © 2025 Anunciai.app.br - Conectando a comunidade Cristã
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Feito por <span className="font-semibold">AURORA BUSINESS INTELLIGENCE</span>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
