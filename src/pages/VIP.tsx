@@ -80,7 +80,7 @@ const VIP = () => {
         <SEO
           title="VIP Ativo - Anunciai"
           description="Sua assinatura VIP está ativa. Aproveite todos os benefícios."
-          canonical="https://anunciai.app.br/vip"
+          canonical="https://anunciai.app.br/plano"
         />
         <Header />
         
@@ -135,8 +135,8 @@ const VIP = () => {
     <div className="min-h-screen bg-background">
       <SEO
         title="Torne-se VIP - Anunciai"
-        description="Destaque seus anúncios com o plano VIP. R$ 14,90/mês ou R$ 11,90/mês no plano anual."
-        canonical="https://anunciai.app.br/vip"
+        description="Destaque seus anúncios com o plano VIP. R$ 11,90/mês."
+        canonical="https://anunciai.app.br/plano"
       />
       <Header />
       
@@ -203,7 +203,7 @@ const VIP = () => {
                 <h3 className="text-2xl font-bold">Plano Fogaréu (Destaque)</h3>
               </div>
               <div className="mb-6">
-                <p className="text-4xl font-bold text-orange-500">R$ 14,90</p>
+                <p className="text-4xl font-bold text-orange-500">R$ 11,90</p>
                 <p className="text-muted-foreground">por mês</p>
               </div>
               

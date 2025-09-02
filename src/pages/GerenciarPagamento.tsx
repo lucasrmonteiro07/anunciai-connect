@@ -122,7 +122,7 @@ const GerenciarPagamento = () => {
   };
 
   const handleSubscribe = () => {
-    navigate('/vip');
+    navigate('/plano');
   };
 
   const handleCheckout = async (planType: 'monthly' | 'annual') => {
@@ -332,7 +332,7 @@ const GerenciarPagamento = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div>
                           <h4 className="font-semibold text-orange-600">Plano Mensal</h4>
-                          <p className="text-2xl font-bold text-orange-500">R$ 14,90</p>
+                          <p className="text-2xl font-bold text-orange-500">R$ 11,90</p>
                           <p className="text-xs text-muted-foreground">por mês</p>
                         </div>
                         <Flame className="h-6 w-6 text-orange-500" />

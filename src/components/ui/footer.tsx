@@ -33,6 +33,7 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Facebook do Anunciai"
               >
                 <Facebook className="h-5 w-5" />
               </a>
@@ -41,12 +42,14 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram do Anunciai"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a 
                 href="mailto:contato@anunciai.app.br"
                 className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Email de contato"
               >
                 <Mail className="h-5 w-5" />
               </a>
@@ -89,7 +92,7 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Serviços</h3>
             <nav className="space-y-2">
               <Link 
-                to="/vip" 
+                to="/plano" 
                 className="block text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 Planos VIP

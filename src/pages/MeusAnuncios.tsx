@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import { Button } from '@/components/ui/button';
@@ -139,10 +139,10 @@ const MeusAnuncios = () => {
             </p>
           </div>
           <Button asChild>
-            <a href="/anunciar">
+            <Link to="/anunciar">
               <Plus className="h-4 w-4 mr-2" />
               Novo Anúncio
-            </a>
+            </Link>
           </Button>
         </div>
 
@@ -167,10 +167,10 @@ const MeusAnuncios = () => {
                 Você ainda não criou nenhum anúncio. Comece agora mesmo e divulgue seus serviços para a comunidade cristã.
               </p>
               <Button asChild size="lg">
-                <a href="/anunciar">
+                <Link to="/anunciar">
                   <Plus className="h-4 w-4 mr-2" />
                   Criar Primeiro Anúncio
-                </a>
+                </Link>
               </Button>
             </div>
           </div>

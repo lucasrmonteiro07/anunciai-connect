@@ -213,7 +213,7 @@ const Index = () => {
               <div className="text-center text-white">
                 <h3 className="text-2xl font-bold mb-2">Plano Fogaréu (Destaque)</h3>
                 <div className="mb-4">
-                  <p className="text-3xl font-bold">R$ 14,90</p>
+                  <p className="text-3xl font-bold">R$ 11,90</p>
                   <p className="text-sm opacity-90">por mês</p>
                   <p className="text-lg mt-2">ou R$ 11,90/mês no plano anual</p>
                 </div>
@@ -243,7 +243,7 @@ const Index = () => {
                   <Button 
                     variant="secondary" 
                     className="w-full bg-white text-orange-600 hover:bg-orange-50"
-                    onClick={() => navigate('/vip')}
+                    onClick={() => navigate('/plano')}
                   >
                     🔥 Tornar-se Fogaréu
                   </Button>

@@ -400,6 +400,7 @@ const Anunciar = () => {
                   onChange={(e) => handleInputChange("categoria", e.target.value)}
                   className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
                   required
+                  aria-label="Selecione uma categoria"
                 >
                   <option value="">Selecione uma categoria</option>
                   {(formData.tipoAnuncio === "empreendimento" ? estabelecimentos : prestadorServicos).map((item) => (

@@ -52,7 +52,7 @@ serve(async (req) => {
     // Define pricing based on plan type
     let unitAmount, interval;
     if (planType === "monthly") {
-      unitAmount = 1490; // R$ 14,90 in cents
+      unitAmount = 1190; // R$ 11,90 in cents
       interval = "month";
     } else if (planType === "annual") {
       unitAmount = 1190; // R$ 11,90 in cents  
