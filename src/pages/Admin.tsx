@@ -73,12 +73,14 @@ const Admin = () => {
           .eq('user_id', session.user.id)
           .eq('role', 'admin');
 
-        if (roles && roles.length > 0) {
-          setIsAdmin(true);
+        const isUserAdmin = roles && roles.length > 0;
+        setIsAdmin(isUserAdmin);
+        
+        if (isUserAdmin) {
           loadData();
         } else {
-          toast.error('Acesso negado: Apenas administradores podem acessar esta página');
-          navigate('/');
+          // For non-admin users, allow access but load only their own data
+          loadData();
         }
       } else {
         navigate('/login');
@@ -103,8 +105,10 @@ const Admin = () => {
   }, [navigate]);
 
   const loadData = async () => {
+    if (!user?.id) return;
+    
     try {
-      // Load profiles
+      // Load profiles (always all for admin)
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -113,19 +117,31 @@ const Admin = () => {
       if (profilesError) throw profilesError;
       setProfiles(profilesData || []);
 
-      // Load services
-      const { data: servicesData, error: servicesError } = await supabase
+      // Load services - all for admin, only user's own for non-admin
+      let servicesQuery = supabase
         .from('services')
-        .select('*')
+        .select('*');
+      
+      if (!isAdmin) {
+        servicesQuery = servicesQuery.eq('user_id', user.id);
+      }
+      
+      const { data: servicesData, error: servicesError } = await servicesQuery
         .order('created_at', { ascending: false });
 
       if (servicesError) throw servicesError;
       setServices(servicesData || []);
 
-      // Load subscribers
-      const { data: subscribersData, error: subscribersError } = await supabase
+      // Load subscribers - all for admin, only user's own for non-admin  
+      let subscribersQuery = supabase
         .from('subscribers')
-        .select('*')
+        .select('*');
+      
+      if (!isAdmin) {
+        subscribersQuery = subscribersQuery.eq('user_id', user.id);
+      }
+      
+      const { data: subscribersData, error: subscribersError } = await subscribersQuery
         .order('created_at', { ascending: false });
 
       if (subscribersError) throw subscribersError;
@@ -241,9 +257,7 @@ const Admin = () => {
     );
   }
 
-  if (!isAdmin) {
-    return null;
-  }
+  // Remove the admin check - allow access to all authenticated users
 
   return (
     <div className="min-h-screen bg-background">
@@ -256,32 +270,35 @@ const Admin = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Painel Administrativo</h1>
-          <p className="text-muted-foreground">Gerencie usuários, anúncios e configurações do sistema</p>
+          <h1 className="text-3xl font-bold mb-2">{isAdmin ? 'Painel Administrativo' : 'Meus Dados'}</h1>
+          <p className="text-muted-foreground">{isAdmin ? 'Gerencie usuários, anúncios e configurações do sistema' : 'Gerencie seus anúncios e assinatura'}</p>
         </div>
 
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Usuários
-            </TabsTrigger>
+        <Tabs defaultValue={isAdmin ? "users" : "services"} className="space-y-6">
+          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            {isAdmin && (
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Usuários
+              </TabsTrigger>
+            )}
             <TabsTrigger value="services" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Anúncios
+              {isAdmin ? 'Anúncios' : 'Meus Anúncios'}
             </TabsTrigger>
             <TabsTrigger value="subscriptions" className="flex items-center gap-2">
               <CreditCard className="h-4 w-4" />
-              Assinaturas
+              {isAdmin ? 'Assinaturas' : 'Minha Assinatura'}
             </TabsTrigger>
           </TabsList>
 
-          {/* Users Tab */}
-          <TabsContent value="users" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gerenciar Usuários</CardTitle>
-              </CardHeader>
+          {/* Users Tab - Only for admins */}
+          {isAdmin && (
+            <TabsContent value="users" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gerenciar Usuários</CardTitle>
+                </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
@@ -393,12 +410,13 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Services Tab */}
           <TabsContent value="services" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciar Anúncios</CardTitle>
+                <CardTitle>{isAdmin ? 'Gerenciar Anúncios' : 'Meus Anúncios'}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -476,7 +494,7 @@ const Admin = () => {
           <TabsContent value="subscriptions" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciar Assinaturas Fogaréu</CardTitle>
+                <CardTitle>{isAdmin ? 'Gerenciar Assinaturas Fogaréu' : 'Minha Assinatura Fogaréu'}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
