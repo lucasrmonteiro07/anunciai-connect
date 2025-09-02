@@ -60,7 +60,7 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
         <div className="relative h-48 bg-muted rounded-t-lg overflow-hidden">
           <img 
             src={service.images && service.images.length > 0 ? service.images[0] : service.logo} 
-            alt={`Logo ${service.title}`}
+            alt={`Capa ${service.title}`}
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;

@@ -93,28 +93,35 @@ const Anunciar = () => {
   };
 
   const estabelecimentos = [
-    "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria",
-    "Igreja", "Templo", "Capela", "Ministério", "Casa de Oração", "Centro de Culto",
-    "Escola", "Faculdade", "Curso Técnico", "Curso de Idiomas", "Reforço Escolar",
-    "Hospital", "Clínica", "Consultório", "Laboratório", "Farmácia", "Ótica",
-    "Loja de Roupas", "Calçados", "Acessórios", "Perfumaria", "Livraria", "Papelaria",
-    "Supermercado", "Mercado", "Açougue", "Hortifruti", "Casa de Carnes",
-    "Oficina Mecânica", "Lava Jato", "Auto Peças", "Borracharia", "Funilaria",
-    "Salão de Beleza", "Barbearia", "Estética", "Manicure", "Depilação",
-    "Academia", "Studio de Dança", "Artes Marciais", "Pilates", "Yoga"
+    "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria", "Churrascaria",
+    "Igreja", "Templo", "Capela", "Ministério", "Casa de Oração", "Centro de Culto", "Comunidade",
+    "Escola", "Faculdade", "Curso Técnico", "Curso de Idiomas", "Reforço Escolar", "Creche", "Berçário",
+    "Hospital", "Clínica", "Consultório", "Laboratório", "Farmácia", "Ótica", "Fisioterapia",
+    "Loja de Roupas", "Calçados", "Acessórios", "Perfumaria", "Livraria", "Papelaria", "Casa de Presentes",
+    "Supermercado", "Mercado", "Açougue", "Hortifruti", "Casa de Carnes", "Loja de Conveniência",
+    "Oficina Mecânica", "Lava Jato", "Auto Peças", "Borracharia", "Funilaria", "Auto Center",
+    "Salão de Beleza", "Barbearia", "Estética", "Manicure", "Depilação", "Spa", "Massoterapia",
+    "Academia", "Studio de Dança", "Artes Marciais", "Pilates", "Yoga", "Crossfit",
+    "Pet Shop", "Veterinária", "Hotel para Pets", "Adestramento", "Banho e Tosa",
+    "Imobiliária", "Corretora", "Financeira", "Seguros", "Contabilidade",
+    "Gráfica", "Serigrafia", "Editora", "Copiadora", "Centro de Impressão",
+    "Joalheria", "Relojoaria", "Ótica", "Casa de Câmbio", "Lotérica"
   ];
 
   const prestadorServicos = [
-    "Pedreiro", "Pintor", "Eletricista", "Encanador", "Marceneiro", "Serralheiro",
-    "Jardineiro", "Faxineira", "Diarista", "Cuidador de Idosos", "Babá",
-    "Professor Particular", "Instrutor", "Tutor", "Coach", "Consultor",
-    "Advogado", "Contador", "Arquiteto", "Engenheiro", "Designer",
-    "Fotógrafo", "Videomaker", "DJ", "Músico", "Cantor", "Organizador de Eventos",
-    "Cabeleireiro", "Manicure", "Esteticista", "Massoterapeuta", "Personal Trainer",
-    "Mecânico", "Borracheiro", "Funileiro", "Soldador", "Técnico em Eletrônicos",
-    "Confeiteiro", "Cozinheiro", "Garçom", "Bartender", "Salgadeiro",
-    "Costureira", "Sapateiro", "Relojoeiro", "Técnico em Informática", "Web Designer",
-    "Motorista", "Entregador", "Carregador", "Mudanças", "Frete"
+    "Pedreiro", "Pintor", "Eletricista", "Encanador", "Marceneiro", "Serralheiro", "Vidraceiro",
+    "Jardineiro", "Faxineira", "Diarista", "Cuidador de Idosos", "Babá", "Passadeira",
+    "Professor Particular", "Instrutor", "Tutor", "Coach", "Consultor", "Palestrante",
+    "Advogado", "Contador", "Arquiteto", "Engenheiro", "Designer", "Publicitário",
+    "Fotógrafo", "Videomaker", "DJ", "Músico", "Cantor", "Organizador de Eventos", "Buffet",
+    "Cabeleireiro", "Manicure", "Esteticista", "Massoterapeuta", "Personal Trainer", "Maquiador",
+    "Mecânico", "Borracheiro", "Funileiro", "Soldador", "Técnico em Eletrônicos", "Chaveiro",
+    "Confeiteiro", "Cozinheiro", "Garçom", "Bartender", "Salgadeiro", "Doceira",
+    "Costureira", "Sapateiro", "Relojoeiro", "Técnico em Informática", "Web Designer", "Programador",
+    "Motorista", "Entregador", "Carregador", "Mudanças", "Frete", "Motoboy",
+    "Veterinário", "Adestrador", "Tosador", "Cuidador de Pets", "Dog Walker",
+    "Psicólogo", "Fisioterapeuta", "Nutricionista", "Enfermeiro", "Dentista",
+    "Tradutor", "Intérprete", "Revisor", "Redator", "Jornalista"
   ];
 
   const buscarCep = async (cepValue: string) => {

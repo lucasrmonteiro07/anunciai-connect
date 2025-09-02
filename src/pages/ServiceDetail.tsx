@@ -11,6 +11,7 @@ import MiniMap from "@/components/ui/mini-map";
 import Chat from "@/components/Chat";
 import Rating from "@/components/Rating";
 import ContactInfo from "@/components/ui/contact-info";
+import FloatingChat from "@/components/ui/floating-chat";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -410,6 +411,15 @@ const ServiceDetail = () => {
           />
         </div>
       </main>
+      
+      {/* Floating Chat - Só aparece se não for o dono */}
+      {!isOwner && service.userId && (
+        <FloatingChat 
+          receiverId={service.userId}
+          receiverName={service.ownerName || service.title}
+        />
+      )}
+      
       <Footer />
     </div>
   );

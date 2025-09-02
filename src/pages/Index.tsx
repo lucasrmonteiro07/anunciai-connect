@@ -281,7 +281,7 @@ const Index = () => {
             <div>
               <h2 className="text-3xl font-bold mb-2">Serviços em Destaque</h2>
               <p className="text-muted-foreground">
-                Encontre profissionais cristãos qualificados em sua região
+                Encontre profissionais e estabelecimentos cristãos qualificados em sua região
               </p>
             </div>
             <div className="flex gap-2">
