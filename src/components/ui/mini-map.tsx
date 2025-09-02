@@ -68,8 +68,8 @@ const MiniMap: React.FC<MiniMapProps> = ({ latitude, longitude, title, address }
         center={[validLat, validLng]}
         zoom={15}
         style={{ height: '100%', width: '100%' }}
-        zoomControl={false}
-        scrollWheelZoom={false}
+        zoomControl={true}
+        scrollWheelZoom={true}
         attributionControl={false}
         key={`minimap-${validLat}-${validLng}`} // Force remount when coordinates change
       >

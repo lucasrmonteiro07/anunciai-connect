@@ -135,9 +135,14 @@ const Anunciar = () => {
             latitude: coords.lat,
             longitude: coords.lon
           });
+          
+          toast.success(`Endereço encontrado: ${data.localidade}, ${data.uf}`);
+        } else {
+          toast.error("CEP não encontrado");
         }
       } catch (error) {
         console.error("Erro ao buscar CEP:", error);
+        toast.error("Erro ao buscar CEP");
       }
     }
   };
@@ -230,6 +235,29 @@ const Anunciar = () => {
         return;
       }
 
+      // Upload das fotos se houver
+      let imageUrls: string[] = [];
+      if (fotos.length > 0) {
+        for (const foto of fotos) {
+          const fileExt = foto.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `${user.id}/${fileName}`;
+
+          const { error: uploadError, data } = await supabase.storage
+            .from('services')
+            .upload(filePath, foto);
+
+          if (uploadError) {
+            console.error('Erro ao fazer upload da foto:', uploadError);
+          } else {
+            const { data: { publicUrl } } = supabase.storage
+              .from('services')
+              .getPublicUrl(filePath);
+            imageUrls.push(publicUrl);
+          }
+        }
+      }
+
       // Inserir o anúncio
       const { error } = await supabase
         .from('services')
@@ -252,6 +280,8 @@ const Anunciar = () => {
           facebook: formData.facebook || null,
           instagram: formData.instagram || null,
           website: formData.website || null,
+          logo_url: imageUrls.length > 0 ? imageUrls[0] : null,
+          images: imageUrls,
           user_id: user.id,
           status: 'active'
         });
@@ -437,7 +467,7 @@ const Anunciar = () => {
                  </div>
                  <div>
                    <label className="block text-sm font-medium mb-2">Estado <span className="text-red-500">*</span></label>
-                   <Select onValueChange={(value) => setEndereco(prev => ({...prev, uf: value}))}>
+                   <Select value={endereco.uf} onValueChange={(value) => setEndereco(prev => ({...prev, uf: value}))}>
                      <SelectTrigger>
                        <SelectValue placeholder="Selecione o estado" />
                      </SelectTrigger>

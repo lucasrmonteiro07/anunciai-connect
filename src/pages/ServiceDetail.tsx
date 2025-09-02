@@ -240,9 +240,13 @@ const ServiceDetail = () => {
               <CardContent className="p-6">
                 <div className="flex items-start gap-4 mb-4">
                   <img 
-                    src={service.logo}
+                    src={service.images && service.images.length > 0 ? service.images[0] : service.logo}
                     alt={service.title}
                     className="w-20 h-20 object-cover rounded-lg"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+                    }}
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
@@ -260,6 +264,28 @@ const ServiceDetail = () => {
                 </div>
                 
                 <p className="text-foreground leading-relaxed">{service.description}</p>
+
+                {/* Service Images Gallery */}
+                {service.images && service.images.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-3">Fotos</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {service.images.map((image, index) => (
+                        <img 
+                          key={index}
+                          src={image}
+                          alt={`${service.title} - Foto ${index + 1}`}
+                          className="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => window.open(image, '_blank')}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
