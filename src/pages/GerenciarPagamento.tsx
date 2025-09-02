@@ -14,7 +14,8 @@ import {
   ExternalLink,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Flame
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -124,6 +125,31 @@ const GerenciarPagamento = () => {
     navigate('/vip');
   };
 
+  const handleCheckout = async (planType: 'monthly' | 'annual') => {
+    if (!user) {
+      toast.error('Você precisa estar logado para assinar o plano VIP');
+      navigate('/login');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { planType }
+      });
+
+      if (error) throw error;
+
+      // Open Stripe checkout in a new tab
+      window.open(data.url, '_blank');
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast.error('Erro ao processar pagamento. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -149,9 +175,25 @@ const GerenciarPagamento = () => {
 
   const getStatusColor = () => {
     if (subscriptionData.subscribed) {
-      return 'bg-green-100 text-green-800 border-green-200';
+      return 'bg-gradient-to-r from-orange-500 to-red-500 text-white border-0';
     }
     return 'bg-red-100 text-red-800 border-red-200';
+  };
+
+  const getStatusBadge = () => {
+    if (subscriptionData.subscribed) {
+      return (
+        <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold flex items-center gap-1 border-0">
+          <Flame className="h-3 w-3" />
+          FOGARÉU
+        </Badge>
+      );
+    }
+    return (
+      <Badge className="bg-red-100 text-red-800 border-red-200">
+        Inativo
+      </Badge>
+    );
   };
 
   if (loading) {
@@ -214,9 +256,7 @@ const GerenciarPagamento = () => {
                 <div className="flex items-center gap-2">
                   {getStatusIcon()}
                   <span className="font-medium">Status:</span>
-                  <Badge className={getStatusColor()}>
-                    {getStatusText()}
-                  </Badge>
+                  {getStatusBadge()}
                 </div>
                 {subscriptionData.subscription_tier && (
                   <Badge variant="secondary">
@@ -284,13 +324,62 @@ const GerenciarPagamento = () => {
                   <p className="text-sm text-muted-foreground">
                     Destaque seus anúncios e alcance mais clientes com o Plano Fogaréu.
                   </p>
-                  <Button 
-                    onClick={handleSubscribe}
-                    className="w-full"
-                  >
-                    <Crown className="h-4 w-4 mr-2" />
-                    Assinar Plano Fogaréu
-                  </Button>
+                  
+                  {/* Opções de Plano */}
+                  <div className="space-y-3">
+                    {/* Plano Mensal */}
+                    <div className="border rounded-lg p-4 bg-gradient-to-r from-orange-500/5 to-red-500/5 border-orange-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <h4 className="font-semibold text-orange-600">Plano Mensal</h4>
+                          <p className="text-2xl font-bold text-orange-500">R$ 14,90</p>
+                          <p className="text-xs text-muted-foreground">por mês</p>
+                        </div>
+                        <Flame className="h-6 w-6 text-orange-500" />
+                      </div>
+                      <Button 
+                        onClick={() => handleCheckout('monthly')}
+                        className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
+                        disabled={loading}
+                      >
+                        {loading ? 'Processando...' : 'Assinar Mensal'}
+                      </Button>
+                    </div>
+
+                    {/* Plano Anual */}
+                    <div className="border rounded-lg p-4 bg-gradient-to-r from-green-500/5 to-emerald-500/5 border-green-200 relative">
+                      <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        ECONOMIZE 20%
+                      </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <h4 className="font-semibold text-green-600">Plano Anual</h4>
+                          <p className="text-2xl font-bold text-green-500">R$ 11,90</p>
+                          <p className="text-xs text-muted-foreground">por mês (R$ 142,80/ano)</p>
+                        </div>
+                        <Crown className="h-6 w-6 text-green-500" />
+                      </div>
+                      <Button 
+                        onClick={() => handleCheckout('annual')}
+                        className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0"
+                        disabled={loading}
+                      >
+                        {loading ? 'Processando...' : 'Assinar Anual'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Link para página VIP */}
+                  <div className="text-center pt-2">
+                    <Button 
+                      onClick={handleSubscribe}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      Ver mais detalhes
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             )}
