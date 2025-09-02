@@ -175,7 +175,7 @@ const GerenciarPagamento = () => {
     <div className="min-h-screen bg-background">
       <SEO
         title="Gerenciar Pagamento - Anunciai"
-        description="Gerencie sua assinatura VIP e métodos de pagamento na plataforma Anunciai."
+        description="Gerencie sua assinatura Fogaréu e métodos de pagamento na plataforma Anunciai."
         canonical="https://anunciai.app.br/gerenciar-pagamento"
       />
       <Header />
@@ -187,7 +187,7 @@ const GerenciarPagamento = () => {
             <div>
               <h1 className="text-3xl font-bold mb-2">Gerenciar Pagamento</h1>
               <p className="text-muted-foreground">
-                Gerencie sua assinatura VIP e configurações de pagamento
+                Gerencie sua assinatura e configurações de pagamento
               </p>
             </div>
             <Button
@@ -206,7 +206,7 @@ const GerenciarPagamento = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Crown className="h-5 w-5 text-primary" />
-                Status da Assinatura VIP
+                Status da Assinatura
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -235,11 +235,11 @@ const GerenciarPagamento = () => {
               )}
 
               <div className="pt-4 border-t">
-                <h4 className="font-medium mb-2">Benefícios VIP:</h4>
+                <h4 className="font-medium mb-2">Benefícios do Plano Fogaréu:</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>✅ Anúncios destacados no topo das buscas</li>
-                  <li>✅ Até 5 fotos por anúncio (vs 1 no plano gratuito)</li>
-                  <li>✅ Selo VIP nos seus anúncios</li>
+                  <li>✅ Até 5 fotos por anúncio (vs 1 no Plano Benção)</li>
+                  <li>✅ Selo de destaque nos seus anúncios</li>
                   <li>✅ Prioridade no suporte</li>
                   <li>✅ Estatísticas detalhadas de visualizações</li>
                 </ul>
@@ -277,19 +277,19 @@ const GerenciarPagamento = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Crown className="h-5 w-5 text-primary" />
-                    Upgrade para VIP
+                    Upgrade para Plano Fogaréu
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Destaque seus anúncios e alcance mais clientes com o plano VIP.
+                    Destaque seus anúncios e alcance mais clientes com o Plano Fogaréu.
                   </p>
                   <Button 
                     onClick={handleSubscribe}
                     className="w-full"
                   >
                     <Crown className="h-4 w-4 mr-2" />
-                    Assinar Plano VIP
+                    Assinar Plano Fogaréu
                   </Button>
                 </CardContent>
               </Card>
