@@ -13,51 +13,7 @@ import ChristianAd from '@/components/ui/christian-ad';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-// Mock data as fallback
-const mockServices: ServiceData[] = [
-  {
-    id: '1',
-    title: 'Construções Silva & Filhos',
-    description: 'Empresa familiar especializada em construção residencial e comercial. Mais de 15 anos de experiência no mercado com foco em qualidade e atendimento cristão.',
-    category: 'Construção',
-    type: 'empreendimento',
-    location: { city: 'São Paulo', uf: 'SP' },
-    contact: { phone: '(11) 99999-9999', email: 'contato@silvafilhos.com.br' },
-    logo: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-    images: [],
-    isVip: true,
-    denomination: 'Igreja Batista',
-    ownerName: 'João Silva'
-  },
-  {
-    id: '2', 
-    title: 'Ministério de Louvor & Eventos',
-    description: 'Serviços de sonorização, música ao vivo e organização de eventos cristãos. Especialistas em casamentos, congressos e celebrações.',
-    category: 'Música',
-    type: 'prestador',
-    location: { city: 'Rio de Janeiro', uf: 'RJ' },
-    contact: { phone: '(21) 88888-8888', email: 'louvor@eventos.com.br' },
-    logo: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
-    images: [],
-    isVip: false,
-    denomination: 'Lagoinha',
-    ownerName: 'Maria Santos'
-  },
-  {
-    id: '3',
-    title: 'Buffet Maná - Catering Cristão',
-    description: 'Buffet especializado em eventos cristãos, casamentos e confraternizações. Cardápio variado com opções tradicionais e contemporâneas.',
-    category: 'Alimentação',
-    type: 'empreendimento',
-    location: { city: 'Belo Horizonte', uf: 'MG' },
-    contact: { phone: '(31) 77777-7777', email: 'contato@buffetmana.com.br' },
-    logo: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop',
-    images: [],
-    isVip: true,
-    denomination: 'Assembleia de Deus',
-    ownerName: 'Pedro Oliveira'
-  }
-];
+// Service categories and trusted community indicators remain
 
 const Index = () => {
   const navigate = useNavigate();
@@ -87,8 +43,8 @@ const Index = () => {
 
       if (servicesError) {
         console.error('Error fetching services:', servicesError);
-        setServices(mockServices);
-        setFilteredServices(mockServices);
+        setServices([]);
+        setFilteredServices([]);
         return;
       }
 
@@ -146,14 +102,13 @@ const Index = () => {
         return 0;
       });
 
-      // Combine real data with mock data for demonstration
-      const allServices = [...sortedServices, ...mockServices];
-      setServices(allServices);
-      setFilteredServices(allServices);
+      // Use only real services data (no mock data)
+      setServices(sortedServices);
+      setFilteredServices(sortedServices);
     } catch (error) {
       console.error('Error loading services:', error);
-      setServices(mockServices);
-      setFilteredServices(mockServices);
+      setServices([]);
+      setFilteredServices([]);
     } finally {
       setLoading(false);
     }
