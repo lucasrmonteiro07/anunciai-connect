@@ -5,7 +5,7 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Camera, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
@@ -36,6 +36,11 @@ const EditarAnuncio = () => {
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
   const [website, setWebsite] = useState("");
+
+  // Fotos e VIP
+  const [isVip, setIsVip] = useState(false);
+  const [fotos, setFotos] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
 
   const estabelecimentos = [
     "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria",
@@ -110,6 +115,26 @@ const EditarAnuncio = () => {
     return () => subscription.unsubscribe();
   }, [navigate, id]);
 
+  const checkVipStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('is_vip')
+          .eq('id', user.id)
+          .single();
+        setIsVip(data?.is_vip || false);
+      }
+    } catch (error) {
+      console.error('Error checking VIP status:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkVipStatus();
+  }, []);
+
   const loadService = async () => {
     if (!id) {
       toast.error('ID do anúncio não encontrado');
@@ -162,6 +187,7 @@ const EditarAnuncio = () => {
       setInstagram(data.instagram || '');
       setFacebook(data.facebook || '');
       setWebsite(data.website || '');
+      setExistingImages(data.images || []);
 
     } catch (error) {
       console.error('Error loading service:', error);
@@ -170,6 +196,25 @@ const EditarAnuncio = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const maxFotos = isVip ? 5 : 1;
+      const currentCount = existingImages.length + fotos.length;
+      const remainingSlots = maxFotos - currentCount;
+      if (remainingSlots <= 0) return;
+      const newFotos = Array.from(e.target.files).slice(0, remainingSlots);
+      setFotos(prev => [...prev, ...newFotos]);
+    }
+  };
+
+  const removeFoto = (index: number) => {
+    setFotos(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingFoto = (index: number) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSave = async () => {
@@ -210,6 +255,7 @@ const EditarAnuncio = () => {
           instagram,
           facebook,
           website,
+          images: existingImages,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
@@ -453,6 +499,65 @@ const EditarAnuncio = () => {
                   onChange={(e) => setWebsite(e.target.value)}
                   placeholder="www.seusite.com"
                 />
+              </div>
+            </div>
+
+            {/* Fotos */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                <Camera className="inline mr-1 h-4 w-4" />
+                Fotos do Serviço/Estabelecimento
+                <span className="text-muted-foreground">
+                  {` (Opcional - até ${isVip ? 5 : 1} ${isVip ? 'fotos' : 'foto'})`}
+                </span>
+                {isVip && <Crown className="inline ml-1 h-4 w-4 text-primary" />}
+              </label>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                {existingImages.map((url, index) => (
+                  <div key={`existing-${index}`} className="relative">
+                    <img
+                      src={url}
+                      alt={`Foto ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                    <button
+                      onClick={() => removeExistingFoto(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {fotos.map((foto, index) => (
+                  <div key={`new-${index}`} className="relative">
+                    <img
+                      src={URL.createObjectURL(foto)}
+                      alt={`Nova foto ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                    <button
+                      onClick={() => removeFoto(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {(existingImages.length + fotos.length) < (isVip ? 5 : 1) && (
+                  <label className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary">
+                    <div className="text-center">
+                      <Camera className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-500">Adicionar Foto</span>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFotoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
