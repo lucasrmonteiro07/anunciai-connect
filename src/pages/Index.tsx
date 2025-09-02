@@ -9,6 +9,7 @@ import MapFilter from '@/components/ui/map-filter';
 import { Button } from '@/components/ui/button';
 import { Filter, Map as MapIcon } from 'lucide-react';
 import SEO from '@/components/SEO';
+import ChristianAd from '@/components/ui/christian-ad';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -295,6 +296,11 @@ const Index = () => {
               </div>
             </div>
           </div>
+
+          {/* Anúncio discreto após planos */}
+          <div className="mt-12 max-w-md mx-auto">
+            <ChristianAd slot="1234567890" className="rounded-lg border border-border/50" />
+          </div>
         </div>
       </section>
       
@@ -374,6 +380,13 @@ const Index = () => {
               ))
             )}
           </div>
+
+          {/* Anúncio discreto após grid de serviços */}
+          {filteredServices.length > 6 && (
+            <div className="mt-8 max-w-lg mx-auto">
+              <ChristianAd slot="0987654321" className="rounded-lg border border-border/50" />
+            </div>
+          )}
 
           {filteredServices.length === 0 && (
             <div className="text-center py-12">
