@@ -1,24 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { ServiceData } from './service-card';
 
 // Fix for default markers in react-leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
-
-// Create custom VIP marker icon
-const vipIcon = new L.Icon({
-  iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMzQiIHZpZXdCb3g9IjAgMCAyNCAzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDEuNUMyMCAyIDIwIDEwIDIwIDEyQzIwIDE3IDEyIDMxIDEyIDMxUzQgMTcgNDEyQzQgMTAgNCA4IDEyIDEuNVoiIGZpbGw9IiNGRjYzMzMiIHN0cm9rZT0iI0ZGNEQ0RCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjUiIGZpbGw9IndoaXRlIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkY0RDREIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5K5PC90ZXh0Pgo8L3N2Zz4K',
-  iconSize: [24, 34],
-  iconAnchor: [12, 34],
-  popupAnchor: [0, -34],
-});
+if (typeof window !== 'undefined') {
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  });
+}
 
 interface MapFilterProps {
   services: ServiceData[];
@@ -30,44 +24,77 @@ const MapBounds: React.FC<{ services: ServiceData[] }> = ({ services }) => {
   const map = useMap();
   
   useEffect(() => {
-    if (services.length === 0) return;
+    if (!map || services.length === 0) return;
     
-    const validServices = services.filter(s => 
-      s.location.latitude && s.location.longitude &&
-      !isNaN(s.location.latitude) && !isNaN(s.location.longitude)
-    );
-    
-    if (validServices.length === 0) {
-      // Default to Brazil center if no valid coordinates
-      map.setView([-14.2350, -51.9253], 4);
-      return;
+    try {
+      const validServices = services.filter(s => 
+        s.location.latitude && s.location.longitude &&
+        !isNaN(s.location.latitude) && !isNaN(s.location.longitude)
+      );
+      
+      if (validServices.length === 0) {
+        map.setView([-14.2350, -51.9253], 4);
+        return;
+      }
+      
+      if (validServices.length === 1) {
+        const service = validServices[0];
+        map.setView([service.location.latitude!, service.location.longitude!], 13);
+        return;
+      }
+      
+      const bounds = L.latLngBounds(
+        validServices.map(service => [service.location.latitude!, service.location.longitude!])
+      );
+      map.fitBounds(bounds, { padding: [20, 20] });
+    } catch (error) {
+      console.error('Error setting map bounds:', error);
     }
-    
-    if (validServices.length === 1) {
-      // Single marker - center on it
-      const service = validServices[0];
-      map.setView([service.location.latitude!, service.location.longitude!], 13);
-      return;
-    }
-    
-    // Multiple markers - fit bounds
-    const bounds = L.latLngBounds(
-      validServices.map(service => [service.location.latitude!, service.location.longitude!])
-    );
-    map.fitBounds(bounds, { padding: [20, 20] });
-    
   }, [map, services]);
 
   return null;
 };
 
 const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
-  console.log('MapFilter services:', services);
+  // Create VIP icon inside component to avoid module-level side effects
+  const vipIcon = useMemo(() => {
+    if (typeof window === 'undefined') return undefined;
+    
+    try {
+      return new L.Icon({
+        iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMzQiIHZpZXdCb3g9IjAgMCAyNCAzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDEuNUMyMCAyIDIwIDEwIDIwIDEyQzIwIDE3IDEyIDMxIDEyIDMxUzQgMTcgNDEyQzQgMTAgNCA4IDEyIDEuNVoiIGZpbGw9IiNGRjYzMzMiIHN0cm9rZT0iI0ZGNEQ0RCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjUiIGZpbGw9IndoaXRlIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkY0RDREIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5K5PC90ZXh0Pgo8L3N2Zz4K',
+        iconSize: [24, 34],
+        iconAnchor: [12, 34],
+        popupAnchor: [0, -34],
+      });
+    } catch (error) {
+      console.error('Error creating VIP icon:', error);
+      return undefined;
+    }
+  }, []);
   
-  const validServices = services.filter(s => 
-    s.location.latitude && s.location.longitude &&
-    !isNaN(s.location.latitude) && !isNaN(s.location.longitude)
+  const validServices = useMemo(() => 
+    services.filter(s => 
+      s.location.latitude && s.location.longitude &&
+      !isNaN(s.location.latitude) && !isNaN(s.location.longitude)
+    ), [services]
   );
+
+  const handleServiceClick = useCallback((service: ServiceData) => {
+    try {
+      onServiceClick(service);
+    } catch (error) {
+      console.error('Error handling service click:', error);
+    }
+  }, [onServiceClick]);
+
+  if (typeof window === 'undefined') {
+    return (
+      <div className="w-full h-96 rounded-lg overflow-hidden border border-border flex items-center justify-center">
+        <p className="text-muted-foreground">Carregando mapa...</p>
+      </div>
+    );
+  }
   
   return (
     <div className="w-full h-96 rounded-lg overflow-hidden border border-border">
@@ -77,6 +104,7 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
         style={{ height: '100%', width: '100%' }}
         zoomControl={true}
         scrollWheelZoom={true}
+        key={`map-${validServices.length}`} // Force remount when services change significantly
       >
         <MapBounds services={validServices} />
         <TileLayer
@@ -85,11 +113,11 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
         />
         {validServices.map((service) => (
           <Marker 
-            key={service.id}
+            key={`marker-${service.id}`}
             position={[service.location.latitude!, service.location.longitude!]}
-            icon={service.isVip ? vipIcon : undefined}
+            icon={service.isVip && vipIcon ? vipIcon : undefined}
             eventHandlers={{
-              click: () => onServiceClick(service)
+              click: () => handleServiceClick(service)
             }}
           >
             <Popup>
@@ -104,7 +132,10 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
                   📍 {service.location.city}, {service.location.uf}
                 </div>
                 <button 
-                  onClick={() => onServiceClick(service)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleServiceClick(service);
+                  }}
                   className="mt-2 px-3 py-1 bg-primary text-primary-foreground rounded text-xs hover:bg-primary/90"
                 >
                   Ver Detalhes
