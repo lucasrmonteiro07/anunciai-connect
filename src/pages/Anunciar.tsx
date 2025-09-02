@@ -1,18 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import MiniMap from "@/components/ui/mini-map";
-import { Camera, Facebook, Instagram, Globe, MapPin } from "lucide-react";
+import { Camera, Facebook, Instagram, Globe, MapPin, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const Anunciar = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isVip, setIsVip] = useState(false);
   const [formData, setFormData] = useState({
     nomeNegocio: "",
     tipoAnuncio: "",
@@ -21,6 +24,7 @@ const Anunciar = () => {
     telefone: "",
     email: "",
     valor: "",
+    numero: "",
     facebook: "",
     instagram: "",
     website: ""
@@ -35,6 +39,58 @@ const Anunciar = () => {
     longitude: -46.6333
   });
   const [fotos, setFotos] = useState<File[]>([]);
+
+  // Brazilian states and their cities
+  const estados = [
+    { uf: "AC", nome: "Acre" },
+    { uf: "AL", nome: "Alagoas" },
+    { uf: "AP", nome: "Amapá" },
+    { uf: "AM", nome: "Amazonas" },
+    { uf: "BA", nome: "Bahia" },
+    { uf: "CE", nome: "Ceará" },
+    { uf: "DF", nome: "Distrito Federal" },
+    { uf: "ES", nome: "Espírito Santo" },
+    { uf: "GO", nome: "Goiás" },
+    { uf: "MA", nome: "Maranhão" },
+    { uf: "MT", nome: "Mato Grosso" },
+    { uf: "MS", nome: "Mato Grosso do Sul" },
+    { uf: "MG", nome: "Minas Gerais" },
+    { uf: "PA", nome: "Pará" },
+    { uf: "PB", nome: "Paraíba" },
+    { uf: "PR", nome: "Paraná" },
+    { uf: "PE", nome: "Pernambuco" },
+    { uf: "PI", nome: "Piauí" },
+    { uf: "RJ", nome: "Rio de Janeiro" },
+    { uf: "RN", nome: "Rio Grande do Norte" },
+    { uf: "RS", nome: "Rio Grande do Sul" },
+    { uf: "RO", nome: "Rondônia" },
+    { uf: "RR", nome: "Roraima" },
+    { uf: "SC", nome: "Santa Catarina" },
+    { uf: "SP", nome: "São Paulo" },
+    { uf: "SE", nome: "Sergipe" },
+    { uf: "TO", nome: "Tocantins" }
+  ];
+
+  useEffect(() => {
+    checkVipStatus();
+  }, []);
+
+  const checkVipStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('is_vip')
+          .eq('id', user.id)
+          .single();
+        
+        setIsVip(data?.is_vip || false);
+      }
+    } catch (error) {
+      console.error('Error checking VIP status:', error);
+    }
+  };
 
   const estabelecimentos = [
     "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria",
@@ -67,19 +123,44 @@ const Anunciar = () => {
         const response = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`);
         const data = await response.json();
         if (!data.erro) {
+          // Buscar coordenadas via Nominatim (OpenStreetMap)
+          const address = `${data.logradouro}, ${data.localidade}, ${data.uf}, Brasil`;
+          const coords = await buscarCoordenadas(address);
+          
           setEndereco({
             logradouro: data.logradouro,
             bairro: data.bairro,
             cidade: data.localidade,
             uf: data.uf,
-            latitude: -23.5505, // Coordenadas padrão, idealmente buscar via geocoding
-            longitude: -46.6333
+            latitude: coords.lat,
+            longitude: coords.lon
           });
         }
       } catch (error) {
         console.error("Erro ao buscar CEP:", error);
       }
     }
+  };
+
+  const buscarCoordenadas = async (address: string) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+      );
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lon: parseFloat(data[0].lon)
+        };
+      }
+    } catch (error) {
+      console.error("Erro ao buscar coordenadas:", error);
+    }
+    
+    // Coordenadas padrão (Brasil central) se não encontrar
+    return { lat: -14.2350, lon: -51.9253 };
   };
 
   const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +173,9 @@ const Anunciar = () => {
 
   const handleFotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFotos = Array.from(e.target.files).slice(0, 3 - fotos.length);
+      const maxFotos = isVip ? 5 : 1;
+      const remainingSlots = maxFotos - fotos.length;
+      const newFotos = Array.from(e.target.files).slice(0, remainingSlots);
       setFotos(prev => [...prev, ...newFotos]);
     }
   };
@@ -155,9 +238,11 @@ const Anunciar = () => {
           type: formData.tipoAnuncio,
           category: formData.categoria,
           description: formData.descricao,
-          address: `${endereco.logradouro}, ${endereco.bairro}`,
+          address: `${endereco.logradouro}${formData.numero ? ', ' + formData.numero : ''}, ${endereco.bairro}`,
+          number: formData.numero || null,
           city: endereco.cidade,
           uf: endereco.uf,
+          cep: cep,
           latitude: endereco.latitude,
           longitude: endereco.longitude,
           phone: formData.telefone,
@@ -322,45 +407,58 @@ const Anunciar = () => {
                     maxLength={8}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Logradouro</label>
-                  <Input 
-                    type="text" 
-                    value={endereco.logradouro}
-                    onChange={(e) => setEndereco(prev => ({...prev, logradouro: e.target.value}))}
-                    placeholder="Rua, Avenida, etc."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Bairro</label>
-                  <Input 
-                    type="text" 
-                    value={endereco.bairro}
-                    onChange={(e) => setEndereco(prev => ({...prev, bairro: e.target.value}))}
-                    placeholder="Bairro"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Cidade <span className="text-red-500">*</span></label>
-                  <Input 
-                    type="text" 
-                    value={endereco.cidade}
-                    onChange={(e) => setEndereco(prev => ({...prev, cidade: e.target.value}))}
-                    placeholder="Cidade"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">UF <span className="text-red-500">*</span></label>
-                  <Input 
-                    type="text" 
-                    value={endereco.uf}
-                    onChange={(e) => setEndereco(prev => ({...prev, uf: e.target.value}))}
-                    placeholder="UF"
-                    maxLength={2}
-                    required
-                  />
-                </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-2">Logradouro</label>
+                   <Input 
+                     type="text" 
+                     value={endereco.logradouro}
+                     onChange={(e) => setEndereco(prev => ({...prev, logradouro: e.target.value}))}
+                     placeholder="Rua, Avenida, etc."
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-2">Número</label>
+                   <Input 
+                     type="text" 
+                     value={formData.numero}
+                     onChange={(e) => handleInputChange("numero", e.target.value)}
+                     placeholder="123"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-2">Bairro</label>
+                   <Input 
+                     type="text" 
+                     value={endereco.bairro}
+                     onChange={(e) => setEndereco(prev => ({...prev, bairro: e.target.value}))}
+                     placeholder="Bairro"
+                   />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-2">Estado <span className="text-red-500">*</span></label>
+                   <Select onValueChange={(value) => setEndereco(prev => ({...prev, uf: value}))}>
+                     <SelectTrigger>
+                       <SelectValue placeholder="Selecione o estado" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {estados.map((estado) => (
+                         <SelectItem key={estado.uf} value={estado.uf}>
+                           {estado.nome} ({estado.uf})
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-2">Cidade <span className="text-red-500">*</span></label>
+                   <Input 
+                     type="text" 
+                     value={endereco.cidade}
+                     onChange={(e) => setEndereco(prev => ({...prev, cidade: e.target.value}))}
+                     placeholder="Digite o nome da cidade"
+                     required
+                   />
+                 </div>
               </div>
             </div>
 
@@ -435,10 +533,19 @@ const Anunciar = () => {
             <div>
               <label className="block text-sm font-medium mb-2">
                 <Camera className="inline mr-1 h-4 w-4" />
-                Fotos do Serviço/Estabelecimento <span className="text-muted-foreground">(Opcional - até 3)</span>
+                Fotos do Serviço/Estabelecimento 
+                <span className="text-muted-foreground">
+                  (Opcional - até {isVip ? 5 : 1} {isVip ? 'fotos' : 'foto'})
+                </span>
+                {isVip && <Crown className="inline ml-1 h-4 w-4 text-primary" />}
               </label>
               <p className="text-xs text-muted-foreground mb-2">
                 Adicione fotos que mostrem seu trabalho, estabelecimento ou serviços. Imagens atraem mais clientes!
+                {!isVip && (
+                  <span className="block text-primary mt-1">
+                    💎 Upgrade para VIP e adicione até 5 fotos!
+                  </span>
+                )}
               </p>
               <div className="grid grid-cols-3 gap-4 mb-4">
                 {fotos.map((foto, index) => (
@@ -456,7 +563,7 @@ const Anunciar = () => {
                     </button>
                   </div>
                 ))}
-                {fotos.length < 3 && (
+                {fotos.length < (isVip ? 5 : 1) && (
                   <label className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary">
                     <div className="text-center">
                       <Camera className="mx-auto h-8 w-8 text-gray-400 mb-2" />
@@ -531,6 +638,7 @@ const Anunciar = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

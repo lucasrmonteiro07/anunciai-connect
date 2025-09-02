@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Phone, Mail, MessageCircle, Instagram, Facebook, Globe, Trash2 } from "lucide-react";
 import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -366,6 +367,7 @@ const ServiceDetail = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

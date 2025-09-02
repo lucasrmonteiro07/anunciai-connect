@@ -14,6 +14,7 @@ import MeusAnuncios from "./pages/MeusAnuncios";
 import NotFound from "./pages/NotFound";
 import ServiceDetail from "./pages/ServiceDetail";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import GerenciarPagamento from "./pages/GerenciarPagamento";
 import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
         <Route path="/editar-anuncio/:id" element={<EditarAnuncio />} />
         <Route path="/meus-anuncios" element={<MeusAnuncios />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/gerenciar-pagamento" element={<GerenciarPagamento />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/anuncio/:id" element={<ServiceDetail />} />
         <Route path="*" element={<NotFound />} />

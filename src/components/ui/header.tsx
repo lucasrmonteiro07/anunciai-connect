@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Menu, User, Plus, LogOut, Settings, FileText } from 'lucide-react';
+import { Crown, Menu, User, Plus, LogOut, Settings, FileText, CreditCard } from 'lucide-react';
 import { Button } from './button';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -135,6 +135,17 @@ const Header = () => {
                   <Link to="/perfil">
                     <User className="h-4 w-4 mr-2" />
                     <span className="hidden md:inline">Perfil</span>
+                  </Link>
+                </Button>
+                <Button 
+                  asChild
+                  variant="outline" 
+                  size="sm"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/10"
+                >
+                  <Link to="/gerenciar-pagamento">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    <span className="hidden md:inline">Pagamento</span>
                   </Link>
                 </Button>
                 <Button 
