@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MessageCircle, Instagram, Facebook, Globe, Trash2 } from "lucide-react";
+import { ArrowLeft, Instagram, Facebook, Globe, Trash2 } from "lucide-react";
 import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import MiniMap from "@/components/ui/mini-map";
 import Chat from "@/components/Chat";
 import Rating from "@/components/Rating";
+import ContactInfo from "@/components/ui/contact-info";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -190,12 +191,6 @@ const ServiceDetail = () => {
     }
   };
 
-  const handleWhatsApp = () => {
-    if (!service?.contact.whatsapp) return;
-    const message = encodeURIComponent(`Olá! Vi seu anúncio no Anunciai e gostaria de saber mais sobre: ${service.title}`);
-    window.open(`https://wa.me/${service.contact.whatsapp}?text=${message}`, '_blank');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -355,81 +350,10 @@ const ServiceDetail = () => {
             {/* Contact Actions */}
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Entre em contato</h3>
-                
-                {!currentUser && (
-                  <div className="mb-4 p-3 bg-muted/50 rounded-lg border">
-                    <p className="text-sm text-muted-foreground">
-                      🔒 Informações de contato protegidas. 
-                      <Button 
-                        variant="link" 
-                        className="p-0 h-auto text-primary underline ml-1"
-                        onClick={() => navigate('/login')}
-                      >
-                        Faça login
-                      </Button> 
-                      para acessar telefone, email e WhatsApp.
-                    </p>
-                  </div>
-                )}
-                
-                <div className="space-y-3">
-                  {service.contact.phone && (
-                    <Button 
-                      onClick={() => window.open(`tel:${service.contact.phone}`, '_self')}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Phone className="h-4 w-4 mr-2" />
-                      {service.contact.phone}
-                    </Button>
-                  )}
-                  
-                  {service.contact.whatsapp && (
-                    <Button 
-                      onClick={handleWhatsApp}
-                      className="w-full bg-green-600 hover:bg-green-700"
-                    >
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      WhatsApp
-                    </Button>
-                  )}
-                  
-                   {service.contact.email && (
-                     <Button 
-                       onClick={() => window.open(`mailto:${service.contact.email}`, '_self')}
-                       className="w-full"
-                       variant="outline"
-                     >
-                       <Mail className="h-4 w-4 mr-2" />
-                       Email
-                     </Button>
-                   )}
-
-                   {!service.contact.phone && !service.contact.email && !service.contact.whatsapp && !currentUser && (
-                     <div className="text-center py-4">
-                       <p className="text-muted-foreground text-sm">
-                         Informações de contato disponíveis após login
-                       </p>
-                     </div>
-                   )}
-
-                   {!isOwner && currentUser && (
-                     <Chat 
-                       receiverId={service.userId}
-                       receiverName={service.ownerName}
-                       triggerButton={
-                         <Button 
-                           variant="outline" 
-                           className="w-full"
-                         >
-                           <MessageCircle className="h-4 w-4 mr-2" />
-                           Enviar Mensagem
-                         </Button>
-                       }
-                     />
-                   )}
-                </div>
+                <ContactInfo 
+                  serviceId={service.id}
+                  isOwner={isOwner}
+                />
               </CardContent>
             </Card>
 
