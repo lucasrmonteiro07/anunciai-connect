@@ -376,6 +376,7 @@ const EditarAnuncio = () => {
 
       if (error) {
         console.error('🔍 DEBUG SAVE: Supabase error:', error);
+        console.error('🔍 DEBUG SAVE: Error details:', JSON.stringify(error, null, 2));
         throw error;
       }
 
