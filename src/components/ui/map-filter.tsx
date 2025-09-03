@@ -3,7 +3,8 @@ import { ServiceData } from './service-card';
 
 // Lazy load do Leaflet
 const loadLeaflet = async () => {
-  const { MapContainer, TileLayer, Marker, Popup, useMap } = await import('react-leaflet');
+  const leafletModule = await import('react-leaflet');
+  const { MapContainer, TileLayer, Marker, Popup, useMap } = leafletModule;
   const L = (await import('leaflet')).default;
   
   // Fix for default markers in react-leaflet
@@ -24,7 +25,7 @@ interface MapFilterProps {
 
 // Component to adjust map view based on markers
 const MapBounds: React.FC<{ services: ServiceData[]; leafletComponents: any }> = ({ services, leafletComponents }) => {
-  const map = useMap();
+  const map = leafletComponents.useMap();
   
   useEffect(() => {
     if (!map || services.length === 0) return;

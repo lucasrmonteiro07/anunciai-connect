@@ -118,7 +118,7 @@ const ServiceDetail = () => {
           uf: publicData.uf,
           latitude: publicData.latitude ? Number(publicData.latitude) : undefined,
           longitude: publicData.longitude ? Number(publicData.longitude) : undefined,
-          address: publicData.address || undefined
+          address: undefined // Not available in public table
         },
         contact: {
           phone: contactInfo?.phone || '',
@@ -132,8 +132,8 @@ const ServiceDetail = () => {
         isVip: publicData.is_vip || false,
         denomination: publicData.denomination || '',
         ownerName: contactInfo?.owner_name || '',
-        userId: publicData.user_id || publicData.id, // Usar user_id se disponível, senão ID do serviço
-        valor: publicData.valor || undefined,
+        userId: '', // Será definido depois
+        valor: undefined, // Not available in public table
         socialMedia: {
           instagram: publicData.instagram,
           facebook: publicData.facebook,
@@ -158,10 +158,8 @@ const ServiceDetail = () => {
             // Atualizar userId com o real
             setService(prev => prev ? { ...prev, userId: fullData.user_id } : prev);
           } else {
-            // Se não for o dono, usar o user_id da tabela pública se disponível
-            if (publicData.user_id) {
-              setService(prev => prev ? { ...prev, userId: publicData.user_id } : prev);
-            }
+            // Para visitantes, tentar obter user_id do proprietário
+            setService(prev => prev ? { ...prev, userId: fullData?.user_id || '' } : prev);
           }
         } catch (error) {
           console.log('Cannot access full service data - not owner');

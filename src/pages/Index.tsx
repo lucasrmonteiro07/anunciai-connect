@@ -83,7 +83,7 @@ const Index = () => {
               uf: service.uf,
               latitude: service.latitude ? Number(service.latitude) : undefined,
               longitude: service.longitude ? Number(service.longitude) : undefined,
-              address: service.address || undefined
+              address: undefined // Not available in public table
             },
             contact: { 
               phone: '', 
@@ -97,7 +97,7 @@ const Index = () => {
             isVip: vipMap.get(service.id) || false,
             denomination: service.denomination || '',
             ownerName: '',
-            valor: service.valor || undefined,
+            valor: undefined, // Not available in public table
             socialMedia: {
               instagram: service.instagram || undefined,
               facebook: service.facebook || undefined,
@@ -417,7 +417,6 @@ const Index = () => {
           {showMap && (
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4">Mapa dos Serviços</h3>
-              {console.log('Renderizando mapa com serviços:', filteredServices.length)}
               <MapFilter 
                 services={filteredServices}
                 onServiceClick={(service) => {
