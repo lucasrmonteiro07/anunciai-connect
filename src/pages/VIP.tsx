@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,21 @@ import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 const Destaque = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<any>(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   useEffect(() => {
+    // Check if user came from payment success
+    const fromPayment = searchParams.get('payment') === 'success';
+    if (fromPayment) {
+      setPaymentSuccess(true);
+      toast.success('Pagamento realizado com sucesso! Seu destaque foi ativado automaticamente.');
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -37,7 +46,7 @@ const Destaque = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [searchParams]);
 
   const checkSubscription = async () => {
     try {
@@ -102,10 +111,21 @@ const Destaque = () => {
         
         <main className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
+            {paymentSuccess && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                <div className="flex items-center justify-center">
+                  <Check className="w-5 h-5 mr-2" />
+                  <span className="font-semibold">Pagamento confirmado! Seu destaque foi ativado automaticamente.</span>
+                </div>
+              </div>
+            )}
+            
             <div className="bg-gradient-to-br from-primary to-primary-foreground rounded-xl p-8 text-white mb-8">
               <Flame className="w-16 h-16 mx-auto mb-4" />
               <h1 className="text-3xl font-bold mb-2">Você é Fogaréu!</h1>
-              <p className="text-xl opacity-90 mb-4">Sua assinatura está ativa</p>
+              <p className="text-xl opacity-90 mb-4">
+                {paymentSuccess ? 'Seu destaque foi ativado com sucesso!' : 'Sua assinatura está ativa'}
+              </p>
               <Badge variant="secondary" className="text-lg px-4 py-2">
                 {subscriptionStatus.subscription_tier}
               </Badge>

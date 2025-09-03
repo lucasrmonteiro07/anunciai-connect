@@ -12,6 +12,7 @@ import SEO from '@/components/SEO';
 import ChristianAd from '@/components/ui/christian-ad';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import type { User, Session } from '@supabase/supabase-js';
 
 // Service categories and trusted community indicators remain
 
@@ -24,9 +25,30 @@ const Index = () => {
   const [services, setServices] = useState<ServiceData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMap, setShowMap] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
     loadServices();
+    
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setUser(session?.user ?? null);
+    };
+    
+    checkAuth();
+    
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+    
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -363,9 +385,11 @@ const Index = () => {
                 💳 Gerenciar Pagamento
               </Button>
             </div>
-            <p className="text-muted-foreground">
-              Já tem uma conta? <span className="text-primary cursor-pointer hover:underline" onClick={() => navigate('/login')}>Faça login</span> para gerenciar seus anúncios
-            </p>
+            {!user && (
+              <p className="text-muted-foreground">
+                Já tem uma conta? <span className="text-primary cursor-pointer hover:underline" onClick={() => navigate('/login')}>Faça login</span> para gerenciar seus anúncios
+              </p>
+            )}
           </div>
 
           {/* Anúncio discreto após planos */}

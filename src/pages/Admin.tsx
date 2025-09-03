@@ -67,7 +67,7 @@ const Admin = () => {
 
       if (session?.user) {
         // Check if user is admin
-        const { data: roles } = await supabase
+        const { data: roles, error: rolesError } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
@@ -76,12 +76,8 @@ const Admin = () => {
         const isUserAdmin = roles && roles.length > 0;
         setIsAdmin(isUserAdmin);
         
-        if (isUserAdmin) {
-          loadData();
-        } else {
-          // For non-admin users, allow access but load only their own data
-          loadData();
-        }
+        // Load data after setting admin status
+        loadData(isUserAdmin);
       } else {
         navigate('/login');
       }
@@ -104,8 +100,10 @@ const Admin = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const loadData = async () => {
+  const loadData = async (adminStatus?: boolean) => {
     if (!user?.id) return;
+    
+    const currentAdminStatus = adminStatus !== undefined ? adminStatus : isAdmin;
     
     try {
       // Load profiles (always all for admin)
@@ -122,7 +120,7 @@ const Admin = () => {
         .from('services')
         .select('*');
       
-      if (!isAdmin) {
+      if (!currentAdminStatus) {
         servicesQuery = servicesQuery.eq('user_id', user.id);
       }
       
@@ -137,7 +135,7 @@ const Admin = () => {
         .from('subscribers')
         .select('*');
       
-      if (!isAdmin) {
+      if (!currentAdminStatus) {
         subscribersQuery = subscribersQuery.eq('user_id', user.id);
       }
       
@@ -246,6 +244,26 @@ const Admin = () => {
     }
   };
 
+  const makeUserAdmin = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_roles')
+        .upsert({
+          user_id: userId,
+          role: 'admin'
+        });
+
+      if (error) throw error;
+
+      toast.success('Usuário promovido a admin com sucesso');
+      // Reload data to reflect changes
+      loadData(isAdmin);
+    } catch (error) {
+      console.error('Error making user admin:', error);
+      toast.error('Erro ao promover usuário a admin');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -272,6 +290,21 @@ const Admin = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">{isAdmin ? 'Painel Administrativo' : 'Meus Dados'}</h1>
           <p className="text-muted-foreground">{isAdmin ? 'Gerencie usuários, anúncios e configurações do sistema' : 'Gerencie seus anúncios e assinatura'}</p>
+          
+          {!isAdmin && (
+            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-yellow-800 mb-2">
+                Você não tem permissões de administrador. Para acessar todas as funcionalidades, você precisa ser promovido a admin.
+              </p>
+              <Button 
+                onClick={() => makeUserAdmin(user?.id || '')}
+                variant="outline"
+                className="border-yellow-300 text-yellow-800 hover:bg-yellow-100"
+              >
+                Solicitar Acesso de Admin
+              </Button>
+            </div>
+          )}
         </div>
 
         <Tabs defaultValue={isAdmin ? "users" : "services"} className="space-y-6">

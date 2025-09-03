@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Check, Crown } from 'lucide-react';
+import { Check, Crown, Flame } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(5);
+  const [subscriptionChecked, setSubscriptionChecked] = useState(false);
 
   useEffect(() => {
     // Check subscription status after payment
@@ -22,6 +25,8 @@ const PaymentSuccess = () => {
             Authorization: `Bearer ${session.access_token}`
           }
         });
+        setSubscriptionChecked(true);
+        toast.success('Destaque ativado com sucesso!');
       } catch (error) {
         console.error('Error checking subscription:', error);
       }
@@ -29,6 +34,17 @@ const PaymentSuccess = () => {
 
     checkSubscription();
   }, []);
+
+  useEffect(() => {
+    if (subscriptionChecked && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (subscriptionChecked && countdown === 0) {
+      navigate('/plano?payment=success');
+    }
+  }, [subscriptionChecked, countdown, navigate]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,13 +64,13 @@ const PaymentSuccess = () => {
             
             <h1 className="text-3xl font-bold mb-4">Pagamento Confirmado!</h1>
             <p className="text-xl text-muted-foreground mb-6">
-              Parabéns! Agora você tem destaque nos seus anúncios
+              Parabéns! Seu destaque foi ativado automaticamente
             </p>
             
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-6 mb-8">
+            <div className="bg-gradient-to-r from-orange-500/10 to-red-500/5 rounded-lg p-6 mb-8">
               <div className="flex items-center justify-center mb-4">
-                <Crown className="w-8 h-8 text-primary mr-2" />
-                <span className="text-xl font-semibold">Status Destaque Ativado</span>
+                <Flame className="w-8 h-8 text-orange-500 mr-2" />
+                <span className="text-xl font-semibold">Status Fogaréu Ativado</span>
               </div>
               <div className="space-y-2 text-left max-w-md mx-auto">
                 <div className="flex items-center">
@@ -63,18 +79,37 @@ const PaymentSuccess = () => {
                 </div>
                 <div className="flex items-center">
                   <Check className="w-4 h-4 text-green-500 mr-2" />
-                  <span className="text-sm">Badge Destaque adicionado</span>
+                  <span className="text-sm">Badge Fogaréu adicionado</span>
                 </div>
                 <div className="flex items-center">
                   <Check className="w-4 h-4 text-green-500 mr-2" />
                   <span className="text-sm">Prioridade nos resultados</span>
                 </div>
+                <div className="flex items-center">
+                  <Check className="w-4 h-4 text-green-500 mr-2" />
+                  <span className="text-sm">Até 5 fotos por anúncio</span>
+                </div>
               </div>
             </div>
+
+            {subscriptionChecked && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-blue-800 text-center">
+                  Redirecionando para sua página de destaque em {countdown} segundos...
+                </p>
+              </div>
+            )}
             
             <div className="space-y-4">
               <Button 
+                onClick={() => navigate('/plano?payment=success')}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+              >
+                Ver Meu Status Fogaréu
+              </Button>
+              <Button 
                 onClick={() => navigate('/meus-anuncios')}
+                variant="outline"
                 className="w-full"
               >
                 Ver Meus Anúncios em Destaque
