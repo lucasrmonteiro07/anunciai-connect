@@ -101,47 +101,60 @@ const Admin = () => {
   }, [navigate]);
 
   const loadData = async (adminStatus?: boolean) => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.log('No user ID available');
+      return;
+    }
     
     const currentAdminStatus = adminStatus !== undefined ? adminStatus : isAdmin;
+    console.log('Loading data - User ID:', user.id, 'Admin Status:', currentAdminStatus);
     
     try {
+      // Test the has_role function first
+      const { data: roleTest, error: roleTestError } = await supabase
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+      
+      console.log('Role test result:', roleTest, 'Error:', roleTestError);
+      
       // Load profiles (always all for admin)
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
+      console.log('Profiles query result:', profilesData, 'Error:', profilesError);
       if (profilesError) throw profilesError;
       setProfiles(profilesData || []);
 
-      // Load services - all for admin, only user's own for non-admin
+            // Load services - all for admin, only user's own for non-admin
       let servicesQuery = supabase
         .from('services')
         .select('*');
-      
+
       if (!currentAdminStatus) {
         servicesQuery = servicesQuery.eq('user_id', user.id);
       }
-      
+
       const { data: servicesData, error: servicesError } = await servicesQuery
         .order('created_at', { ascending: false });
 
+      console.log('Services query result:', servicesData, 'Error:', servicesError);
       if (servicesError) throw servicesError;
       setServices(servicesData || []);
 
-      // Load subscribers - all for admin, only user's own for non-admin  
+            // Load subscribers - all for admin, only user's own for non-admin  
       let subscribersQuery = supabase
         .from('subscribers')
         .select('*');
-      
+
       if (!currentAdminStatus) {
         subscribersQuery = subscribersQuery.eq('user_id', user.id);
       }
-      
+
       const { data: subscribersData, error: subscribersError } = await subscribersQuery
         .order('created_at', { ascending: false });
 
+      console.log('Subscribers query result:', subscribersData, 'Error:', subscribersError);
       if (subscribersError) throw subscribersError;
       setSubscribers(subscribersData || []);
     } catch (error) {
