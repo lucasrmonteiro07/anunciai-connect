@@ -367,12 +367,12 @@ const EditarAnuncio = () => {
 
       console.log('🔍 DEBUG SAVE: Update data:', updateData);
 
-      // Usar RPC para evitar redirecionamentos para services_public
-      const { error } = await supabase.rpc('update_service', {
-        service_id: id,
-        service_data: updateData,
-        user_id: user?.id
-      });
+      // Usar query normal - o problema estava no trigger, não na query
+      const { error } = await supabase
+        .from('services')
+        .update(updateData)
+        .eq('id', id)
+        .eq('user_id', user?.id);
 
       if (error) {
         console.error('🔍 DEBUG SAVE: Supabase error:', error);
