@@ -21,32 +21,51 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
 }) => {
   useEffect(() => {
     let attempts = 0;
-    const maxAttempts = 5;
+    const maxAttempts = 3;
+    let timeoutId: NodeJS.Timeout;
     
     const loadAd = () => {
       try {
         if (attempts >= maxAttempts) {
-          console.log('AdSense: Máximo de tentativas atingido para slot:', slot);
+          // Silenciosamente falha após 3 tentativas
           return;
         }
         
         attempts++;
         
-        if (window.adsbygoogle) {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-          console.log('AdSense carregado com sucesso para slot:', slot);
+        // Verificar se o script do AdSense foi carregado
+        if (window.adsbygoogle && typeof window.adsbygoogle.push === 'function') {
+          try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+            // Sucesso - não logar para evitar spam
+          } catch (pushError) {
+            // Se falhar no push, tentar novamente
+            if (attempts < maxAttempts) {
+              timeoutId = setTimeout(loadAd, 3000);
+            }
+          }
         } else {
-          console.log(`AdSense não disponível ainda (tentativa ${attempts}/${maxAttempts}), tentando novamente em 2s...`);
-          setTimeout(loadAd, 2000);
+          // Script ainda não carregou, tentar novamente
+          if (attempts < maxAttempts) {
+            timeoutId = setTimeout(loadAd, 3000);
+          }
         }
       } catch (err) {
-        console.error("AdSense error:", err);
+        // Erro silencioso - não logar para evitar spam no console
+        if (attempts < maxAttempts) {
+          timeoutId = setTimeout(loadAd, 3000);
+        }
       }
     };
 
-    // Aguardar um pouco para garantir que o DOM está pronto
-    const timer = setTimeout(loadAd, 1000);
-    return () => clearTimeout(timer);
+    // Aguardar mais tempo para o script carregar
+    timeoutId = setTimeout(loadAd, 2000);
+    
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [slot]);
 
   return (
@@ -60,7 +79,13 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive="true"
+        style={{ display: 'block' }}
       />
+      {/* Fallback para quando AdSense não carrega */}
+      <div className="adsense-fallback hidden bg-muted/20 rounded-lg p-4 text-center text-sm text-muted-foreground">
+        <p>Espaço para anúncios</p>
+        <p className="text-xs mt-1">Produtos e serviços cristãos</p>
+      </div>
     </div>
   );
 };

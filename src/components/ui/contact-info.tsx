@@ -52,12 +52,12 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ serviceId, isOwner }) => {
     }
   };
 
-  // Se for o dono do serviço, mostra sempre
+  // Se for o dono do serviço, carrega os dados automaticamente
   useEffect(() => {
-    if (isOwner) {
-      setShowContact(true);
+    if (isOwner && !contactData) {
+      loadContactInfo();
     }
-  }, [isOwner]);
+  }, [isOwner, contactData]);
 
   if (!showContact && !isOwner) {
     return (
@@ -79,11 +79,21 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ serviceId, isOwner }) => {
     );
   }
 
-  if (!contactData) {
+  if (!contactData && (loading || isOwner)) {
     return (
       <div className="text-center p-4">
         <p className="text-sm text-muted-foreground">
           Carregando informações de contato...
+        </p>
+      </div>
+    );
+  }
+
+  if (!contactData && !loading) {
+    return (
+      <div className="text-center p-4">
+        <p className="text-sm text-muted-foreground">
+          Informações de contato não disponíveis
         </p>
       </div>
     );
