@@ -367,11 +367,13 @@ const EditarAnuncio = () => {
 
       console.log('🔍 DEBUG SAVE: Update data:', updateData);
 
+      // Usar query direta para evitar redirecionamentos
       const { error } = await supabase
         .from('services')
         .update(updateData)
         .eq('id', id)
-        .eq('user_id', user?.id); // Garantir que só o dono pode editar
+        .eq('user_id', user?.id)
+        .select(); // Adicionar select para forçar query na tabela correta
 
       if (error) {
         console.error('🔍 DEBUG SAVE: Supabase error:', error);
