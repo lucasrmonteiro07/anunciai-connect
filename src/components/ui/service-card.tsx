@@ -60,24 +60,47 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
         {/* Logo/Image Section */}
         <div className="relative h-48 bg-muted rounded-t-lg overflow-hidden">
           <img 
-            src={service.images && service.images.length > 0 && service.images[0] 
-              ? service.images[0] 
-              : service.logo && service.logo !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
-                ? service.logo
-                : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
-            } 
+            src={(() => {
+              // Lógica melhorada de fallback para imagens
+              const defaultImage = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              
+              // 1. Verificar se há imagens válidas
+              if (service.images && Array.isArray(service.images) && service.images.length > 0) {
+                const firstImage = service.images[0];
+                if (firstImage && typeof firstImage === 'string' && firstImage.trim() !== '') {
+                  console.log('Usando primeira imagem:', firstImage);
+                  return firstImage;
+                }
+              }
+              
+              // 2. Verificar se há logo válido
+              if (service.logo && typeof service.logo === 'string' && service.logo.trim() !== '' && service.logo !== defaultImage) {
+                console.log('Usando logo:', service.logo);
+                return service.logo;
+              }
+              
+              // 3. Usar imagem padrão
+              console.log('Usando imagem padrão para:', service.title);
+              return defaultImage;
+            })()} 
             alt={`Capa ${service.title}`}
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              console.log('Erro ao carregar imagem:', target.src);
+              console.log('❌ Erro ao carregar imagem:', target.src);
+              console.log('📝 Serviço:', service.title);
+              
               // Se falhar, usar imagem padrão
-              if (target.src !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop') {
-                target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              const defaultImage = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              if (target.src !== defaultImage) {
+                console.log('🔄 Tentando imagem padrão...');
+                target.src = defaultImage;
+              } else {
+                console.log('⚠️  Imagem padrão também falhou');
               }
             }}
             onLoad={() => {
-              console.log('Imagem carregada com sucesso:', service.title);
+              console.log('✅ Imagem carregada com sucesso:', service.title);
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

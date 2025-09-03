@@ -90,8 +90,10 @@ const Index = () => {
               email: '',
               whatsapp: undefined
             },
-            logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-            images: service.images || [],
+            logo: service.logo_url && service.logo_url.trim() !== '' ? service.logo_url : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+            images: (service.images && Array.isArray(service.images)) 
+              ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
+              : [],
             isVip: vipMap.get(service.id) || false,
             denomination: service.denomination || '',
             ownerName: '',
