@@ -302,22 +302,13 @@ const EditarAnuncio = () => {
 
     setSaving(true);
     try {
-      console.log('🔍 DEBUG SAVE: Iniciando salvamento...');
-      console.log('- User ID:', user?.id);
-      console.log('- Service ID:', id);
-      console.log('- Existing Images:', existingImages);
-      console.log('- New Photos:', fotos.length);
-      
       let allImages = [...existingImages];
 
       // Upload das novas fotos se houver
       if (fotos.length > 0) {
-        console.log('🔍 DEBUG SAVE: Fazendo upload de', fotos.length, 'fotos...');
         const uploadPromises = fotos.map(async (foto, index) => {
           const fileExt = foto.name.split('.').pop();
           const fileName = `${user?.id}/${id}/foto_${Date.now()}_${index}.${fileExt}`;
-          
-          console.log('🔍 DEBUG SAVE: Uploading file:', fileName);
           
           const { error: uploadError } = await supabase.storage
             .from('service-images')
@@ -332,13 +323,11 @@ const EditarAnuncio = () => {
             .from('service-images')
             .getPublicUrl(fileName);
 
-          console.log('🔍 DEBUG SAVE: Image uploaded, URL:', data.publicUrl);
           return data.publicUrl;
         });
 
         const newImageUrls = await Promise.all(uploadPromises);
         allImages = [...allImages, ...newImageUrls];
-        console.log('🔍 DEBUG SAVE: All images after upload:', allImages);
       }
 
       const updateData = {
@@ -365,22 +354,14 @@ const EditarAnuncio = () => {
         updated_at: new Date().toISOString()
       };
 
-      console.log('🔍 DEBUG SAVE: Update data:', updateData);
-
-      // Usar query normal - o problema estava no trigger, não na query
       const { error } = await supabase
         .from('services')
         .update(updateData)
         .eq('id', id)
         .eq('user_id', user?.id);
 
-      if (error) {
-        console.error('🔍 DEBUG SAVE: Supabase error:', error);
-        console.error('🔍 DEBUG SAVE: Error details:', JSON.stringify(error, null, 2));
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log('🔍 DEBUG SAVE: Update successful!');
       toast.success('Anúncio atualizado com sucesso!');
       navigate('/meus-anuncios');
     } catch (error) {
