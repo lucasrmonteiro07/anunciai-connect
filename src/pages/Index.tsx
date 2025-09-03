@@ -64,35 +64,44 @@ const Index = () => {
         const vipMap = new Map((profilesData || []).map(p => [p.id, p.is_vip]));
 
         // Transform Supabase data to ServiceData format
-        servicesWithVip = servicesData.map(service => ({
-          id: service.id,
-          title: service.title,
-          description: service.description || '',
-          category: service.category,
-          type: service.type as 'prestador' | 'empreendimento',
-          location: { 
-            city: service.city, 
-            uf: service.uf,
-            latitude: service.latitude ? Number(service.latitude) : undefined,
-            longitude: service.longitude ? Number(service.longitude) : undefined,
-            address: service.address || undefined
-          },
-          contact: { 
-            phone: '', 
-            email: '',
-            whatsapp: undefined
-          },
-          logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-          images: service.images || [],
-          isVip: vipMap.get(service.id) || false,
-          denomination: service.denomination || '',
-          ownerName: '',
-          socialMedia: {
-            instagram: service.instagram || undefined,
-            facebook: service.facebook || undefined,
-            website: service.website || undefined
-          }
-        }));
+        servicesWithVip = servicesData.map(service => {
+          console.log('Serviço carregado:', {
+            title: service.title,
+            logo_url: service.logo_url,
+            images: service.images,
+            hasImages: service.images && service.images.length > 0
+          });
+          
+          return {
+            id: service.id,
+            title: service.title,
+            description: service.description || '',
+            category: service.category,
+            type: service.type as 'prestador' | 'empreendimento',
+            location: { 
+              city: service.city, 
+              uf: service.uf,
+              latitude: service.latitude ? Number(service.latitude) : undefined,
+              longitude: service.longitude ? Number(service.longitude) : undefined,
+              address: service.address || undefined
+            },
+            contact: { 
+              phone: '', 
+              email: '',
+              whatsapp: undefined
+            },
+            logo: service.logo_url || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+            images: service.images || [],
+            isVip: vipMap.get(service.id) || false,
+            denomination: service.denomination || '',
+            ownerName: '',
+            socialMedia: {
+              instagram: service.instagram || undefined,
+              facebook: service.facebook || undefined,
+              website: service.website || undefined
+            }
+          };
+        });
       }
 
       // Sort with VIP services first
@@ -305,7 +314,7 @@ const Index = () => {
                   ECONOMIZE 20%
                 </div>
                 <div className="text-center">
-                  <h4 className="text-lg font-bold mb-2">Plano Fogaréu</h4>
+                  <h4 className="text-lg font-bold mb-2">Plano Fogaréu Anual</h4>
                   <p className="text-2xl font-bold mb-2">R$ 11,90</p>
                   <p className="text-sm mb-4">por mês (R$ 142,80/ano)</p>
                   <ul className="text-sm text-left space-y-2">

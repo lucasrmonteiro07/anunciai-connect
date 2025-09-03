@@ -64,7 +64,11 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
+              console.log('Erro ao carregar imagem:', target.src);
               target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+            }}
+            onLoad={() => {
+              console.log('Imagem carregada com sucesso:', service.title);
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
