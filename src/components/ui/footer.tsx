@@ -92,7 +92,7 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Serviços</h3>
             <nav className="space-y-2">
               <Link 
-                to="/plano" 
+                to="/gerenciar-pagamento" 
                 className="block text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 Planos Destaque

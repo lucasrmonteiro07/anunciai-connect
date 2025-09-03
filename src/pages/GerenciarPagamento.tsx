@@ -132,7 +132,7 @@ const GerenciarPagamento = () => {
   };
 
   const handleSubscribe = () => {
-    navigate('/plano');
+    handleCheckout('monthly');
   };
 
   const handleCheckout = async (planType: 'monthly' | 'annual') => {

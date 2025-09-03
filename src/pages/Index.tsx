@@ -27,6 +27,7 @@ const Index = () => {
   const [showMap, setShowMap] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     loadServices();
@@ -183,6 +184,40 @@ const Index = () => {
     setFilteredServices(filtered);
   }, [services, searchTerm, selectedCategory, selectedLocation]);
 
+  const handleDirectCheckout = async (planType: 'monthly' | 'annual') => {
+    if (!user) {
+      toast.error('Você precisa estar logado para assinar o plano Destaque');
+      navigate('/login');
+      return;
+    }
+
+    setCheckoutLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Sessão expirada. Faça login novamente.');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { planType },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      // Open Stripe checkout in a new tab
+      window.open(data.url, '_blank');
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast.error('Erro ao processar pagamento. Tente novamente.');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SEO 
@@ -300,9 +335,10 @@ const Index = () => {
                 <Button 
                   variant="secondary" 
                   className="w-full bg-white text-orange-600 hover:bg-orange-50 mb-3"
-                  onClick={() => navigate('/plano')}
+                  onClick={() => handleDirectCheckout('monthly')}
+                  disabled={checkoutLoading}
                 >
-                  🔥 Tornar-se Fogaréu
+                  {checkoutLoading ? 'Processando...' : '🔥 Tornar-se Fogaréu'}
                 </Button>
               </div>
             </div>
@@ -350,9 +386,10 @@ const Index = () => {
                 <Button 
                   variant="secondary" 
                   className="w-full bg-white text-green-600 hover:bg-green-50 mb-3"
-                  onClick={() => navigate('/plano')}
+                  onClick={() => handleDirectCheckout('annual')}
+                  disabled={checkoutLoading}
                 >
-                  💰 Escolher Anual
+                  {checkoutLoading ? 'Processando...' : '💰 Escolher Anual'}
                 </Button>
               </div>
             </div>

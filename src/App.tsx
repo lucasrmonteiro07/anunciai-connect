@@ -11,7 +11,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Login = lazy(() => import("./pages/Login"));
 const Anunciar = lazy(() => import("./pages/Anunciar"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Destaque = lazy(() => import("./pages/VIP"));
+
 const EditarAnuncio = lazy(() => import("./pages/EditarAnuncio"));
 const MeusAnuncios = lazy(() => import("./pages/MeusAnuncios"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -54,7 +54,7 @@ const App = () => (
           <Route path="/contato" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/anunciar" element={<Anunciar />} />
-          <Route path="/plano" element={<Destaque />} />
+
           <Route path="/perfil" element={<Profile />} />
           <Route path="/editar-anuncio/:id" element={<EditarAnuncio />} />
           <Route path="/meus-anuncios" element={<MeusAnuncios />} />
