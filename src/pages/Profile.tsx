@@ -311,6 +311,7 @@ const Profile = () => {
                 value={tipoAnuncio}
                 onChange={(e) => setTipoAnuncio(e.target.value)}
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+                aria-label="Tipo de anúncio"
               >
                 <option value="">Selecione o tipo</option>
                 <option value="prestador">Prestador de Serviços</option>
@@ -326,6 +327,7 @@ const Profile = () => {
                   value={categoria}
                   onChange={(e) => setCategoria(e.target.value)}
                   className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+                  aria-label="Categoria do serviço"
                 >
                   <option value="">Selecione a categoria</option>
                   {(tipoAnuncio === "prestador" ? prestadorServicos : estabelecimentos).map((item) => (
@@ -355,6 +357,7 @@ const Profile = () => {
                 value={denominacao}
                 onChange={(e) => setDenominacao(e.target.value)}
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+                aria-label="Denominação religiosa"
               >
                 <option value="">Selecione sua denominação</option>
                 {denominacoes.map((item) => (

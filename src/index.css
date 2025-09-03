@@ -137,15 +137,15 @@
     padding: 2px;
     background: var(--gradient-vip);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: xor;
     -webkit-mask-composite: xor;
+    mask-composite: xor;
   }
 
   /* Gold Accents */
   .gold-accent {
     background: var(--gradient-gold);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 

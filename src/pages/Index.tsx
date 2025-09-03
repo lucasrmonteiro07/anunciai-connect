@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import Footer from '@/components/ui/footer';
@@ -126,13 +126,16 @@ const Index = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     let filtered = services;
 
-    if (searchTerm) {
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase().trim();
       filtered = filtered.filter(service => 
-        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchTerm.toLowerCase())
+        service.title.toLowerCase().includes(searchLower) ||
+        service.description.toLowerCase().includes(searchLower) ||
+        service.category.toLowerCase().includes(searchLower) ||
+        service.denomination.toLowerCase().includes(searchLower)
       );
     }
 
@@ -148,7 +151,7 @@ const Index = () => {
       );
     }
 
-    // Sort VIP first
+    // Sort VIP first, then by creation date
     filtered.sort((a, b) => {
       if (a.isVip && !b.isVip) return -1;
       if (!a.isVip && b.isVip) return 1;
@@ -156,7 +159,7 @@ const Index = () => {
     });
 
     setFilteredServices(filtered);
-  };
+  }, [services, searchTerm, selectedCategory, selectedLocation]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -171,14 +174,15 @@ const Index = () => {
           url: "https://anunciai.app.br/"
         }}
       />
+      <main role="main" aria-label="Página principal do Anunciai">
       <Header />
       <HeroSection />
       
       {/* Seção de Informações dos Planos - Melhor Estruturada */}
-      <section className="py-16 bg-gradient-to-br from-primary/5 to-orange-500/5">
+      <section className="py-16 bg-gradient-to-br from-primary/5 to-orange-500/5" aria-labelledby="plans-heading">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
+            <h2 id="plans-heading" className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
               Escolha o Plano Ideal para Seu Negócio
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -197,6 +201,7 @@ const Index = () => {
                 <div className="mb-4">
                   <span className="text-5xl font-bold text-primary">R$ 0</span>
                   <p className="text-muted-foreground mt-1">Para sempre</p>
+                  <p className="text-xs text-muted-foreground mt-2">Sem taxas ocultas</p>
                 </div>
                 <ul className="text-left space-y-3 mb-6">
                   <li className="flex items-center">
@@ -246,6 +251,7 @@ const Index = () => {
                 <div className="mb-4">
                   <span className="text-5xl font-bold">R$ 14,90</span>
                   <p className="mt-1 opacity-90">por mês</p>
+                  <p className="text-xs opacity-75 mt-2">Cancele quando quiser</p>
                 </div>
                 <ul className="text-left space-y-3 mb-6">
                   <li className="flex items-center">
@@ -295,6 +301,7 @@ const Index = () => {
                   <span className="text-5xl font-bold">R$ 11,90</span>
                   <p className="mt-1 opacity-90">por mês</p>
                   <p className="text-sm opacity-75">(R$ 142,80/ano)</p>
+                  <p className="text-xs opacity-75 mt-2">Economia de R$ 36/ano</p>
                 </div>
                 <ul className="text-left space-y-3 mb-6">
                   <li className="flex items-center">
@@ -371,7 +378,7 @@ const Index = () => {
       </section>
       
       {/* Search Section */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12 bg-card/30" data-search-section>
         <div className="container mx-auto px-4">
           <SearchBar
             searchTerm={searchTerm}
@@ -386,11 +393,18 @@ const Index = () => {
       </section>
 
       {/* Services Grid */}
-      <section className="py-12">
+      <section className="py-12" aria-labelledby="services-heading">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Serviços em Destaque</h2>
+              <h2 id="services-heading" className="text-3xl font-bold mb-2">
+                Serviços em Destaque
+                {filteredServices.length > 0 && (
+                  <span className="text-lg font-normal text-muted-foreground ml-2">
+                    ({filteredServices.length} {filteredServices.length === 1 ? 'resultado' : 'resultados'})
+                  </span>
+                )}
+              </h2>
               <p className="text-muted-foreground">
                 Encontre profissionais e estabelecimentos cristãos qualificados em sua região
               </p>
@@ -434,7 +448,7 @@ const Index = () => {
             {loading ? (
               // Loading skeleton
               Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="animate-pulse">
+                <div key={`skeleton-${index}`} className="animate-pulse">
                   <div className="bg-muted h-48 rounded-t-lg"></div>
                   <div className="p-6 space-y-3">
                     <div className="h-4 bg-muted rounded w-3/4"></div>
@@ -461,29 +475,39 @@ const Index = () => {
             </div>
           )}
 
-          {filteredServices.length === 0 && (
+          {filteredServices.length === 0 && !loading && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                Nenhum serviço encontrado com os filtros aplicados.
-              </p>
-              <Button 
-                variant="outline" 
-                className="mt-4"
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedCategory('all');
-                  setSelectedLocation('all');
-                  setFilteredServices(services);
-                }}
-              >
-                Limpar Filtros
-              </Button>
+              <div className="max-w-md mx-auto">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-xl font-semibold mb-2">Nenhum serviço encontrado</h3>
+                <p className="text-muted-foreground mb-6">
+                  {searchTerm || selectedCategory !== 'all' || selectedLocation !== 'all' 
+                    ? 'Tente ajustar os filtros de busca para encontrar mais resultados.'
+                    : 'Ainda não há serviços cadastrados nesta categoria.'
+                  }
+                </p>
+                {(searchTerm || selectedCategory !== 'all' || selectedLocation !== 'all') && (
+                  <Button 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setSelectedCategory('all');
+                      setSelectedLocation('all');
+                      setFilteredServices(services);
+                    }}
+                  >
+                    Limpar Filtros
+                  </Button>
+                )}
+              </div>
             </div>
           )}
         </div>
       </section>
 
       <Footer />
+      </main>
     </div>
   );
 };

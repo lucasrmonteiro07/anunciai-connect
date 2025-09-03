@@ -49,6 +49,10 @@ const HeroSection = () => {
             <Button 
               size="lg"
               className="px-8 py-4 text-lg bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
+              onClick={() => {
+                const searchSection = document.querySelector('[data-search-section]');
+                searchSection?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               <Search className="mr-2 h-5 w-5" />
               Buscar Anúncios
