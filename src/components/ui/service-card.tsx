@@ -27,6 +27,7 @@ export interface ServiceData {
   isVip: boolean;
   denomination: string;
   ownerName: string;
+  valor?: string;
   socialMedia?: {
     instagram?: string;
     facebook?: string;
@@ -59,13 +60,21 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
         {/* Logo/Image Section */}
         <div className="relative h-48 bg-muted rounded-t-lg overflow-hidden">
           <img 
-            src={service.images && service.images.length > 0 ? service.images[0] : service.logo} 
+            src={service.images && service.images.length > 0 && service.images[0] 
+              ? service.images[0] 
+              : service.logo && service.logo !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+                ? service.logo
+                : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+            } 
             alt={`Capa ${service.title}`}
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               console.log('Erro ao carregar imagem:', target.src);
-              target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              // Se falhar, usar imagem padrão
+              if (target.src !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop') {
+                target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              }
             }}
             onLoad={() => {
               console.log('Imagem carregada com sucesso:', service.title);
@@ -106,6 +115,15 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
               {service.location.city}, {service.location.uf}
             </div>
           </div>
+
+          {/* Valor do Serviço */}
+          {service.valor && (
+            <div className="mb-4">
+              <div className="bg-primary/10 text-primary px-3 py-2 rounded-lg text-center">
+                <span className="font-semibold text-sm">{service.valor}</span>
+              </div>
+            </div>
+          )}
 
           {/* Denomination */}
           <div className="mb-4">

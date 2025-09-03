@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Instagram, Facebook, Globe, Trash2 } from "lucide-react";
+import { ArrowLeft, Instagram, Facebook, Globe, Trash2, MapPin, ExternalLink } from "lucide-react";
 import Header from "@/components/ui/header";
 import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
@@ -39,6 +39,7 @@ interface Service {
   denomination: string;
   ownerName: string;
   userId: string;
+  valor?: string;
   socialMedia?: {
     instagram?: string;
     facebook?: string;
@@ -130,6 +131,7 @@ const ServiceDetail = () => {
         denomination: publicData.denomination || '',
         ownerName: contactInfo?.owner_name || '',
         userId: publicData.user_id || publicData.id, // Usar user_id se disponível, senão ID do serviço
+        valor: publicData.valor || undefined,
         socialMedia: {
           instagram: publicData.instagram,
           facebook: publicData.facebook,
@@ -271,12 +273,19 @@ const ServiceDetail = () => {
               <CardContent className="p-6">
                 <div className="flex items-start gap-4 mb-4">
                   <img 
-                    src={service.images && service.images.length > 0 ? service.images[0] : service.logo}
+                    src={service.images && service.images.length > 0 && service.images[0] 
+                      ? service.images[0] 
+                      : service.logo && service.logo !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+                        ? service.logo
+                        : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+                    }
                     alt={service.title}
                     className="w-20 h-20 object-cover rounded-lg"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+                      if (target.src !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop') {
+                        target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+                      }
                     }}
                   />
                   <div className="flex-1">
@@ -296,12 +305,21 @@ const ServiceDetail = () => {
                 
                 <p className="text-foreground leading-relaxed">{service.description}</p>
 
+                {/* Valor do Serviço */}
+                {service.valor && (
+                  <div className="mt-4">
+                    <div className="bg-primary/10 text-primary px-4 py-3 rounded-lg text-center">
+                      <span className="font-semibold text-lg">{service.valor}</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Service Images Gallery */}
                 {service.images && service.images.length > 0 && (
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-3">Fotos</h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {service.images.map((image, index) => (
+                      {service.images.filter(img => img && img.trim() !== '').map((image, index) => (
                         <img 
                           key={index}
                           src={image}
@@ -323,7 +341,24 @@ const ServiceDetail = () => {
             {/* Location & Map */}
             <Card>
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Localização</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold">Localização</h2>
+                  {service.location.latitude && service.location.longitude && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const url = `https://www.google.com/maps?q=${service.location.latitude},${service.location.longitude}`;
+                        window.open(url, '_blank');
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Ver no mapa
+                      <ExternalLink className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
                 <p className="text-muted-foreground mb-4">
                   {service.location.address ? `${service.location.address} - ` : ''}{service.location.city}, {service.location.uf}
                 </p>
@@ -344,6 +379,22 @@ const ServiceDetail = () => {
                     </p>
                     <div className="mt-4 text-xs text-muted-foreground">
                       Se você é o proprietário deste anúncio, edite-o para adicionar coordenadas precisas ou permitir localização manual.
+                    </div>
+                    <div className="mt-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const searchQuery = encodeURIComponent(`${service.location.city}, ${service.location.uf}`);
+                          const url = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                          window.open(url, '_blank');
+                        }}
+                        className="flex items-center gap-2 mx-auto"
+                      >
+                        <MapPin className="h-4 w-4" />
+                        Ver {service.location.city} no mapa
+                        <ExternalLink className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 )}

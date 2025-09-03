@@ -49,9 +49,20 @@ const MapCenter: React.FC<{ lat: number; lng: number }> = ({ lat, lng }) => {
 const MiniMap: React.FC<MiniMapProps> = ({ latitude, longitude, title, address }) => {
   console.log('MiniMap props:', { latitude, longitude, title, address });
   
-  // Ensure coordinates are valid numbers
-  const validLat = isNaN(latitude) ? -14.2350 : latitude;
-  const validLng = isNaN(longitude) ? -51.9253 : longitude;
+  // Ensure coordinates are valid numbers and within reasonable bounds
+  const isValidCoordinate = (coord: number) => {
+    return !isNaN(coord) && coord !== null && coord !== undefined && 
+           coord >= -90 && coord <= 90; // Latitude bounds
+  };
+  
+  const isValidLongitude = (coord: number) => {
+    return !isNaN(coord) && coord !== null && coord !== undefined && 
+           coord >= -180 && coord <= 180; // Longitude bounds
+  };
+  
+  // Use coordinates if valid, otherwise use a default location in Brazil
+  const validLat = isValidCoordinate(latitude) ? latitude : -23.5505; // São Paulo
+  const validLng = isValidLongitude(longitude) ? longitude : -46.6333; // São Paulo
   
   // Handle SSR by showing loading state
   if (typeof window === 'undefined') {
@@ -62,11 +73,19 @@ const MiniMap: React.FC<MiniMapProps> = ({ latitude, longitude, title, address }
     );
   }
   
+  // Check if we're using default coordinates
+  const usingDefaultCoords = !isValidCoordinate(latitude) || !isValidLongitude(longitude);
+  
   return (
     <div className="w-full h-48 rounded-lg overflow-hidden border border-border">
+      {usingDefaultCoords && (
+        <div className="absolute top-2 left-2 z-[1000] bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
+          Localização aproximada
+        </div>
+      )}
       <MapContainer
         center={[validLat, validLng]}
-        zoom={15}
+        zoom={usingDefaultCoords ? 5 : 15}
         style={{ height: '100%', width: '100%' }}
         zoomControl={true}
         scrollWheelZoom={true}
@@ -83,6 +102,11 @@ const MiniMap: React.FC<MiniMapProps> = ({ latitude, longitude, title, address }
             <div className="text-center">
               <strong>{title}</strong>
               {address && <p className="text-sm text-muted-foreground mt-1">{address}</p>}
+              {usingDefaultCoords && (
+                <p className="text-xs text-yellow-600 mt-1">
+                  Localização aproximada - coordenadas precisas não disponíveis
+                </p>
+              )}
             </div>
           </Popup>
         </Marker>

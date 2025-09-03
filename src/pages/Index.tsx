@@ -95,6 +95,7 @@ const Index = () => {
             isVip: vipMap.get(service.id) || false,
             denomination: service.denomination || '',
             ownerName: '',
+            valor: service.valor || undefined,
             socialMedia: {
               instagram: service.instagram || undefined,
               facebook: service.facebook || undefined,

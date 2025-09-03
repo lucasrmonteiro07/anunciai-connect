@@ -243,7 +243,7 @@ const Anunciar = () => {
       }
 
       // Upload das fotos se houver
-      let imageUrls: string[] = [];
+      const imageUrls: string[] = [];
       if (fotos.length > 0) {
         for (const foto of fotos) {
           const fileExt = foto.name.split('.').pop();
@@ -290,7 +290,8 @@ const Anunciar = () => {
           logo_url: imageUrls.length > 0 ? imageUrls[0] : null,
           images: imageUrls,
           user_id: user.id,
-          status: 'active'
+          status: 'active',
+          valor: formData.valor || null
         });
 
       if (error) throw error;
