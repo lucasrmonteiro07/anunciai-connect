@@ -247,8 +247,104 @@ const Index = () => {
                   >
                     🔥 Tornar-se Fogaréu
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full bg-white/20 text-white border-white/30 hover:bg-white/30"
+                    onClick={() => navigate('/gerenciar-pagamento')}
+                  >
+                    💳 Gerenciar Pagamento
+                  </Button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Seção de Informações dos Planos */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-4">Escolha o Plano Ideal para Seu Negócio</h3>
+              <p className="text-muted-foreground">
+                Compare os benefícios e escolha o plano que melhor se adapta às suas necessidades
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {/* Plano Benção - Resumo */}
+              <div className="bg-card rounded-lg p-6 border border-border">
+                <div className="text-center">
+                  <h4 className="text-lg font-bold text-primary mb-2">Plano Benção</h4>
+                  <p className="text-2xl font-bold text-primary mb-2">R$ 0</p>
+                  <p className="text-sm text-muted-foreground mb-4">Para sempre</p>
+                  <ul className="text-sm text-left space-y-2">
+                    <li>✅ 1 foto</li>
+                    <li>✅ Listagem básica</li>
+                    <li>✅ Contato</li>
+                    <li>✅ Localização</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Plano Fogaréu Mensal - Resumo */}
+              <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg p-6 text-white">
+                <div className="text-center">
+                  <h4 className="text-lg font-bold mb-2">Plano Fogaréu</h4>
+                  <p className="text-2xl font-bold mb-2">R$ 14,90</p>
+                  <p className="text-sm mb-4">por mês</p>
+                  <ul className="text-sm text-left space-y-2">
+                    <li>✅ 5 fotos</li>
+                    <li>✅ Destaque nas buscas</li>
+                    <li>✅ Badge especial</li>
+                    <li>✅ Prioridade</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Plano Fogaréu Anual - Resumo */}
+              <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg p-6 text-white relative">
+                <div className="absolute top-2 right-2 bg-white text-green-600 px-2 py-1 rounded-full text-xs font-bold">
+                  ECONOMIZE 20%
+                </div>
+                <div className="text-center">
+                  <h4 className="text-lg font-bold mb-2">Plano Fogaréu</h4>
+                  <p className="text-2xl font-bold mb-2">R$ 11,90</p>
+                  <p className="text-sm mb-4">por mês (R$ 142,80/ano)</p>
+                  <ul className="text-sm text-left space-y-2">
+                    <li>✅ 5 fotos</li>
+                    <li>✅ Destaque nas buscas</li>
+                    <li>✅ Badge especial</li>
+                    <li>✅ Prioridade</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="text-center space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={() => navigate('/anunciar')}
+                  variant="outline"
+                  className="px-8"
+                >
+                  🆓 Começar Grátis
+                </Button>
+                <Button 
+                  onClick={() => navigate('/plano')}
+                  className="px-8 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                >
+                  🔥 Tornar-se Fogaréu
+                </Button>
+                <Button 
+                  onClick={() => navigate('/gerenciar-pagamento')}
+                  variant="secondary"
+                  className="px-8"
+                >
+                  💳 Gerenciar Pagamento
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Já tem uma conta? <span className="text-primary cursor-pointer" onClick={() => navigate('/login')}>Faça login</span> para gerenciar seus anúncios
+              </p>
             </div>
           </div>
 
