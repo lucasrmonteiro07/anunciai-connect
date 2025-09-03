@@ -41,6 +41,10 @@ const EditarAnuncio = () => {
   const [isVip, setIsVip] = useState(false);
   const [fotos, setFotos] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
+  
+  // Coordenadas
+  const [latitude, setLatitude] = useState<number>(-23.5505);
+  const [longitude, setLongitude] = useState<number>(-46.6333);
 
   const estabelecimentos = [
     "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria",
@@ -135,6 +139,67 @@ const EditarAnuncio = () => {
     checkVipStatus();
   }, []);
 
+  const buscarCoordenadas = async (address: string) => {
+    try {
+      // Melhorar o formato do endereço para geocodificação mais precisa
+      const formattedAddress = address
+        .replace(/\s+/g, ' ') // Remove espaços extras
+        .trim();
+      
+      console.log('Buscando coordenadas para:', formattedAddress);
+      
+      // Tentar diferentes formatos de endereço para melhor precisão
+      const searchQueries = [
+        formattedAddress,
+        `${formattedAddress}, Brasil`,
+        formattedAddress.replace(', Brasil', '') // Remover Brasil se já estiver
+      ];
+      
+      for (const query of searchQueries) {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=br&addressdetails=1`
+          );
+          
+          if (!response.ok) {
+            console.warn('Erro na resposta do Nominatim:', response.status);
+            continue;
+          }
+          
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            const result = data[0];
+            console.log('Coordenadas encontradas:', {
+              address: result.display_name,
+              lat: result.lat,
+              lon: result.lon,
+              importance: result.importance
+            });
+            
+            // Verificar se a importância é alta o suficiente (mais de 0.3)
+            if (result.importance > 0.3) {
+              return {
+                lat: parseFloat(result.lat),
+                lon: parseFloat(result.lon)
+              };
+            }
+          }
+        } catch (queryError) {
+          console.warn('Erro na consulta:', query, queryError);
+          continue;
+        }
+      }
+      
+      console.warn('Nenhuma coordenada precisa encontrada para:', formattedAddress);
+    } catch (error) {
+      console.error("Erro ao buscar coordenadas:", error);
+    }
+    
+    // Coordenadas padrão (Brasil central) se não encontrar
+    return { lat: -14.2350, lon: -51.9253 };
+  };
+
   const loadService = async () => {
     if (!id) {
       toast.error('ID do anúncio não encontrado');
@@ -188,6 +253,8 @@ const EditarAnuncio = () => {
       setFacebook(data.facebook || '');
       setWebsite(data.website || '');
       setExistingImages(data.images || []);
+      setLatitude(data.latitude || -23.5505);
+      setLongitude(data.longitude || -46.6333);
 
     } catch (error) {
       console.error('Error loading service:', error);
@@ -256,6 +323,8 @@ const EditarAnuncio = () => {
           facebook,
           website,
           images: existingImages,
+          latitude,
+          longitude,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
@@ -402,6 +471,34 @@ const EditarAnuncio = () => {
                   onChange={(e) => setNumber(e.target.value)}
                   placeholder="Número"
                 />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2">Endereço Completo (para localização precisa)</label>
+                <Input 
+                  type="text" 
+                  value={`${address}${number ? ', ' + number : ''}${neighborhood ? ', ' + neighborhood : ''}, ${city}, ${uf}`}
+                  readOnly
+                  className="bg-gray-50"
+                  placeholder="Endereço será preenchido automaticamente"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Este endereço completo é usado para localização precisa no mapa. Atualize os campos acima para modificar.
+                </p>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                  onClick={async () => {
+                    const fullAddress = `${address}${number ? ', ' + number : ''}${neighborhood ? ', ' + neighborhood : ''}, ${city}, ${uf}, Brasil`;
+                    const coords = await buscarCoordenadas(fullAddress);
+                    setLatitude(coords.lat);
+                    setLongitude(coords.lon);
+                    toast.success('Coordenadas atualizadas!');
+                  }}
+                >
+                  🔄 Atualizar Localização no Mapa
+                </Button>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Bairro</label>

@@ -131,8 +131,16 @@ const Anunciar = () => {
         const data = await response.json();
         if (!data.erro) {
           // Buscar coordenadas via Nominatim (OpenStreetMap)
-          const address = `${data.logradouro}, ${data.localidade}, ${data.uf}, Brasil`;
-          const coords = await buscarCoordenadas(address);
+          // Construir endereço mais completo e preciso
+          const addressParts = [];
+          if (data.logradouro) addressParts.push(data.logradouro);
+          if (data.bairro) addressParts.push(data.bairro);
+          if (data.localidade) addressParts.push(data.localidade);
+          if (data.uf) addressParts.push(data.uf);
+          addressParts.push('Brasil');
+          
+          const fullAddress = addressParts.join(', ');
+          const coords = await buscarCoordenadas(fullAddress);
           
           setEndereco({
             logradouro: data.logradouro,
@@ -156,17 +164,57 @@ const Anunciar = () => {
 
   const buscarCoordenadas = async (address: string) => {
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
-      );
-      const data = await response.json();
+      // Melhorar o formato do endereço para geocodificação mais precisa
+      const formattedAddress = address
+        .replace(/\s+/g, ' ') // Remove espaços extras
+        .trim();
       
-      if (data && data.length > 0) {
-        return {
-          lat: parseFloat(data[0].lat),
-          lon: parseFloat(data[0].lon)
-        };
+      console.log('Buscando coordenadas para:', formattedAddress);
+      
+      // Tentar diferentes formatos de endereço para melhor precisão
+      const searchQueries = [
+        formattedAddress,
+        `${formattedAddress}, Brasil`,
+        formattedAddress.replace(', Brasil', '') // Remover Brasil se já estiver
+      ];
+      
+      for (const query of searchQueries) {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=br&addressdetails=1`
+          );
+          
+          if (!response.ok) {
+            console.warn('Erro na resposta do Nominatim:', response.status);
+            continue;
+          }
+          
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            const result = data[0];
+            console.log('Coordenadas encontradas:', {
+              address: result.display_name,
+              lat: result.lat,
+              lon: result.lon,
+              importance: result.importance
+            });
+            
+            // Verificar se a importância é alta o suficiente (mais de 0.3)
+            if (result.importance > 0.3) {
+              return {
+                lat: parseFloat(result.lat),
+                lon: parseFloat(result.lon)
+              };
+            }
+          }
+        } catch (queryError) {
+          console.warn('Erro na consulta:', query, queryError);
+          continue;
+        }
       }
+      
+      console.warn('Nenhuma coordenada precisa encontrada para:', formattedAddress);
     } catch (error) {
       console.error("Erro ao buscar coordenadas:", error);
     }
@@ -464,6 +512,37 @@ const Anunciar = () => {
                      onChange={(e) => handleInputChange("numero", e.target.value)}
                      placeholder="123"
                    />
+                 </div>
+                 <div className="md:col-span-2">
+                   <label className="block text-sm font-medium mb-2">Endereço Completo (para localização precisa)</label>
+                   <Input 
+                     type="text" 
+                     value={`${endereco.logradouro}${formData.numero ? ', ' + formData.numero : ''}${endereco.bairro ? ', ' + endereco.bairro : ''}, ${endereco.cidade}, ${endereco.uf}`}
+                     readOnly
+                     className="bg-gray-50"
+                     placeholder="Endereço será preenchido automaticamente"
+                   />
+                   <p className="text-xs text-muted-foreground mt-1">
+                     Este endereço completo é usado para localização precisa no mapa. Atualize os campos acima para modificar.
+                   </p>
+                   <Button 
+                     type="button"
+                     variant="outline" 
+                     size="sm" 
+                     className="mt-2"
+                     onClick={async () => {
+                       const fullAddress = `${endereco.logradouro}${formData.numero ? ', ' + formData.numero : ''}${endereco.bairro ? ', ' + endereco.bairro : ''}, ${endereco.cidade}, ${endereco.uf}, Brasil`;
+                       const coords = await buscarCoordenadas(fullAddress);
+                       setEndereco(prev => ({
+                         ...prev,
+                         latitude: coords.lat,
+                         longitude: coords.lon
+                       }));
+                       toast.success('Coordenadas atualizadas!');
+                     }}
+                   >
+                     🔄 Atualizar Localização no Mapa
+                   </Button>
                  </div>
                  <div>
                    <label className="block text-sm font-medium mb-2">Bairro</label>
