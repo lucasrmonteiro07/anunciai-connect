@@ -49,13 +49,13 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      console.log('🔍 LOGOUT: Iniciando logout...');
+
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Error logging out:', error);
         return;
       }
-      console.log('🔍 LOGOUT: Logout realizado com sucesso');
+
       setUser(null);
       setIsAdmin(false);
       navigate('/');

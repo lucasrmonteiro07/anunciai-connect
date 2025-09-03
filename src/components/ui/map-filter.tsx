@@ -7,21 +7,9 @@ const loadLeaflet = async () => {
   const { MapContainer, TileLayer, Marker, Popup, useMap } = leafletModule;
   const L = (await import('leaflet')).default;
   
-  // Fix for default markers in react-leaflet
-  const createCustomIcon = () => {
-    return L.icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
-    });
-  };
-
-  // Set the default icon
-  L.Marker.prototype.options.icon = createCustomIcon();
+  // Import and configure Leaflet icons
+  const { configureLeafletIcons } = await import('@/lib/leaflet-config');
+  configureLeafletIcons();
   
   return { MapContainer, TileLayer, Marker, Popup, useMap, L };
 };
