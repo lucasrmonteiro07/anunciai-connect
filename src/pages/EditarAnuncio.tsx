@@ -302,36 +302,83 @@ const EditarAnuncio = () => {
 
     setSaving(true);
     try {
+      console.log('🔍 DEBUG SAVE: Iniciando salvamento...');
+      console.log('- User ID:', user?.id);
+      console.log('- Service ID:', id);
+      console.log('- Existing Images:', existingImages);
+      console.log('- New Photos:', fotos.length);
+      
+      let allImages = [...existingImages];
+
+      // Upload das novas fotos se houver
+      if (fotos.length > 0) {
+        console.log('🔍 DEBUG SAVE: Fazendo upload de', fotos.length, 'fotos...');
+        const uploadPromises = fotos.map(async (foto, index) => {
+          const fileExt = foto.name.split('.').pop();
+          const fileName = `${user?.id}/${id}/foto_${Date.now()}_${index}.${fileExt}`;
+          
+          console.log('🔍 DEBUG SAVE: Uploading file:', fileName);
+          
+          const { error: uploadError } = await supabase.storage
+            .from('service-images')
+            .upload(fileName, foto);
+
+          if (uploadError) {
+            console.error('Error uploading image:', uploadError);
+            throw uploadError;
+          }
+
+          const { data } = supabase.storage
+            .from('service-images')
+            .getPublicUrl(fileName);
+
+          console.log('🔍 DEBUG SAVE: Image uploaded, URL:', data.publicUrl);
+          return data.publicUrl;
+        });
+
+        const newImageUrls = await Promise.all(uploadPromises);
+        allImages = [...allImages, ...newImageUrls];
+        console.log('🔍 DEBUG SAVE: All images after upload:', allImages);
+      }
+
+      const updateData = {
+        title: title.trim(),
+        description: description?.trim() || null,
+        category,
+        type,
+        denomination: denomination || null,
+        address: address?.trim() || null,
+        number: number?.trim() || null,
+        neighborhood: neighborhood?.trim() || null,
+        cep: cep?.trim() || null,
+        city: city?.trim() || null,
+        uf: uf?.trim() || null,
+        phone: phone?.trim() || null,
+        email: email?.trim() || null,
+        whatsapp: whatsapp?.trim() || null,
+        instagram: instagram?.trim() || null,
+        facebook: facebook?.trim() || null,
+        website: website?.trim() || null,
+        images: allImages,
+        latitude,
+        longitude,
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('🔍 DEBUG SAVE: Update data:', updateData);
+
       const { error } = await supabase
         .from('services')
-        .update({
-          title,
-          description,
-          category,
-          type,
-          denomination,
-          address,
-          number,
-          neighborhood,
-          cep,
-          city,
-          uf,
-          phone,
-          email,
-          whatsapp,
-          instagram,
-          facebook,
-          website,
-          images: existingImages,
-          latitude,
-          longitude,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', id)
         .eq('user_id', user?.id); // Garantir que só o dono pode editar
 
-      if (error) throw error;
+      if (error) {
+        console.error('🔍 DEBUG SAVE: Supabase error:', error);
+        throw error;
+      }
 
+      console.log('🔍 DEBUG SAVE: Update successful!');
       toast.success('Anúncio atualizado com sucesso!');
       navigate('/meus-anuncios');
     } catch (error) {
