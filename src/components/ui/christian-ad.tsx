@@ -20,14 +20,25 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
   className = "my-4 rounded-lg overflow-hidden"
 }) => {
   useEffect(() => {
-    try {
-      if (window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+    const loadAd = () => {
+      try {
+        console.log('Tentando carregar AdSense para slot:', slot);
+        if (window.adsbygoogle) {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          console.log('AdSense carregado com sucesso para slot:', slot);
+        } else {
+          console.log('AdSense não disponível ainda, tentando novamente em 1s...');
+          setTimeout(loadAd, 1000);
+        }
+      } catch (err) {
+        console.error("AdSense error:", err);
       }
-    } catch (err) {
-      console.error("AdSense error:", err);
-    }
-  }, []);
+    };
+
+    // Aguardar um pouco para garantir que o DOM está pronto
+    const timer = setTimeout(loadAd, 500);
+    return () => clearTimeout(timer);
+  }, [slot]);
 
   return (
     <div className={className}>
@@ -35,8 +46,7 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
         Produtos Cristãos
       </div>
       <ins
-        className="adsbygoogle"
-        style={{ display: "block" }}
+        className="adsbygoogle block min-h-[90px]"
         data-ad-client="ca-pub-7412845197984129"
         data-ad-slot={slot}
         data-ad-format={format}

@@ -393,7 +393,11 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => setShowMap(!showMap)}
+                onClick={() => {
+                  console.log('Botão mapa clicado, showMap atual:', showMap);
+                  setShowMap(!showMap);
+                  console.log('showMap após clique:', !showMap);
+                }}
                 className={showMap ? "bg-primary text-primary-foreground" : ""}
               >
                 <MapIcon className="h-4 w-4 mr-2" />
@@ -410,9 +414,13 @@ const Index = () => {
           {showMap && (
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4">Mapa dos Serviços</h3>
+              {console.log('Renderizando mapa com serviços:', filteredServices.length)}
               <MapFilter 
                 services={filteredServices}
-                onServiceClick={(service) => navigate(`/anuncio/${service.id}`)}
+                onServiceClick={(service) => {
+                  console.log('Clique no serviço do mapa:', service.title);
+                  navigate(`/anuncio/${service.id}`);
+                }}
               />
             </div>
           )}
