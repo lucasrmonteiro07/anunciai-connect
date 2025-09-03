@@ -20,15 +20,24 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
   className = "my-4 rounded-lg overflow-hidden"
 }) => {
   useEffect(() => {
+    let attempts = 0;
+    const maxAttempts = 5;
+    
     const loadAd = () => {
       try {
-        console.log('Tentando carregar AdSense para slot:', slot);
+        if (attempts >= maxAttempts) {
+          console.log('AdSense: Máximo de tentativas atingido para slot:', slot);
+          return;
+        }
+        
+        attempts++;
+        
         if (window.adsbygoogle) {
           (window.adsbygoogle = window.adsbygoogle || []).push({});
           console.log('AdSense carregado com sucesso para slot:', slot);
         } else {
-          console.log('AdSense não disponível ainda, tentando novamente em 1s...');
-          setTimeout(loadAd, 1000);
+          console.log(`AdSense não disponível ainda (tentativa ${attempts}/${maxAttempts}), tentando novamente em 2s...`);
+          setTimeout(loadAd, 2000);
         }
       } catch (err) {
         console.error("AdSense error:", err);
@@ -36,7 +45,7 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
     };
 
     // Aguardar um pouco para garantir que o DOM está pronto
-    const timer = setTimeout(loadAd, 500);
+    const timer = setTimeout(loadAd, 1000);
     return () => clearTimeout(timer);
   }, [slot]);
 

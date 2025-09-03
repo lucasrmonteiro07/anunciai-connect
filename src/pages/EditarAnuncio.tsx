@@ -311,7 +311,7 @@ const EditarAnuncio = () => {
           const fileName = `${user?.id}/${id}/foto_${Date.now()}_${index}.${fileExt}`;
           
           const { error: uploadError } = await supabase.storage
-            .from('service-images')
+            .from('services')
             .upload(fileName, foto);
 
           if (uploadError) {
@@ -320,7 +320,7 @@ const EditarAnuncio = () => {
           }
 
           const { data } = supabase.storage
-            .from('service-images')
+            .from('services')
             .getPublicUrl(fileName);
 
           return data.publicUrl;

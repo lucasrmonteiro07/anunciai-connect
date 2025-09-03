@@ -88,12 +88,7 @@ const Index = () => {
 
         // Transform Supabase data to ServiceData format
         servicesWithVip = servicesData.map(service => {
-          console.log('Serviço carregado:', {
-            title: service.title,
-            logo_url: service.logo_url,
-            images: service.images,
-            hasImages: service.images && service.images.length > 0
-          });
+
           
           return {
             id: service.id,
@@ -407,7 +402,7 @@ const Index = () => {
                 🆓 Começar Grátis
               </Button>
               <Button 
-                onClick={() => navigate('/plano')}
+                onClick={() => navigate('/gerenciar-pagamento')}
                 size="lg"
                 className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
               >
@@ -474,11 +469,7 @@ const Index = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => {
-                  console.log('Botão mapa clicado, showMap atual:', showMap);
-                  setShowMap(!showMap);
-                  console.log('showMap após clique:', !showMap);
-                }}
+                onClick={() => setShowMap(!showMap)}
                 className={showMap ? "bg-primary text-primary-foreground" : ""}
               >
                 <MapIcon className="h-4 w-4 mr-2" />
@@ -497,10 +488,7 @@ const Index = () => {
               <h3 className="text-xl font-semibold mb-4">Mapa dos Serviços</h3>
               <MapFilter 
                 services={filteredServices}
-                onServiceClick={(service) => {
-                  console.log('Clique no serviço do mapa:', service.title);
-                  navigate(`/anuncio/${service.id}`);
-                }}
+                onServiceClick={(service) => navigate(`/anuncio/${service.id}`)}
               />
             </div>
           )}

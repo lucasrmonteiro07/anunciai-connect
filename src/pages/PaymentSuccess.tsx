@@ -42,7 +42,7 @@ const PaymentSuccess = () => {
       }, 1000);
       return () => clearTimeout(timer);
     } else if (subscriptionChecked && countdown === 0) {
-      navigate('/plano?payment=success');
+      navigate('/gerenciar-pagamento');
     }
   }, [subscriptionChecked, countdown, navigate]);
 
@@ -102,7 +102,7 @@ const PaymentSuccess = () => {
             
             <div className="space-y-4">
               <Button 
-                onClick={() => navigate('/plano?payment=success')}
+                onClick={() => navigate('/gerenciar-pagamento')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
               >
                 Ver Meu Status Fogaréu

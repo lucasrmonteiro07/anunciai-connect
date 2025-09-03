@@ -76,12 +76,7 @@ const Admin = () => {
         const isUserAdmin = roles && roles.length > 0;
         setIsAdmin(isUserAdmin);
         
-        console.log('🔍 DEBUG ADMIN:');
-        console.log('- User ID:', session.user.id);
-        console.log('- User Email:', session.user.email);
-        console.log('- Roles found:', roles);
-        console.log('- Is Admin:', isUserAdmin);
-        console.log('- Roles length:', roles?.length);
+
         
         // Load data after setting admin status
         loadData(isUserAdmin, session.user.id);
@@ -110,7 +105,7 @@ const Admin = () => {
   const loadData = async (adminStatus?: boolean, userId?: string) => {
     const currentUserId = userId || user?.id;
     if (!currentUserId) {
-      console.log('❌ No user ID available');
+
       return;
     }
     
