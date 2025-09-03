@@ -84,7 +84,7 @@ const Admin = () => {
         console.log('- Roles length:', roles?.length);
         
         // Load data after setting admin status
-        loadData(isUserAdmin);
+        loadData(isUserAdmin, session.user.id);
       } else {
         navigate('/login');
       }
@@ -107,8 +107,9 @@ const Admin = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const loadData = async (adminStatus?: boolean) => {
-    if (!user?.id) {
+  const loadData = async (adminStatus?: boolean, userId?: string) => {
+    const currentUserId = userId || user?.id;
+    if (!currentUserId) {
       console.log('❌ No user ID available');
       return;
     }
@@ -116,7 +117,7 @@ const Admin = () => {
     const currentAdminStatus = adminStatus !== undefined ? adminStatus : isAdmin;
     
     console.log('🔍 DEBUG LOAD DATA:');
-    console.log('- User ID:', user.id);
+    console.log('- User ID:', currentUserId);
     console.log('- Admin Status from param:', adminStatus);
     console.log('- Admin Status from state:', isAdmin);
     console.log('- Current Admin Status:', currentAdminStatus);
@@ -145,7 +146,7 @@ const Admin = () => {
         .select('*');
 
       if (!currentAdminStatus) {
-        servicesQuery = servicesQuery.eq('user_id', user.id);
+        servicesQuery = servicesQuery.eq('user_id', currentUserId);
       }
 
       const { data: servicesData, error: servicesError } = await servicesQuery
@@ -168,7 +169,7 @@ const Admin = () => {
         .select('*');
 
       if (!currentAdminStatus) {
-        subscribersQuery = subscribersQuery.eq('user_id', user.id);
+        subscribersQuery = subscribersQuery.eq('user_id', currentUserId);
       }
 
       const { data: subscribersData, error: subscribersError } = await subscribersQuery
@@ -297,7 +298,7 @@ const Admin = () => {
 
       toast.success('Usuário promovido a admin com sucesso');
       // Reload data to reflect changes
-      loadData(isAdmin);
+      loadData(isAdmin, user?.id);
     } catch (error) {
       console.error('Error making user admin:', error);
       toast.error('Erro ao promover usuário a admin');
