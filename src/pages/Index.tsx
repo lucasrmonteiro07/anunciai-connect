@@ -7,7 +7,7 @@ import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import MapFilter from '@/components/ui/map-filter';
 import { Button } from '@/components/ui/button';
-import { Filter, Map as MapIcon } from 'lucide-react';
+import { Filter, Map as MapIcon, Flame } from 'lucide-react';
 import SEO from '@/components/SEO';
 import ChristianAd from '@/components/ui/christian-ad';
 import { supabase } from '@/integrations/supabase/client';
@@ -174,22 +174,31 @@ const Index = () => {
       <Header />
       <HeroSection />
       
-      {/* Promotional Section */}
-      <section className="py-16 bg-gradient-to-r from-primary/5 to-primary/10">
+      {/* Seção de Informações dos Planos - Melhor Estruturada */}
+      <section className="py-16 bg-gradient-to-br from-primary/5 to-orange-500/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Anuncie Seu Negócio</h2>
-            <p className="text-xl text-muted-foreground">Conecte-se com a comunidade cristã</p>
+            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
+              Escolha o Plano Ideal para Seu Negócio
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Compare os benefícios e escolha o plano que melhor se adapta às suas necessidades de negócio
+            </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Plano Benção (Free) */}
-            <div className="bg-card rounded-xl p-8 border-2 border-border hover:border-primary/50 transition-colors">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 max-w-6xl mx-auto">
+            {/* Plano Benção - Melhorado */}
+            <div className="bg-card rounded-xl p-8 border-2 border-border hover:border-primary/50 transition-all duration-300 relative">
               <div className="text-center">
-                <h3 className="text-2xl font-bold mb-2 text-primary">Plano Benção (Free)</h3>
-                <p className="text-4xl font-bold text-primary mb-4">R$ 0</p>
-                <p className="text-muted-foreground mb-6">Para sempre</p>
-                <ul className="text-left space-y-3 mb-8">
+                <div className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4 inline-block">
+                  PLANO GRATUITO
+                </div>
+                <h3 className="text-2xl font-bold text-primary mb-2">Plano Benção</h3>
+                <div className="mb-4">
+                  <span className="text-5xl font-bold text-primary">R$ 0</span>
+                  <p className="text-muted-foreground mt-1">Para sempre</p>
+                </div>
+                <ul className="text-left space-y-3 mb-6">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     1 foto do seu negócio
@@ -206,37 +215,46 @@ const Index = () => {
                     <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
                     Localização no mapa
                   </li>
-                  <li className="flex items-center">
+                  <li className="flex items-center text-muted-foreground">
                     <div className="w-2 h-2 bg-muted rounded-full mr-3"></div>
-                    <span className="text-muted-foreground">Sem destaque nas pesquisas</span>
+                    Sem destaque nas pesquisas
                   </li>
                 </ul>
-                <Button className="w-full" onClick={() => navigate('/anunciar')}>
+                <Button 
+                  onClick={() => navigate('/anunciar')}
+                  variant="outline"
+                  className="w-full border-primary/30 hover:border-primary hover:bg-primary/10"
+                >
                   Começar Grátis
                 </Button>
               </div>
             </div>
 
-            {/* Plano Fogaréu (Destaque) */}
-            <div className="fogareu-card bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-8 border-2 border-orange-400 relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-white text-orange-600 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                🔥 FOGARÉU
-              </div>
-              <div className="text-center text-white">
-                <h3 className="text-2xl font-bold mb-2">Plano Fogaréu (Destaque)</h3>
-                <div className="mb-4">
-                  <p className="text-3xl font-bold text-orange-500">R$ 14,90</p>
-                  <p className="text-sm text-muted-foreground">por mês</p>
-                  <p className="text-sm text-muted-foreground mt-2">ou R$ 11,90/mês no plano anual (R$ 142,80/ano)</p>
+            {/* Plano Fogaréu Mensal - Melhorado */}
+            <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-xl p-8 text-white relative transform hover:scale-105 transition-all duration-300 shadow-xl">
+              <div className="absolute top-4 right-4">
+                <div className="bg-white text-orange-600 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                  <Flame className="h-3 w-3" />
+                  POPULAR
                 </div>
-                <ul className="text-left space-y-3 mb-8">
+              </div>
+              <div className="text-center">
+                <div className="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 inline-block">
+                  PLANO MENSAL
+                </div>
+                <h3 className="text-2xl font-bold mb-2">Plano Fogaréu</h3>
+                <div className="mb-4">
+                  <span className="text-5xl font-bold">R$ 14,90</span>
+                  <p className="mt-1 opacity-90">por mês</p>
+                </div>
+                <ul className="text-left space-y-3 mb-6">
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                     5 fotos do seu negócio
                   </li>
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Destaque nas pesquisas
+                    Destaque nas buscas
                   </li>
                   <li className="flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
@@ -251,118 +269,103 @@ const Index = () => {
                     Aparece primeiro na busca
                   </li>
                 </ul>
-                <div className="space-y-2">
-                  <Button 
-                    variant="secondary" 
-                    className="w-full bg-white text-orange-600 hover:bg-orange-50"
-                    onClick={() => navigate('/plano')}
-                  >
-                    🔥 Tornar-se Fogaréu
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full bg-white/20 text-white border-white/30 hover:bg-white/30"
-                    onClick={() => navigate('/gerenciar-pagamento')}
-                  >
-                    💳 Gerenciar Pagamento
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Seção de Informações dos Planos */}
-          <div className="mt-12 max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-4">Escolha o Plano Ideal para Seu Negócio</h3>
-              <p className="text-muted-foreground">
-                Compare os benefícios e escolha o plano que melhor se adapta às suas necessidades
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {/* Plano Benção - Resumo */}
-              <div className="bg-card rounded-lg p-6 border border-border">
-                <div className="text-center">
-                  <h4 className="text-lg font-bold text-primary mb-2">Plano Benção</h4>
-                  <p className="text-2xl font-bold text-primary mb-2">R$ 0</p>
-                  <p className="text-sm text-muted-foreground mb-4">Para sempre</p>
-                  <ul className="text-sm text-left space-y-2">
-                    <li>✅ 1 foto</li>
-                    <li>✅ Listagem básica</li>
-                    <li>✅ Contato</li>
-                    <li>✅ Localização</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Plano Fogaréu Mensal - Resumo */}
-              <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-lg p-6 text-white">
-                <div className="text-center">
-                  <h4 className="text-lg font-bold mb-2">Plano Fogaréu</h4>
-                  <p className="text-2xl font-bold mb-2">R$ 14,90</p>
-                  <p className="text-sm mb-4">por mês</p>
-                  <ul className="text-sm text-left space-y-2">
-                    <li>✅ 5 fotos</li>
-                    <li>✅ Destaque nas buscas</li>
-                    <li>✅ Badge especial</li>
-                    <li>✅ Prioridade</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Plano Fogaréu Anual - Resumo */}
-              <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg p-6 text-white relative">
-                <div className="absolute top-2 right-2 bg-white text-green-600 px-2 py-1 rounded-full text-xs font-bold">
-                  ECONOMIZE 20%
-                </div>
-                <div className="text-center">
-                  <h4 className="text-lg font-bold mb-2">Plano Fogaréu Anual</h4>
-                  <p className="text-2xl font-bold mb-2">R$ 11,90</p>
-                  <p className="text-sm mb-4">por mês (R$ 142,80/ano)</p>
-                  <ul className="text-sm text-left space-y-2">
-                    <li>✅ 5 fotos</li>
-                    <li>✅ Destaque nas buscas</li>
-                    <li>✅ Badge especial</li>
-                    <li>✅ Prioridade</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Botões de Ação */}
-            <div className="text-center space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
-                  onClick={() => navigate('/anunciar')}
-                  variant="outline"
-                  className="px-8"
-                >
-                  🆓 Começar Grátis
-                </Button>
-                <Button 
+                  variant="secondary" 
+                  className="w-full bg-white text-orange-600 hover:bg-orange-50 mb-3"
                   onClick={() => navigate('/plano')}
-                  className="px-8 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
                 >
                   🔥 Tornar-se Fogaréu
                 </Button>
+              </div>
+            </div>
+
+            {/* Plano Fogaréu Anual - Melhorado */}
+            <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl p-8 text-white relative transform hover:scale-105 transition-all duration-300 shadow-xl">
+              <div className="absolute top-4 right-4">
+                <div className="bg-white text-green-600 px-3 py-1 rounded-full text-xs font-bold">
+                  ECONOMIZE 20%
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="bg-white/20 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 inline-block">
+                  PLANO ANUAL
+                </div>
+                <h3 className="text-2xl font-bold mb-2">Plano Fogaréu Anual</h3>
+                <div className="mb-4">
+                  <span className="text-5xl font-bold">R$ 11,90</span>
+                  <p className="mt-1 opacity-90">por mês</p>
+                  <p className="text-sm opacity-75">(R$ 142,80/ano)</p>
+                </div>
+                <ul className="text-left space-y-3 mb-6">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    5 fotos do seu negócio
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Destaque nas buscas
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Contorno dourado nos anúncios
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Badge Fogaréu especial
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                    Aparece primeiro na busca
+                  </li>
+                </ul>
                 <Button 
-                  onClick={() => navigate('/gerenciar-pagamento')}
-                  variant="secondary"
-                  className="px-8"
+                  variant="secondary" 
+                  className="w-full bg-white text-green-600 hover:bg-green-50 mb-3"
+                  onClick={() => navigate('/plano')}
                 >
-                  💳 Gerenciar Pagamento
+                  💰 Escolher Anual
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Já tem uma conta? <span className="text-primary cursor-pointer" onClick={() => navigate('/login')}>Faça login</span> para gerenciar seus anúncios
-              </p>
             </div>
           </div>
 
+          {/* Botões de Ação Centralizados */}
+          <div className="text-center space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-2xl mx-auto">
+              <Button 
+                onClick={() => navigate('/anunciar')}
+                variant="outline"
+                size="lg"
+                className="px-8 py-3"
+              >
+                🆓 Começar Grátis
+              </Button>
+              <Button 
+                onClick={() => navigate('/plano')}
+                size="lg"
+                className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+              >
+                🔥 Ver Todos os Planos
+              </Button>
+              <Button 
+                onClick={() => navigate('/gerenciar-pagamento')}
+                variant="secondary"
+                size="lg"
+                className="px-8 py-3"
+              >
+                💳 Gerenciar Pagamento
+              </Button>
+            </div>
+            <p className="text-muted-foreground">
+              Já tem uma conta? <span className="text-primary cursor-pointer hover:underline" onClick={() => navigate('/login')}>Faça login</span> para gerenciar seus anúncios
+            </p>
+          </div>
+
           {/* Anúncio discreto após planos */}
-          <div className="mt-12 max-w-md mx-auto">
-            <ChristianAd slot="1234567890" className="rounded-lg border border-border/50" />
+          <div className="py-8">
+            <div className="max-w-md mx-auto">
+              <ChristianAd slot="1234567890" className="rounded-lg border border-border/50" />
+            </div>
           </div>
         </div>
       </section>
