@@ -76,6 +76,13 @@ const Admin = () => {
         const isUserAdmin = roles && roles.length > 0;
         setIsAdmin(isUserAdmin);
         
+        console.log('🔍 DEBUG ADMIN:');
+        console.log('- User ID:', session.user.id);
+        console.log('- User Email:', session.user.email);
+        console.log('- Roles found:', roles);
+        console.log('- Is Admin:', isUserAdmin);
+        console.log('- Roles length:', roles?.length);
+        
         // Load data after setting admin status
         loadData(isUserAdmin);
       } else {
@@ -101,21 +108,36 @@ const Admin = () => {
   }, [navigate]);
 
   const loadData = async (adminStatus?: boolean) => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.log('❌ No user ID available');
+      return;
+    }
     
     const currentAdminStatus = adminStatus !== undefined ? adminStatus : isAdmin;
     
+    console.log('🔍 DEBUG LOAD DATA:');
+    console.log('- User ID:', user.id);
+    console.log('- Admin Status from param:', adminStatus);
+    console.log('- Admin Status from state:', isAdmin);
+    console.log('- Current Admin Status:', currentAdminStatus);
+    
     try {
-
-      
       // Load profiles (always all for admin)
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
+      console.log('🔍 PROFILES QUERY:');
+      console.log('- Data:', profilesData);
+      console.log('- Error:', profilesError);
+      console.log('- Count:', profilesData?.length || 0);
+
       if (profilesError) throw profilesError;
       setProfiles(profilesData || []);
+      
+      console.log('🔍 PROFILES SET:');
+      console.log('- Profiles state set to:', profilesData?.length || 0, 'items');
 
             // Load services - all for admin, only user's own for non-admin
       let servicesQuery = supabase
@@ -129,8 +151,16 @@ const Admin = () => {
       const { data: servicesData, error: servicesError } = await servicesQuery
         .order('created_at', { ascending: false });
 
+      console.log('🔍 SERVICES QUERY:');
+      console.log('- Data:', servicesData);
+      console.log('- Error:', servicesError);
+      console.log('- Count:', servicesData?.length || 0);
+
       if (servicesError) throw servicesError;
       setServices(servicesData || []);
+      
+      console.log('🔍 SERVICES SET:');
+      console.log('- Services state set to:', servicesData?.length || 0, 'items');
 
             // Load subscribers - all for admin, only user's own for non-admin  
       let subscribersQuery = supabase
@@ -144,8 +174,16 @@ const Admin = () => {
       const { data: subscribersData, error: subscribersError } = await subscribersQuery
         .order('created_at', { ascending: false });
 
+      console.log('🔍 SUBSCRIBERS QUERY:');
+      console.log('- Data:', subscribersData);
+      console.log('- Error:', subscribersError);
+      console.log('- Count:', subscribersData?.length || 0);
+
       if (subscribersError) throw subscribersError;
       setSubscribers(subscribersData || []);
+      
+      console.log('🔍 SUBSCRIBERS SET:');
+      console.log('- Subscribers state set to:', subscribersData?.length || 0, 'items');
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Erro ao carregar dados');
@@ -276,6 +314,13 @@ const Admin = () => {
       </div>
     );
   }
+
+  console.log('🔍 RENDER STATE:');
+  console.log('- Loading:', loading);
+  console.log('- Is Admin:', isAdmin);
+  console.log('- Profiles count:', profiles.length);
+  console.log('- Services count:', services.length);
+  console.log('- Subscribers count:', subscribers.length);
 
   // Remove the admin check - allow access to all authenticated users
 
