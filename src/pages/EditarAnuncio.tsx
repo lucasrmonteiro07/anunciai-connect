@@ -144,6 +144,9 @@ const EditarAnuncio = () => {
       // Melhorar o formato do endereço para geocodificação mais precisa
       const formattedAddress = address
         .replace(/\s+/g, ' ') // Remove espaços extras
+        .replace(/, Rondônia,/, ',') // Remove "Rondônia" se estiver incorretamente no endereço
+        .replace(/, Mato Grosso,/, ',') // Remove "Mato Grosso" se estiver incorretamente no endereço
+        .replace(/, Amazonas,/, ',') // Remove outros estados incorretos
         .trim();
       
       console.log('Buscando coordenadas para:', formattedAddress);
@@ -152,8 +155,15 @@ const EditarAnuncio = () => {
       const searchQueries = [
         formattedAddress,
         `${formattedAddress}, Brasil`,
-        formattedAddress.replace(', Brasil', '') // Remover Brasil se já estiver
-      ];
+        formattedAddress.replace(', Brasil', ''), // Remover Brasil se já estiver
+        // Adicionar formato específico para cidades do RS
+        formattedAddress.includes('RS') ? formattedAddress.replace(', RS', ', Rio Grande do Sul, Brasil') : null,
+        formattedAddress.includes('Rio Grande do Sul') ? formattedAddress : null,
+        // Formato específico para Novo Hamburgo
+        formattedAddress.includes('Novo Hamburgo') ? formattedAddress.replace(/.*Novo Hamburgo.*/, 'Novo Hamburgo, Rio Grande do Sul, Brasil') : null,
+        // Formato simplificado para Novo Hamburgo
+        formattedAddress.includes('Novo Hamburgo') ? 'Novo Hamburgo, RS, Brasil' : null
+      ].filter(Boolean);
       
       for (const query of searchQueries) {
         try {
@@ -197,7 +207,7 @@ const EditarAnuncio = () => {
     }
     
     // Coordenadas padrão (Brasil central) se não encontrar
-    return { lat: -14.2350, lon: -51.9253 };
+    return { lat: -23.5505, lon: -46.6333 };
   };
 
   const loadService = async () => {
@@ -508,7 +518,7 @@ const EditarAnuncio = () => {
                   type="text" 
                   value={`${address}${number ? ', ' + number : ''}${neighborhood ? ', ' + neighborhood : ''}, ${city}, ${uf}`}
                   readOnly
-                  className="bg-gray-50"
+                  className="bg-black text-white border-gray-600"
                   placeholder="Endereço será preenchido automaticamente"
                 />
                 <p className="text-xs text-muted-foreground mt-1">

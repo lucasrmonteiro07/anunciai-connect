@@ -190,7 +190,7 @@ const Profile = () => {
     
     // Default coordinates for Brazil center if not found
     console.log('Using default Brazil coordinates');
-    return { lat: -14.2350, lng: -51.9253 };
+    return { lat: -23.5505, lng: -46.6333 };
   };
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {

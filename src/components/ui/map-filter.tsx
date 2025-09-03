@@ -37,7 +37,7 @@ const MapBounds: React.FC<{ services: ServiceData[]; leafletComponents: any }> =
       );
       
       if (validServices.length === 0) {
-        map.setView([-14.2350, -51.9253], 4);
+        map.setView([-23.5505, -46.6333], 4);
         return;
       }
       
@@ -115,7 +115,7 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
   return (
     <div className="w-full h-96 rounded-lg overflow-hidden border border-border">
       <MapContainer
-        center={[-14.2350, -51.9253]}
+        center={[-23.5505, -46.6333]}
         zoom={4}
         style={{ height: '100%', width: '100%' }}
         zoomControl={true}
