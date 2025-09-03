@@ -101,20 +101,12 @@ const Admin = () => {
   }, [navigate]);
 
   const loadData = async (adminStatus?: boolean) => {
-    if (!user?.id) {
-      console.log('No user ID available');
-      return;
-    }
+    if (!user?.id) return;
     
     const currentAdminStatus = adminStatus !== undefined ? adminStatus : isAdmin;
-    console.log('Loading data - User ID:', user.id, 'Admin Status:', currentAdminStatus);
     
     try {
-      // Test the has_role function first
-      const { data: roleTest, error: roleTestError } = await supabase
-        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
-      
-      console.log('Role test result:', roleTest, 'Error:', roleTestError);
+
       
       // Load profiles (always all for admin)
       const { data: profilesData, error: profilesError } = await supabase
@@ -122,7 +114,6 @@ const Admin = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('Profiles query result:', profilesData, 'Error:', profilesError);
       if (profilesError) throw profilesError;
       setProfiles(profilesData || []);
 
@@ -138,7 +129,6 @@ const Admin = () => {
       const { data: servicesData, error: servicesError } = await servicesQuery
         .order('created_at', { ascending: false });
 
-      console.log('Services query result:', servicesData, 'Error:', servicesError);
       if (servicesError) throw servicesError;
       setServices(servicesData || []);
 
@@ -154,7 +144,6 @@ const Admin = () => {
       const { data: subscribersData, error: subscribersError } = await subscribersQuery
         .order('created_at', { ascending: false });
 
-      console.log('Subscribers query result:', subscribersData, 'Error:', subscribersError);
       if (subscribersError) throw subscribersError;
       setSubscribers(subscribersData || []);
     } catch (error) {
