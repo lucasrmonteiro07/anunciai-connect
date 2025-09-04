@@ -21,6 +21,7 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
+  const [selectedCity, setSelectedCity] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
   const [services, setServices] = useState<ServiceData[]>([]);
@@ -89,7 +90,7 @@ const Index = () => {
 
   useEffect(() => {
     handleSearch();
-  }, [services, searchTerm, selectedCategory, selectedLocation]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity]);
 
   const loadServices = async () => {
     try {
@@ -183,7 +184,7 @@ const Index = () => {
     let filtered = services;
 
     console.log('🔍 Filtro - Serviços iniciais:', services.length);
-    console.log('🔍 Filtro - Parâmetros:', { searchTerm, selectedCategory, selectedLocation, selectedType });
+    console.log('🔍 Filtro - Parâmetros:', { searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType });
 
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
@@ -214,10 +215,18 @@ const Index = () => {
       filtered = filtered.filter(service => 
         service.location.uf.toLowerCase() === selectedLocation.toLowerCase()
       );
-      console.log('🔍 Filtro - Após localização:', filtered.length);
-      console.log('🔍 Filtro - Serviços filtrados por UF:', filtered.map(s => ({ 
+      console.log('🔍 Filtro - Após estado:', filtered.length);
+    }
+
+    if (selectedCity !== 'all') {
+      filtered = filtered.filter(service => 
+        service.location.city.toLowerCase() === selectedCity.toLowerCase()
+      );
+      console.log('🔍 Filtro - Após cidade:', filtered.length);
+      console.log('🔍 Filtro - Serviços filtrados por cidade:', filtered.map(s => ({ 
         title: s.title, 
         uf: s.location?.uf,
+        city: s.location?.city,
         lat: s.latitude,
         lng: s.longitude,
         type: s.type
@@ -232,7 +241,7 @@ const Index = () => {
     });
 
     setFilteredServices(filtered);
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedType]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType]);
 
   const handleDirectCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {
@@ -500,6 +509,8 @@ const Index = () => {
             setSelectedCategory={setSelectedCategory}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
+            selectedCity={selectedCity}
+            setSelectedCity={setSelectedCity}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
             onSearch={handleSearch}
@@ -607,12 +618,12 @@ const Index = () => {
                 <div className="text-6xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold mb-2">Nenhum serviço encontrado</h3>
                 <p className="text-muted-foreground mb-6">
-                  {searchTerm || selectedCategory !== 'all' || selectedLocation !== 'all' 
+                  {searchTerm || selectedCategory !== 'all' || selectedLocation !== 'all' || selectedCity !== 'all'
                     ? 'Tente ajustar os filtros de busca para encontrar mais resultados.'
                     : 'Ainda não há serviços cadastrados nesta categoria.'
                   }
                 </p>
-                {(searchTerm || selectedCategory !== 'all' || selectedLocation !== 'all') && (
+                {(searchTerm || selectedCategory !== 'all' || selectedLocation !== 'all' || selectedCity !== 'all') && (
                   <Button 
                     variant="outline" 
                     className="mt-4"
@@ -620,6 +631,7 @@ const Index = () => {
                       setSearchTerm('');
                       setSelectedCategory('all');
                       setSelectedLocation('all');
+                      setSelectedCity('all');
                       setFilteredServices(services);
                     }}
                   >
