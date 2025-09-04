@@ -1,0 +1,9 @@
+# ads.txt file for anunciai.app.br
+# This file authorizes Google AdSense to sell advertising space on this website
+# Created: 2024
+# Publisher ID: ca-pub-7412845197984129
+
+# Google AdSense - Direct relationship
+google.com, pub-7412845197984129, DIRECT, f08c47fec0942fa0
+
+# Additional authorized sellers can be added here as needed
