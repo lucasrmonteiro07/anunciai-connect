@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import MiniMap from "@/components/ui/mini-map";
+import GoogleMapsMiniMap from "@/components/ui/google-maps-mini-map";
 import { Camera, Facebook, Instagram, Globe, MapPin, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -598,11 +598,13 @@ const Anunciar = () => {
                   <MapPin className="inline mr-1 h-4 w-4" />
                   Localização
                 </label>
-                <MiniMap 
+                <GoogleMapsMiniMap 
                   latitude={endereco.latitude}
                   longitude={endereco.longitude}
                   title={endereco.logradouro}
                   address={`${endereco.bairro}, ${endereco.cidade} - ${endereco.uf}`}
+                  height="300px"
+                  mapType={google.maps.MapTypeId.ROADMAP}
                 />
               </div>
             )}

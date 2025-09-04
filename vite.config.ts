@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => ({
           vendor: ['react', 'react-dom'],
           supabase: ['@supabase/supabase-js'],
           ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select'],
-          maps: ['leaflet', 'react-leaflet'],
+          // Google Maps não precisa de chunk separado pois é carregado via CDN
           charts: ['recharts'],
         },
       },

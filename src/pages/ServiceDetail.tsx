@@ -7,7 +7,7 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import MiniMap from "@/components/ui/mini-map";
+import GoogleMapsMiniMap from "@/components/ui/google-maps-mini-map";
 import Chat from "@/components/Chat";
 import Rating from "@/components/Rating";
 import ContactInfo from "@/components/ui/contact-info";
@@ -382,11 +382,13 @@ const ServiceDetail = () => {
                   {service.location.address ? `${service.location.address} - ` : ''}{service.location.city}, {service.location.uf}
                 </p>
                 {service.location.latitude && service.location.longitude ? (
-                  <MiniMap
+                  <GoogleMapsMiniMap
                     latitude={service.location.latitude}
                     longitude={service.location.longitude}
                     title={service.title}
                     address={service.location.address}
+                    height="300px"
+                    mapType={google.maps.MapTypeId.ROADMAP}
                   />
                 ) : (
                   <div className="bg-muted/30 p-6 rounded-lg text-center">
