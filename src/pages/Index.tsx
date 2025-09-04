@@ -5,7 +5,7 @@ import Footer from '@/components/ui/footer';
 import HeroSection from '@/components/ui/hero-section';
 import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
-import SimpleGoogleMaps from '@/components/ui/simple-google-maps';
+import ServicesMap from '@/components/ui/services-map';
 import { Button } from '@/components/ui/button';
 import { Filter, Map as MapIcon, Flame } from 'lucide-react';
 import SEO from '@/components/SEO';
@@ -539,10 +539,8 @@ const Index = () => {
                 </div>
               </div>
               
-              <SimpleGoogleMaps 
-                latitude={-23.5505}
-                longitude={-46.6333}
-                title="Mapa de Teste"
+              <ServicesMap 
+                services={filteredServices}
                 height="400px"
               />
             </div>
