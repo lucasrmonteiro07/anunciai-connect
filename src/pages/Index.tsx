@@ -486,6 +486,23 @@ const Index = () => {
           {showMap && (
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4">Mapa dos Serviços</h3>
+              
+              {/* Debug Info - Temporary */}
+              <div className="mb-4 p-4 bg-muted/20 rounded-lg text-sm">
+                <h4 className="font-semibold mb-2">Debug Info:</h4>
+                <p>Total de serviços: {services.length}</p>
+                <p>Serviços filtrados: {filteredServices.length}</p>
+                <p>Serviços com coordenadas: {filteredServices.filter(s => s.location.latitude && s.location.longitude).length}</p>
+                <div className="mt-2">
+                  <p className="font-medium">Coordenadas dos serviços:</p>
+                  {filteredServices.slice(0, 3).map(service => (
+                    <div key={service.id} className="text-xs text-muted-foreground">
+                      {service.title}: lat={service.location.latitude}, lng={service.location.longitude}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
               <MapFilter 
                 services={filteredServices}
                 onServiceClick={(service) => navigate(`/anuncio/${service.id}`)}

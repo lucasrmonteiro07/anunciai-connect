@@ -102,12 +102,25 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
     }
   }, [leafletComponents]);
   
-  const validServices = useMemo(() => 
-    services.filter(s => 
+  const validServices = useMemo(() => {
+    const valid = services.filter(s => 
       s.location.latitude && s.location.longitude &&
       !isNaN(s.location.latitude) && !isNaN(s.location.longitude)
-    ), [services]
-  );
+    );
+    
+    // Debug: log services data
+    console.log('MapFilter - Total services:', services.length);
+    console.log('MapFilter - Valid services with coordinates:', valid.length);
+    console.log('MapFilter - Services data:', services.map(s => ({
+      id: s.id,
+      title: s.title,
+      lat: s.location.latitude,
+      lng: s.location.longitude,
+      isVip: s.isVip
+    })));
+    
+    return valid;
+  }, [services]);
 
   const handleServiceClick = useCallback((service: ServiceData) => {
     try {
@@ -128,11 +141,16 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
   const { MapContainer, TileLayer, Marker, Popup } = leafletComponents;
   
   return (
-    <div className="w-full h-96 rounded-lg overflow-hidden border border-border">
+    <div className="w-full h-96 rounded-lg border border-border" style={{ position: 'relative' }}>
       <MapContainer
         center={[-29.6833, -51.1306]} // Centro em Novo Hamburgo
         zoom={validServices.length > 0 ? 12 : 6}
-        style={{ height: '100%', width: '100%' }}
+        style={{ 
+          height: '100%', 
+          width: '100%',
+          borderRadius: '8px',
+          overflow: 'hidden'
+        }}
         zoomControl={true}
         scrollWheelZoom={true}
         key={`map-${validServices.length}`} // Force remount when services change significantly
@@ -142,49 +160,71 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {validServices.map((service) => {
-          // Garantir que as coordenadas são válidas
-          const lat = Number(service.location.latitude);
-          const lng = Number(service.location.longitude);
-          
-          if (isNaN(lat) || isNaN(lng)) {
-            return null;
-          }
-          
-          return (
-            <Marker 
-              key={`marker-${service.id}`}
-              position={[lat, lng]}
-              icon={service.isVip && vipIcon ? vipIcon : undefined}
-              eventHandlers={{
-                click: () => handleServiceClick(service)
-              }}
-            >
-            <Popup>
-              <div className="text-center min-w-48">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <strong className="text-lg">{service.title}</strong>
-                  {service.isVip && <span className="text-orange-500">🔥</span>}
-                </div>
-                <p className="text-sm text-muted-foreground mb-2">{service.category}</p>
-                <p className="text-sm mb-3">{service.description.substring(0, 100)}...</p>
-                <div className="text-xs text-muted-foreground">
-                  📍 {service.location.address ? `${service.location.address} - ` : ''}{service.location.city}, {service.location.uf}
-                </div>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
+        {validServices.length > 0 ? (
+          validServices.map((service) => {
+            // Garantir que as coordenadas são válidas
+            const lat = Number(service.location.latitude);
+            const lng = Number(service.location.longitude);
+            
+            if (isNaN(lat) || isNaN(lng)) {
+              console.warn('Invalid coordinates for service:', service.id, { lat, lng });
+              return null;
+            }
+            
+            console.log('Rendering marker for service:', service.title, { lat, lng, isVip: service.isVip });
+            
+            return (
+              <Marker 
+                key={`marker-${service.id}`}
+                position={[lat, lng]}
+                icon={service.isVip && vipIcon ? vipIcon : undefined}
+                eventHandlers={{
+                  click: () => {
+                    console.log('Marker clicked:', service.title);
                     handleServiceClick(service);
-                  }}
-                  className="mt-2 px-3 py-1 bg-primary text-primary-foreground rounded text-xs hover:bg-primary/90"
-                >
-                  Ver Detalhes
-                </button>
+                  }
+                }}
+              >
+                <Popup>
+                  <div className="text-center min-w-48">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <strong className="text-lg">{service.title}</strong>
+                      {service.isVip && <span className="text-orange-500">🔥</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-2">{service.category}</p>
+                    <p className="text-sm mb-3">{service.description.substring(0, 100)}...</p>
+                    <div className="text-xs text-muted-foreground">
+                      📍 {service.location.address ? `${service.location.address} - ` : ''}{service.location.city}, {service.location.uf}
+                    </div>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleServiceClick(service);
+                      }}
+                      className="mt-2 px-3 py-1 bg-primary text-primary-foreground rounded text-xs hover:bg-primary/90"
+                    >
+                      Ver Detalhes
+                    </button>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })
+        ) : (
+          // Fallback marker when no services with coordinates
+          <Marker 
+            key="fallback-marker"
+            position={[-29.6833, -51.1306]}
+          >
+            <Popup>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Nenhum serviço com localização encontrado
+                </p>
               </div>
             </Popup>
           </Marker>
-          );
-        })}
+        )}
       </MapContainer>
     </div>
   );

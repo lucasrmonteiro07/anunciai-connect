@@ -175,4 +175,40 @@
     background: linear-gradient(135deg, hsl(280 40% 15%), hsl(280 40% 20%));
     color: hsl(280 40% 85%);
   }
+
+  /* Leaflet Map Styles */
+  .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .leaflet-popup-content-wrapper {
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border-radius: 8px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .leaflet-popup-tip {
+    background: hsl(var(--card));
+  }
+
+  .leaflet-control-zoom a {
+    background: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .leaflet-control-zoom a:hover {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  /* Custom marker styles */
+  .custom-div-icon {
+    background: transparent !important;
+    border: none !important;
+  }
 }
