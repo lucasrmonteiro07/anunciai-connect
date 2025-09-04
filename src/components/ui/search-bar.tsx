@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Search, MapPin, Filter } from 'lucide-react';
 import { Button } from './button';
 import { Input } from './input';
@@ -29,10 +29,50 @@ const SearchBar = ({
   onSearch,
   services = []
 }: SearchBarProps) => {
-  // Extrair categorias únicas dos serviços
-  const uniqueCategories = Array.from(new Set(services.map(s => s.category).filter(Boolean)));
+  // Categorias específicas por tipo
+  const serviceCategories = [
+    'Construção', 'Reformas', 'Pintura', 'Elétrica', 'Hidráulica', 'Ar Condicionado',
+    'Música', 'DJ', 'Som e Iluminação', 'Eventos', 'Fotografia', 'Vídeo',
+    'Tecnologia', 'Desenvolvimento Web', 'Design Gráfico', 'Marketing Digital',
+    'Saúde', 'Fisioterapia', 'Psicologia', 'Nutrição', 'Estética',
+    'Educação', 'Aulas Particulares', 'Cursos', 'Consultoria',
+    'Transporte', 'Mudanças', 'Entregas', 'Turismo',
+    'Limpeza', 'Manutenção', 'Segurança', 'Jardinagem'
+  ];
+
+  const establishmentCategories = [
+    'Restaurante', 'Cafeteria', 'Açaiteria', 'Pastelaria', 'Padaria', 'Confeitaria',
+    'Bar', 'Pub', 'Lanchonete', 'Pizzaria', 'Hamburgueria', 'Churrascaria',
+    'Hotel', 'Pousada', 'Hostel', 'Resort',
+    'Loja', 'Boutique', 'Farmácia', 'Supermercado', 'Mercado',
+    'Academia', 'Studio', 'Spa', 'Salão de Beleza', 'Barbearia',
+    'Escola', 'Creche', 'Universidade', 'Curso Técnico',
+    'Clínica', 'Hospital', 'Laboratório', 'Consultório',
+    'Oficina', 'Auto Peças', 'Posto de Gasolina', 'Lavagem de Carros',
+    'Imobiliária', 'Corretora', 'Banco', 'Seguros'
+  ];
+
+  // Filtrar categorias baseado no tipo selecionado
+  const getFilteredCategories = () => {
+    if (selectedType === 'prestador') {
+      return serviceCategories;
+    } else if (selectedType === 'empreendimento') {
+      return establishmentCategories;
+    } else {
+      // Se "Todos os Tipos", mostrar categorias dos serviços reais
+      return Array.from(new Set(services.map(s => s.category).filter(Boolean)));
+    }
+  };
+
+  const filteredCategories = getFilteredCategories();
   
-  console.log('📋 Categorias encontradas nos serviços:', uniqueCategories);
+  // Resetar categoria quando o tipo mudar
+  useEffect(() => {
+    setSelectedCategory('all');
+  }, [selectedType, setSelectedCategory]);
+  
+  console.log('📋 Tipo selecionado:', selectedType);
+  console.log('📋 Categorias filtradas:', filteredCategories);
   return (
     <div className="w-full max-w-6xl mx-auto bg-card rounded-xl p-6 shadow-lg border border-border">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -67,7 +107,7 @@ const SearchBar = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as Categorias</SelectItem>
-            {uniqueCategories.map(category => (
+            {filteredCategories.map(category => (
               <SelectItem key={category} value={category.toLowerCase()}>
                 {category}
               </SelectItem>
