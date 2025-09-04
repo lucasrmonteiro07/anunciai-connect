@@ -71,3 +71,8 @@ BEGIN
   RETURN subscription_end_date > NOW();
 END;
 $func2$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+import { createClient } from '@supabase/supabase-js'
+const supabaseUrl = 'https://wkchztcfbwnbukpqejix.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
