@@ -106,10 +106,10 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       // Adicionar popup
       const infoWindow = new google.maps.InfoWindow({
         content: `
-          <div style="padding: 10px; min-width: 200px;">
-            <h3 style="margin: 0 0 5px 0; font-size: 14px; font-weight: bold;">${service.title}</h3>
-            <p style="margin: 0 0 5px 0; font-size: 12px; color: #666;">${service.category}</p>
-            <p style="margin: 0; font-size: 11px; color: #888;">${service.location?.address || 'Endereço não disponível'}</p>
+          <div class="google-maps-infowindow">
+            <h3>${service.title}</h3>
+            <p class="category">${service.category}</p>
+            <p class="address">${service.location?.address || 'Endereço não disponível'}</p>
           </div>
         `
       });
@@ -133,7 +133,7 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       <div 
         ref={mapRef} 
         className="w-full google-maps-container"
-        style={{ height }}
+        data-height={height}
       />
     </div>
   );

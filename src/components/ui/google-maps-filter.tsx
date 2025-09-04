@@ -195,12 +195,23 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
     }
   }, [services, selectedService, isLoaded]);
 
+  // Aplicar altura dinâmica via JavaScript para valores customizados
+  useEffect(() => {
+    const containers = document.querySelectorAll('.google-maps-container[data-height]');
+    containers.forEach(container => {
+      const heightValue = container.getAttribute('data-height');
+      if (heightValue && !heightValue.match(/^(200px|300px|400px|500px|600px|700px|800px|50vh|60vh|70vh|80vh|90vh|100vh)$/)) {
+        (container as HTMLElement).style.height = heightValue;
+      }
+    });
+  }, [height]);
+
   // Loading state
   if (typeof window === 'undefined') {
     return (
       <div 
         className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-gray-100 google-maps-loading google-maps-container"
-        style={{ height }}
+        data-height={height}
       >
         <p className="text-muted-foreground">Carregando mapa...</p>
       </div>
@@ -212,7 +223,7 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
     return (
       <div 
         className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-yellow-100 google-maps-container"
-        style={{ height }}
+        data-height={height}
       >
         <div className="text-center">
           <p className="text-yellow-800 text-sm">Google Maps não carregado</p>
@@ -227,8 +238,7 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
     return (
       <div 
         className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-red-50 google-maps-error google-maps-container"
-        className="google-maps-container"
-        style={{ height }}
+        data-height={height}
       >
         <div className="text-center">
           <p className="text-red-600 text-sm">{error}</p>
@@ -249,8 +259,7 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
       <div 
         ref={mapRef} 
         className="w-full google-maps-container"
-        className="google-maps-container"
-        style={{ height }}
+        data-height={height}
       />
       
       {/* Loading overlay */}

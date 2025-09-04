@@ -176,7 +176,39 @@
     color: hsl(280 40% 85%);
   }
 
-  /* Google Maps Styles - Removed Leaflet styles */
+  /* Google Maps Styles */
+  .google-maps-container {
+    width: 100%;
+    height: 300px; /* valor padrão */
+  }
+
+  .google-maps-container.h-200 {
+    height: 200px;
+  }
+
+  .google-maps-container.h-250 {
+    height: 250px;
+  }
+
+  .google-maps-container.h-300 {
+    height: 300px;
+  }
+
+  .google-maps-container.h-350 {
+    height: 350px;
+  }
+
+  .google-maps-container.h-400 {
+    height: 400px;
+  }
+
+  .google-maps-container.h-450 {
+    height: 450px;
+  }
+
+  .google-maps-container.h-500 {
+    height: 500px;
+  }
 
   /* Custom marker styles */
   .custom-div-icon {

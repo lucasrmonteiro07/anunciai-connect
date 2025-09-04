@@ -14,7 +14,15 @@ interface SearchBarProps {
   selectedType: string;
   setSelectedType: (type: string) => void;
   onSearch: () => void;
-  services?: Array<{ category: string; type: string }>;
+  services: Array<{ 
+    category: string; 
+    type: string; 
+    title: string;
+    location?: {
+      uf: string;
+      city: string;
+    };
+  }>;
 }
 
 const SearchBar = ({
@@ -27,7 +35,7 @@ const SearchBar = ({
   selectedType,
   setSelectedType,
   onSearch,
-  services = []
+  services
 }: SearchBarProps) => {
   // Categorias específicas por tipo
   const serviceCategories = [
@@ -66,7 +74,15 @@ const SearchBar = ({
 
   // Filtrar estados que têm anúncios
   const getAvailableStates = () => {
+    console.log('🔍 Services para estados:', services.length);
+    console.log('🔍 Services data:', services.map(s => ({ 
+      title: s.title, 
+      uf: s.location?.uf,
+      location: s.location 
+    })));
+    
     const statesWithServices = Array.from(new Set(services.map(s => s.location?.uf).filter(Boolean)));
+    console.log('🔍 Estados encontrados:', statesWithServices);
     
     const stateNames: { [key: string]: string } = {
       'sp': 'São Paulo',
@@ -97,10 +113,28 @@ const SearchBar = ({
       'df': 'Distrito Federal'
     };
 
-    return statesWithServices.map(uf => ({
+    // Se não há estados com serviços, mostrar estados padrão
+    if (statesWithServices.length === 0) {
+      console.log('⚠️ Nenhum estado encontrado, usando estados padrão');
+      return [
+        { value: 'sp', label: 'São Paulo' },
+        { value: 'rj', label: 'Rio de Janeiro' },
+        { value: 'mg', label: 'Minas Gerais' },
+        { value: 'pr', label: 'Paraná' },
+        { value: 'rs', label: 'Rio Grande do Sul' },
+        { value: 'ba', label: 'Bahia' },
+        { value: 'go', label: 'Goiás' },
+        { value: 'pe', label: 'Pernambuco' }
+      ];
+    }
+
+    const result = statesWithServices.map(uf => ({
       value: uf.toLowerCase(),
       label: stateNames[uf.toLowerCase()] || uf.toUpperCase()
     }));
+    
+    console.log('📍 Estados finais:', result);
+    return result;
   };
 
   const filteredCategories = getFilteredCategories();

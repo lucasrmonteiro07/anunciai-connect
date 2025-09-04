@@ -131,7 +131,7 @@ const GoogleMapsMiniMap: React.FC<GoogleMapsMiniMapProps> = ({
     return (
       <div 
         className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-gray-100 google-maps-loading google-maps-container"
-        style={{ height }}
+        data-height={height}
       >
         <p className="text-muted-foreground">Carregando mapa...</p>
       </div>
@@ -143,7 +143,7 @@ const GoogleMapsMiniMap: React.FC<GoogleMapsMiniMapProps> = ({
     return (
       <div 
         className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-yellow-100 google-maps-container"
-        style={{ height }}
+        data-height={height}
       >
         <div className="text-center">
           <p className="text-yellow-800 text-sm">Google Maps não carregado</p>
@@ -156,10 +156,10 @@ const GoogleMapsMiniMap: React.FC<GoogleMapsMiniMapProps> = ({
   // Error state
   if (error) {
     return (
-              <div 
-          className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-red-50 google-maps-error google-maps-container"
-          style={{ height }}
-        >
+      <div 
+        className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-red-50 google-maps-error google-maps-container"
+        data-height={height}
+      >
         <div className="text-center">
           <p className="text-red-600 text-sm">{error}</p>
           <p className="text-red-500 text-xs mt-1">Verifique sua conexão com a internet</p>
@@ -178,11 +178,11 @@ const GoogleMapsMiniMap: React.FC<GoogleMapsMiniMapProps> = ({
       )}
       
       {/* Mapa */}
-              <div
-          ref={mapRef}
-          className="w-full google-maps-container"
-          style={{ height }}
-        />
+      <div
+        ref={mapRef}
+        className="w-full google-maps-container"
+        data-height={height}
+      />
       
       {/* Loading overlay */}
       {!isLoaded && (

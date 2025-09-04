@@ -8,8 +8,112 @@
 }
 
 /* Estilos para altura dinâmica */
-.google-maps-container[style*="height"] {
-  /* Mantém a altura definida inline mas aplica estilos adicionais via CSS */
+.google-maps-container[data-height] {
+  height: 400px; /* altura padrão */
+}
+
+/* Suporte para alturas comuns */
+.google-maps-container[data-height="200px"] {
+  height: 200px;
+}
+
+.google-maps-container[data-height="300px"] {
+  height: 300px;
+}
+
+.google-maps-container[data-height="400px"] {
+  height: 400px;
+}
+
+.google-maps-container[data-height="500px"] {
+  height: 500px;
+}
+
+.google-maps-container[data-height="600px"] {
+  height: 600px;
+}
+
+.google-maps-container[data-height="700px"] {
+  height: 700px;
+}
+
+.google-maps-container[data-height="800px"] {
+  height: 800px;
+}
+
+/* Alturas em vh */
+.google-maps-container[data-height="50vh"] {
+  height: 50vh;
+}
+
+.google-maps-container[data-height="60vh"] {
+  height: 60vh;
+}
+
+.google-maps-container[data-height="70vh"] {
+  height: 70vh;
+}
+
+.google-maps-container[data-height="80vh"] {
+  height: 80vh;
+}
+
+.google-maps-container[data-height="90vh"] {
+  height: 90vh;
+}
+
+.google-maps-container[data-height="100vh"] {
+  height: 100vh;
+}
+
+/* Alturas em rem */
+.google-maps-container[data-height="8rem"] {
+  height: 8rem;
+}
+
+.google-maps-container[data-height="10rem"] {
+  height: 10rem;
+}
+
+.google-maps-container[data-height="12rem"] {
+  height: 12rem;
+}
+
+.google-maps-container[data-height="14rem"] {
+  height: 14rem;
+}
+
+.google-maps-container[data-height="16rem"] {
+  height: 16rem;
+}
+
+.google-maps-container[data-height="18rem"] {
+  height: 18rem;
+}
+
+.google-maps-container[data-height="20rem"] {
+  height: 20rem;
+}
+
+/* Alturas em vh */
+.google-maps-container[data-height="25vh"] {
+  height: 25vh;
+}
+
+.google-maps-container[data-height="30vh"] {
+  height: 30vh;
+}
+
+.google-maps-container[data-height="35vh"] {
+  height: 35vh;
+}
+
+.google-maps-container[data-height="40vh"] {
+  height: 40vh;
+}
+
+.google-maps-container[data-height="45vh"] {
+  height: 45vh;
 }
 
 .google-maps-container .gm-style {
@@ -58,6 +162,30 @@
   font-size: 0.75rem;
   color: #6b7280;
   margin: 0.25rem 0 0 0;
+}
+
+/* Estilos específicos para InfoWindow do ServicesMap */
+.google-maps-infowindow {
+  padding: 10px;
+  min-width: 200px;
+}
+
+.google-maps-infowindow h3 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.google-maps-infowindow .category {
+  margin: 0 0 5px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.google-maps-infowindow .address {
+  margin: 0;
+  font-size: 11px;
+  color: #888;
 }
 
 .google-maps-popup .text-yellow-600 {
