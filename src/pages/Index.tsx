@@ -183,9 +183,6 @@ const Index = () => {
   const handleSearch = useCallback(() => {
     let filtered = services;
 
-    console.log('🔍 Filtro - Serviços iniciais:', services.length);
-    console.log('🔍 Filtro - Parâmetros:', { searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType });
-
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
       filtered = filtered.filter(service => 
@@ -194,43 +191,30 @@ const Index = () => {
         service.category.toLowerCase().includes(searchLower) ||
         service.denomination.toLowerCase().includes(searchLower)
       );
-      console.log('🔍 Filtro - Após busca:', filtered.length);
     }
 
     if (selectedType !== 'all') {
       filtered = filtered.filter(service => 
         service.type.toLowerCase() === selectedType.toLowerCase()
       );
-      console.log('🔍 Filtro - Após tipo:', filtered.length);
     }
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(service => 
         service.category.toLowerCase() === selectedCategory.toLowerCase()
       );
-      console.log('🔍 Filtro - Após categoria:', filtered.length);
     }
 
     if (selectedLocation !== 'all') {
       filtered = filtered.filter(service => 
         service.location.uf.toLowerCase() === selectedLocation.toLowerCase()
       );
-      console.log('🔍 Filtro - Após estado:', filtered.length);
     }
 
     if (selectedCity !== 'all') {
       filtered = filtered.filter(service => 
         service.location.city.toLowerCase() === selectedCity.toLowerCase()
       );
-      console.log('🔍 Filtro - Após cidade:', filtered.length);
-      console.log('🔍 Filtro - Serviços filtrados por cidade:', filtered.map(s => ({ 
-        title: s.title, 
-        uf: s.location?.uf,
-        city: s.location?.city,
-        lat: s.latitude,
-        lng: s.longitude,
-        type: s.type
-      })));
     }
 
     // Sort VIP first, then by creation date
@@ -557,23 +541,6 @@ const Index = () => {
           {showMap && (
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-4">Mapa dos Serviços</h3>
-              
-              {/* Debug Info - Temporary */}
-              <div className="mb-4 p-4 bg-muted/20 rounded-lg text-sm">
-                <h4 className="font-semibold mb-2">Debug Info:</h4>
-                <p>Total de serviços: {services.length}</p>
-                <p>Serviços filtrados: {filteredServices.length}</p>
-                <p>Serviços com coordenadas: {filteredServices.filter(s => s.location.latitude && s.location.longitude).length}</p>
-                <div className="mt-2">
-                  <p className="font-medium">Coordenadas dos serviços:</p>
-                  {filteredServices.slice(0, 3).map(service => (
-                    <div key={service.id} className="text-xs text-muted-foreground">
-                      {service.title}: lat={service.location.latitude}, lng={service.location.longitude}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
               <ServicesMap 
                 services={filteredServices}
                 height="400px"
