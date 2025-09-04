@@ -64,7 +64,47 @@ const SearchBar = ({
     }
   };
 
+  // Filtrar estados que têm anúncios
+  const getAvailableStates = () => {
+    const statesWithServices = Array.from(new Set(services.map(s => s.location?.uf).filter(Boolean)));
+    
+    const stateNames: { [key: string]: string } = {
+      'sp': 'São Paulo',
+      'rj': 'Rio de Janeiro', 
+      'mg': 'Minas Gerais',
+      'pr': 'Paraná',
+      'rs': 'Rio Grande do Sul',
+      'ba': 'Bahia',
+      'go': 'Goiás',
+      'pe': 'Pernambuco',
+      'sc': 'Santa Catarina',
+      'ce': 'Ceará',
+      'pa': 'Pará',
+      'ma': 'Maranhão',
+      'to': 'Tocantins',
+      'mt': 'Mato Grosso',
+      'ms': 'Mato Grosso do Sul',
+      'al': 'Alagoas',
+      'se': 'Sergipe',
+      'pb': 'Paraíba',
+      'rn': 'Rio Grande do Norte',
+      'pi': 'Piauí',
+      'ac': 'Acre',
+      'am': 'Amazonas',
+      'ro': 'Rondônia',
+      'rr': 'Roraima',
+      'ap': 'Amapá',
+      'df': 'Distrito Federal'
+    };
+
+    return statesWithServices.map(uf => ({
+      value: uf.toLowerCase(),
+      label: stateNames[uf.toLowerCase()] || uf.toUpperCase()
+    }));
+  };
+
   const filteredCategories = getFilteredCategories();
+  const availableStates = getAvailableStates();
   
   // Resetar categoria quando o tipo mudar
   useEffect(() => {
@@ -73,6 +113,7 @@ const SearchBar = ({
   
   console.log('📋 Tipo selecionado:', selectedType);
   console.log('📋 Categorias filtradas:', filteredCategories);
+  console.log('📍 Estados disponíveis:', availableStates);
   return (
     <div className="w-full max-w-6xl mx-auto bg-card rounded-xl p-6 shadow-lg border border-border">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -124,14 +165,11 @@ const SearchBar = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todo o Brasil</SelectItem>
-              <SelectItem value="sp">São Paulo</SelectItem>
-              <SelectItem value="rj">Rio de Janeiro</SelectItem>
-              <SelectItem value="mg">Minas Gerais</SelectItem>
-              <SelectItem value="pr">Paraná</SelectItem>
-              <SelectItem value="rs">Rio Grande do Sul</SelectItem>
-              <SelectItem value="ba">Bahia</SelectItem>
-              <SelectItem value="go">Goiás</SelectItem>
-              <SelectItem value="pe">Pernambuco</SelectItem>
+              {availableStates.map(state => (
+                <SelectItem key={state.value} value={state.value}>
+                  {state.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

@@ -20,25 +20,28 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
     console.log('🗺️ ServicesMap - Serviços recebidos:', services.length);
     console.log('🗺️ ServicesMap - Serviços:', services.map(s => ({ 
       title: s.title, 
-      lat: s.latitude, 
-      lng: s.longitude,
+      lat: s.location?.latitude, 
+      lng: s.location?.longitude,
       uf: s.location?.uf,
-      hasLat: !!s.latitude,
-      hasLng: !!s.longitude,
-      latType: typeof s.latitude,
-      lngType: typeof s.longitude
+      hasLat: !!s.location?.latitude,
+      hasLng: !!s.location?.longitude,
+      latType: typeof s.location?.latitude,
+      lngType: typeof s.location?.longitude
     })));
 
     // Filtrar serviços com coordenadas válidas
     const validServices = services.filter(service => {
-      const hasLat = service.latitude !== null && service.latitude !== undefined && service.latitude !== '';
-      const hasLng = service.longitude !== null && service.longitude !== undefined && service.longitude !== '';
-      const isLatNumber = !isNaN(Number(service.latitude));
-      const isLngNumber = !isNaN(Number(service.longitude));
+      const lat = service.location?.latitude;
+      const lng = service.location?.longitude;
+      
+      const hasLat = lat !== null && lat !== undefined && lat !== '';
+      const hasLng = lng !== null && lng !== undefined && lng !== '';
+      const isLatNumber = !isNaN(Number(lat));
+      const isLngNumber = !isNaN(Number(lng));
       
       console.log(`🗺️ Validação ${service.title}:`, {
         hasLat, hasLng, isLatNumber, isLngNumber,
-        lat: service.latitude, lng: service.longitude
+        lat, lng
       });
       
       return hasLat && hasLng && isLatNumber && isLngNumber;
@@ -60,14 +63,14 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       // Se há apenas um serviço, centralizar nele
       const service = validServices[0];
       map.current = new google.maps.Map(mapRef.current, {
-        center: { lat: service.latitude!, lng: service.longitude! },
+        center: { lat: service.location!.latitude!, lng: service.location!.longitude! },
         zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       });
 
       // Adicionar marcador
       new google.maps.Marker({
-        position: { lat: service.latitude!, lng: service.longitude! },
+        position: { lat: service.location!.latitude!, lng: service.location!.longitude! },
         map: map.current,
         title: service.title
       });
@@ -90,7 +93,7 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
 
     // Adicionar marcadores e calcular bounds
     validServices.forEach(service => {
-      const position = { lat: service.latitude!, lng: service.longitude! };
+      const position = { lat: service.location!.latitude!, lng: service.location!.longitude! };
       bounds.extend(position);
 
       const marker = new google.maps.Marker({
