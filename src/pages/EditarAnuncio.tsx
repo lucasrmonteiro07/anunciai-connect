@@ -168,7 +168,7 @@ const EditarAnuncio = () => {
       for (const query of searchQueries) {
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=br&addressdetails=1`
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query || '')}&limit=1&countrycodes=br&addressdetails=1`
           );
           
           if (!response.ok) {
@@ -350,8 +350,8 @@ const EditarAnuncio = () => {
         number: number?.trim() || null,
         neighborhood: neighborhood?.trim() || null,
         cep: cep?.trim() || null,
-        city: city?.trim() || null,
-        uf: uf?.trim() || null,
+        city: city?.trim() || undefined,
+        uf: uf?.trim() || undefined,
         phone: phone?.trim() || null,
         email: email?.trim() || null,
         whatsapp: whatsapp?.trim() || null,
@@ -367,8 +367,8 @@ const EditarAnuncio = () => {
       const { error } = await supabase
         .from('services')
         .update(updateData)
-        .eq('id', id)
-        .eq('user_id', user?.id);
+        .eq('id', id || '')
+        .eq('user_id', user?.id || '');
 
       if (error) throw error;
 

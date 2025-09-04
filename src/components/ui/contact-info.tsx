@@ -115,40 +115,40 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ serviceId, isOwner }) => {
       </div>
       
       <div className="grid gap-3">
-        {contactData.owner_name && (
+        {contactData?.owner_name && (
           <div className="text-sm">
             <span className="font-medium">Responsável: </span>
             {contactData.owner_name}
           </div>
         )}
         
-        {contactData.phone && (
+        {contactData?.phone && (
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => window.open(`tel:${contactData.phone}`, '_self')}
+            onClick={() => window.open(`tel:${contactData?.phone}`, '_self')}
           >
             <Phone className="h-4 w-4 mr-2" />
             {contactData.phone}
           </Button>
         )}
         
-        {contactData.whatsapp && (
+        {contactData?.whatsapp && (
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => window.open(`https://wa.me/${contactData.whatsapp.replace(/\D/g, '')}`, '_blank')}
+            onClick={() => window.open(`https://wa.me/${contactData.whatsapp?.replace(/\D/g, '') || ''}`, '_blank')}
           >
             <MessageCircle className="h-4 w-4 mr-2" />
             WhatsApp: {contactData.whatsapp}
           </Button>
         )}
         
-        {contactData.email && (
+        {contactData?.email && (
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => window.open(`mailto:${contactData.email}`, '_self')}
+            onClick={() => window.open(`mailto:${contactData?.email}`, '_self')}
           >
             <Mail className="h-4 w-4 mr-2" />
             {contactData.email}

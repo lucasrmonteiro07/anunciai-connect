@@ -129,6 +129,8 @@ const Profile = () => {
       if (data) {
         // Load existing profile data
         setNomeNegocio(data.first_name || "");
+        setMembroCrie(data.crie_member || false);
+        setAceitoConteudo(data.marketing_consent || false);
       }
     } catch (error) {
       console.error("Erro ao carregar perfil:", error);
@@ -217,39 +219,45 @@ const Profile = () => {
 
     try {
       // Save profile data
+      const profileData = {
+        first_name: nomeNegocio,
+        email: email,
+        crie_member: membroCrie,
+        marketing_consent: aceitoConteudo
+      };
+
       const { error: profileError } = await supabase
         .from('profiles')
-        .upsert({
-          id: user?.id,
-          first_name: nomeNegocio,
-          email: email
-        });
+        .update(profileData)
+        .eq('id', user?.id || '');
 
       if (profileError) throw profileError;
 
-      // Save service data
-      const { error: serviceError } = await supabase
-        .from('services')
-        .upsert({
-          user_id: user?.id,
-          title: nomeNegocio,
-          type: tipoAnuncio,
-          category: categoria,
-          denomination: denominacao,
-          address: `${endereco.logradouro}${endereco.numero ? `, ${endereco.numero}` : ''}${endereco.bairro ? ` - ${endereco.bairro}` : ''}`,
-          city: endereco.cidade,
-          uf: endereco.uf,
-          latitude: endereco.latitude,
-          longitude: endereco.longitude,
-          phone: telefone,
-          email: email,
-          facebook: facebook,
-          instagram: instagram,
-          website: website,
-          description: `${tipoAnuncio} - ${categoria}${denominacao ? ` - ${denominacao}` : ''}`
-        });
+      // Save service data only if all required fields are filled
+      if (endereco.cidade && endereco.uf && user?.id) {
+        const { error: serviceError } = await supabase
+          .from('services')
+          .upsert({
+            user_id: user.id,
+            title: nomeNegocio,
+            type: tipoAnuncio,
+            category: categoria,
+            denomination: denominacao || null,
+            address: `${endereco.logradouro}${endereco.numero ? `, ${endereco.numero}` : ''}${endereco.bairro ? ` - ${endereco.bairro}` : ''}`,
+            city: endereco.cidade,
+            uf: endereco.uf,
+            latitude: endereco.latitude,
+            longitude: endereco.longitude,
+            phone: telefone,
+            email: email,
+            facebook: facebook,
+            instagram: instagram,
+            website: website,
+            description: `${tipoAnuncio} - ${categoria}${denominacao ? ` - ${denominacao}` : ''}`
+          });
 
-      if (serviceError) throw serviceError;
+        if (serviceError) throw serviceError;
+      }
 
       toast.success("Perfil salvo com sucesso!");
       navigate('/');

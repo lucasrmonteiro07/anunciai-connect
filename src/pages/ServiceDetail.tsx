@@ -76,7 +76,7 @@ const ServiceDetail = () => {
       const { data: publicData, error: publicError } = await supabase
         .from('services_public')
         .select('*')
-        .eq('id', id)
+        .eq('id', id || '')
         .single();
 
       if (publicError) {
@@ -93,11 +93,11 @@ const ServiceDetail = () => {
       }
 
       // Depois buscar informações de contato de forma segura (apenas para usuários autenticados)
-      let contactInfo = null;
+      let contactInfo: any;
       if (currentUser) {
         try {
           const { data: contactData, error: contactError } = await supabase
-            .rpc('get_service_contact_info', { service_id: id });
+            .rpc('get_service_contact_info', { service_id: id || '' });
           
           if (!contactError && contactData && contactData.length > 0) {
             contactInfo = contactData[0];
@@ -121,9 +121,9 @@ const ServiceDetail = () => {
           address: undefined // Not available in public table
         },
         contact: {
-          phone: contactInfo?.phone || '',
-          email: contactInfo?.email || '',
-          whatsapp: contactInfo?.whatsapp || ''
+          phone: (contactInfo as any)?.phone || '',
+          email: (contactInfo as any)?.email || '',
+          whatsapp: (contactInfo as any)?.whatsapp || ''
         },
         logo: publicData.logo_url && publicData.logo_url.trim() !== '' ? publicData.logo_url : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
         images: (publicData.images && Array.isArray(publicData.images)) 
@@ -131,13 +131,13 @@ const ServiceDetail = () => {
           : [],
         isVip: publicData.is_vip || false,
         denomination: publicData.denomination || '',
-        ownerName: contactInfo?.owner_name || '',
+        ownerName: (contactInfo as any)?.owner_name || '',
         userId: '', // Será definido depois
         valor: undefined, // Not available in public table
         socialMedia: {
-          instagram: publicData.instagram,
-          facebook: publicData.facebook,
-          website: publicData.website
+          instagram: publicData.instagram || undefined,
+          facebook: publicData.facebook || undefined,
+          website: publicData.website || undefined
         }
       };
 
@@ -150,7 +150,7 @@ const ServiceDetail = () => {
           const { data: fullData, error: fullError } = await supabase
             .from('services')
             .select('user_id')
-            .eq('id', id)
+            .eq('id', id || '')
             .single();
 
           if (!fullError && fullData && currentUser.id === fullData.user_id) {

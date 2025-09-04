@@ -40,8 +40,8 @@ export const configureLeafletIcons = () => {
     }
     
     // Method 3: Override the createIcon method
-    const originalCreateIcon = L.Marker.prototype._initIcon;
-    L.Marker.prototype._initIcon = function() {
+    const originalCreateIcon = (L.Marker.prototype as any)._initIcon;
+    (L.Marker.prototype as any)._initIcon = function() {
       try {
         if (!this.options.icon) {
           this.options.icon = createDefaultIcon();

@@ -18,21 +18,23 @@ import type { User, Session } from '@supabase/supabase-js';
 
 interface Profile {
   id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  is_vip: boolean;
-  created_at: string;
+  email: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  is_vip: boolean | null;
+  created_at: string | null;
+  crie_member?: boolean | null;
+  marketing_consent?: boolean | null;
 }
 
 interface Subscriber {
   id: string;
   email: string;
-  user_id: string;
+  user_id: string | null;
   subscribed: boolean;
-  subscription_tier: string;
-  subscription_end: string;
-  stripe_customer_id: string;
+  subscription_tier: string | null;
+  subscription_end: string | null;
+  stripe_customer_id: string | null;
 }
 
 interface Service {
@@ -41,9 +43,9 @@ interface Service {
   category: string;
   city: string;
   uf: string;
-  owner_name: string;
+  owner_name: string | null;
   status: string;
-  created_at: string;
+  created_at: string | null;
 }
 
 const Admin = () => {
@@ -74,12 +76,12 @@ const Admin = () => {
           .eq('role', 'admin');
 
         const isUserAdmin = roles && roles.length > 0;
-        setIsAdmin(isUserAdmin);
+        setIsAdmin(!!isUserAdmin);
         
 
         
         // Load data after setting admin status
-        loadData(isUserAdmin, session.user.id);
+        loadData(!!isUserAdmin, session.user.id);
       } else {
         navigate('/login');
       }
@@ -130,7 +132,7 @@ const Admin = () => {
       console.log('- Count:', profilesData?.length || 0);
 
       if (profilesError) throw profilesError;
-      setProfiles(profilesData || []);
+      setProfiles((profilesData || []) as Profile[]);
       
       console.log('🔍 PROFILES SET:');
       console.log('- Profiles state set to:', profilesData?.length || 0, 'items');
@@ -153,7 +155,7 @@ const Admin = () => {
       console.log('- Count:', servicesData?.length || 0);
 
       if (servicesError) throw servicesError;
-      setServices(servicesData || []);
+      setServices((servicesData || []) as Service[]);
       
       console.log('🔍 SERVICES SET:');
       console.log('- Services state set to:', servicesData?.length || 0, 'items');
@@ -176,7 +178,7 @@ const Admin = () => {
       console.log('- Count:', subscribersData?.length || 0);
 
       if (subscribersError) throw subscribersError;
-      setSubscribers(subscribersData || []);
+      setSubscribers((subscribersData || []) as Subscriber[]);
       
       console.log('🔍 SUBSCRIBERS SET:');
       console.log('- Subscribers state set to:', subscribersData?.length || 0, 'items');
@@ -270,7 +272,7 @@ const Admin = () => {
         p.id === editingUser.id 
           ? { ...p, first_name: editForm.first_name.trim() || null, last_name: editForm.last_name.trim() || null }
           : p
-      ));
+      ) as Profile[]);
       
       setEditingUser(null);
       toast.success('Nome do usuário atualizado com sucesso');
@@ -400,19 +402,23 @@ const Admin = () => {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>{profile.email}</TableCell>
+                        <TableCell>{profile.email || 'Email não informado'}</TableCell>
                         <TableCell>
                           <Switch
-                            checked={profile.is_vip}
-                            onCheckedChange={() => toggleUserVip(profile.id, profile.is_vip)}
+                            checked={!!profile.is_vip}
+                            onCheckedChange={() => toggleUserVip(profile.id, !!profile.is_vip)}
                           />
                         </TableCell>
                         <TableCell>
-                          {new Date(profile.created_at).toLocaleDateString('pt-BR')}
+                          {profile.created_at ? new Date(profile.created_at).toLocaleDateString('pt-BR') : 'Data não disponível'}
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => navigate('/perfil')}
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
                               <Dialog

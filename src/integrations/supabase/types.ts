@@ -47,29 +47,44 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          crie_member: boolean | null
           email: string | null
           first_name: string | null
           id: string
           is_vip: boolean | null
           last_name: string | null
+          marketing_consent: boolean | null
+          subscription_end: string | null
+          subscription_start: string | null
+          subscription_tier: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          crie_member?: boolean | null
           email?: string | null
           first_name?: string | null
           id: string
           is_vip?: boolean | null
           last_name?: string | null
+          marketing_consent?: boolean | null
+          subscription_end?: string | null
+          subscription_start?: string | null
+          subscription_tier?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          crie_member?: boolean | null
           email?: string | null
           first_name?: string | null
           id?: string
           is_vip?: boolean | null
           last_name?: string | null
+          marketing_consent?: boolean | null
+          subscription_end?: string | null
+          subscription_start?: string | null
+          subscription_tier?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -139,6 +154,7 @@ export type Database = {
           uf: string
           updated_at: string | null
           user_id: string
+          valor: string | null
           website: string | null
           whatsapp: string | null
         }
@@ -168,6 +184,7 @@ export type Database = {
           uf: string
           updated_at?: string | null
           user_id: string
+          valor?: string | null
           website?: string | null
           whatsapp?: string | null
         }
@@ -197,6 +214,7 @@ export type Database = {
           uf?: string
           updated_at?: string | null
           user_id?: string
+          valor?: string | null
           website?: string | null
           whatsapp?: string | null
         }
@@ -204,11 +222,14 @@ export type Database = {
       }
       services_public: {
         Row: {
+          address: string | null
           category: string
+          cep: string | null
           city: string
           created_at: string | null
           denomination: string | null
           description: string | null
+          email: string | null
           facebook: string | null
           id: string
           images: string[] | null
@@ -217,19 +238,28 @@ export type Database = {
           latitude: number | null
           logo_url: string | null
           longitude: number | null
+          neighborhood: string | null
+          number: string | null
+          phone: string | null
           status: string | null
           title: string
           type: string
           uf: string
           updated_at: string | null
+          user_id: string | null
+          valor: string | null
           website: string | null
+          whatsapp: string | null
         }
         Insert: {
+          address?: string | null
           category: string
+          cep?: string | null
           city: string
           created_at?: string | null
           denomination?: string | null
           description?: string | null
+          email?: string | null
           facebook?: string | null
           id: string
           images?: string[] | null
@@ -238,19 +268,28 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          neighborhood?: string | null
+          number?: string | null
+          phone?: string | null
           status?: string | null
           title: string
           type: string
           uf: string
           updated_at?: string | null
+          user_id?: string | null
+          valor?: string | null
           website?: string | null
+          whatsapp?: string | null
         }
         Update: {
+          address?: string | null
           category?: string
+          cep?: string | null
           city?: string
           created_at?: string | null
           denomination?: string | null
           description?: string | null
+          email?: string | null
           facebook?: string | null
           id?: string
           images?: string[] | null
@@ -259,12 +298,18 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          neighborhood?: string | null
+          number?: string | null
+          phone?: string | null
           status?: string | null
           title?: string
           type?: string
           uf?: string
           updated_at?: string | null
+          user_id?: string | null
+          valor?: string | null
           website?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
@@ -338,13 +383,31 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
+          role_name: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
+        Returns: boolean
+      }
+      is_subscription_active: {
+        Args: { user_id: string }
         Returns: boolean
       }
       make_user_admin: {
         Args: { user_email: string }
+        Returns: undefined
+      }
+      update_service: {
+        Args: { service_data: Json; service_id: string; user_id: string }
+        Returns: Json
+      }
+      update_user_vip_status: {
+        Args: {
+          is_vip: boolean
+          subscription_end?: string
+          subscription_start?: string
+          subscription_tier?: string
+          user_id: string
+        }
         Returns: undefined
       }
     }

@@ -132,7 +132,7 @@ const Anunciar = () => {
         if (!data.erro) {
           // Buscar coordenadas via Nominatim (OpenStreetMap)
           // Construir endereço mais completo e preciso
-          const addressParts = [];
+          const addressParts: string[] = [];
           if (data.logradouro) addressParts.push(data.logradouro);
           if (data.bairro) addressParts.push(data.bairro);
           if (data.localidade) addressParts.push(data.localidade);
@@ -191,7 +191,7 @@ const Anunciar = () => {
       for (const query of searchQueries) {
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=br&addressdetails=1`
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query || '')}&limit=1&countrycodes=br&addressdetails=1`
           );
           
           if (!response.ok) {
@@ -364,12 +364,12 @@ const Anunciar = () => {
     } catch (error) {
       console.error('Erro ao cadastrar anúncio:', error);
       console.error('Error details:', {
-        message: error?.message,
-        code: error?.code,
-        details: error?.details,
-        hint: error?.hint
+        message: (error as any)?.message,
+        code: (error as any)?.code,
+        details: (error as any)?.details,
+        hint: (error as any)?.hint
       });
-      toast.error(`Erro ao cadastrar anúncio: ${error?.message || 'Tente novamente.'}`);
+      toast.error(`Erro ao cadastrar anúncio: ${(error as any)?.message || 'Tente novamente.'}`);
     } finally {
       setLoading(false);
     }

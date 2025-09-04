@@ -15,7 +15,7 @@ export interface ServiceData {
     uf: string;
     latitude?: number;
     longitude?: number;
-    address?: string;
+    address?: string | null;
   };
   contact: {
     phone: string;
@@ -23,6 +23,7 @@ export interface ServiceData {
     whatsapp?: string;
   };
   logo: string;
+  logo_url?: string;
   images: string[];
   isVip: boolean;
   denomination: string;

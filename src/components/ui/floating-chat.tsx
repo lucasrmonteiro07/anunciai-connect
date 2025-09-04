@@ -53,7 +53,7 @@ const FloatingChat = ({ receiverId, receiverName }: FloatingChatProps) => {
           <div className="flex-1 overflow-hidden">
             <Chat 
               receiverId={receiverId}
-              receiverName={receiverName}
+              receiverName={receiverName || 'Anunciante'}
             />
           </div>
         </div>

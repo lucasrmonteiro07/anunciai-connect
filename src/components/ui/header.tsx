@@ -41,7 +41,7 @@ const Header = () => {
         .eq('user_id', userId)
         .eq('role', 'admin');
       
-      setIsAdmin(data && data.length > 0);
+      setIsAdmin(!!(data && data.length > 0));
     } catch (error) {
       console.error('Error checking admin role:', error);
     }
