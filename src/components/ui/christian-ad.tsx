@@ -79,7 +79,6 @@ const ChristianAd: React.FC<ChristianAdProps> = ({
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive="true"
-        style={{ display: 'block' }}
       />
       {/* Fallback para quando AdSense não carrega */}
       <div className="adsense-fallback hidden bg-muted/20 rounded-lg p-4 text-center text-sm text-muted-foreground">

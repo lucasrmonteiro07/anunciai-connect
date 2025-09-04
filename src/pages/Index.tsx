@@ -458,12 +458,14 @@ const Index = () => {
             )}
           </div>
 
-          {/* Anúncio discreto após planos */}
-          <div className="py-8">
-            <div className="max-w-md mx-auto">
-              <ChristianAd slot="1234567890" className="rounded-lg border border-border/50" />
+          {/* Anúncio discreto após planos - apenas se houver conteúdo suficiente */}
+          {services.length > 0 && (
+            <div className="py-8">
+              <div className="max-w-md mx-auto">
+                <ChristianAd slot="7645068919" className="rounded-lg border border-border/50" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
       
@@ -568,10 +570,10 @@ const Index = () => {
             )}
           </div>
 
-          {/* Anúncio discreto após grid de serviços */}
-          {filteredServices.length > 6 && (
+          {/* Anúncio discreto após grid de serviços - apenas se houver conteúdo suficiente */}
+          {filteredServices.length > 6 && !loading && (
             <div className="mt-8 max-w-lg mx-auto">
-              <ChristianAd slot="0987654321" className="rounded-lg border border-border/50" />
+              <ChristianAd slot="7295932163" className="rounded-lg border border-border/50" />
             </div>
           )}
 

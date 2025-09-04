@@ -141,16 +141,11 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
   const { MapContainer, TileLayer, Marker, Popup } = leafletComponents;
   
   return (
-    <div className="w-full h-96 rounded-lg border border-border" style={{ position: 'relative' }}>
+    <div className="w-full h-96 rounded-lg border border-border relative">
       <MapContainer
         center={[-29.6833, -51.1306]} // Centro em Novo Hamburgo
         zoom={validServices.length > 0 ? 12 : 6}
-        style={{ 
-          height: '100%', 
-          width: '100%',
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}
+        className="h-full w-full rounded-lg overflow-hidden"
         zoomControl={true}
         scrollWheelZoom={true}
         key={`map-${validServices.length}`} // Force remount when services change significantly
@@ -159,6 +154,9 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
+          maxNativeZoom={18}
+          subdomains={['a', 'b', 'c']}
         />
         {validServices.length > 0 ? (
           validServices.map((service) => {

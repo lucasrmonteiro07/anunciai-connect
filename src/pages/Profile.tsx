@@ -176,7 +176,7 @@ const Profile = () => {
     try {
       // Encode the address properly for the API
       const encodedAddress = encodeURIComponent(address);
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=br`);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=br&email=contato@anunciai.com.br&accept-language=pt-BR`);
       const data = await response.json();
       
       if (data && data.length > 0) {

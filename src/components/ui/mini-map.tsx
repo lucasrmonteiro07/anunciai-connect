@@ -104,6 +104,9 @@ const MiniMap: React.FC<MiniMapProps> = ({ latitude, longitude, title, address }
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maxZoom={19}
+          maxNativeZoom={18}
+          subdomains={['a', 'b', 'c']}
         />
         <Marker position={[validLat, validLng]}>
           <Popup>
