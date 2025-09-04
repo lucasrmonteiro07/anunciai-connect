@@ -12,6 +12,7 @@ interface SearchBarProps {
   selectedLocation: string;
   setSelectedLocation: (location: string) => void;
   onSearch: () => void;
+  services?: Array<{ category: string }>;
 }
 
 const SearchBar = ({
@@ -21,8 +22,13 @@ const SearchBar = ({
   setSelectedCategory,
   selectedLocation,
   setSelectedLocation,
-  onSearch
+  onSearch,
+  services = []
 }: SearchBarProps) => {
+  // Extrair categorias únicas dos serviços
+  const uniqueCategories = Array.from(new Set(services.map(s => s.category).filter(Boolean)));
+  
+  console.log('📋 Categorias encontradas nos serviços:', uniqueCategories);
   return (
     <div className="w-full max-w-6xl mx-auto bg-card rounded-xl p-6 shadow-lg border border-border">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -45,14 +51,11 @@ const SearchBar = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as Categorias</SelectItem>
-            <SelectItem value="construcao">Construção</SelectItem>
-            <SelectItem value="musica">Música</SelectItem>
-            <SelectItem value="eventos">Eventos</SelectItem>
-            <SelectItem value="alimentacao">Alimentação</SelectItem>
-            <SelectItem value="moda">Moda</SelectItem>
-            <SelectItem value="tecnologia">Tecnologia</SelectItem>
-            <SelectItem value="saude">Saúde</SelectItem>
-            <SelectItem value="educacao">Educação</SelectItem>
+            {uniqueCategories.map(category => (
+              <SelectItem key={category} value={category.toLowerCase()}>
+                {category}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 

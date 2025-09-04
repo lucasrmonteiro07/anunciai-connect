@@ -492,6 +492,7 @@ const Index = () => {
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
             onSearch={handleSearch}
+            services={services}
           />
         </div>
       </section>

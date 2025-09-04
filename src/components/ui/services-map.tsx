@@ -22,16 +22,27 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       title: s.title, 
       lat: s.latitude, 
       lng: s.longitude,
-      uf: s.location?.uf 
+      uf: s.location?.uf,
+      hasLat: !!s.latitude,
+      hasLng: !!s.longitude,
+      latType: typeof s.latitude,
+      lngType: typeof s.longitude
     })));
 
     // Filtrar serviços com coordenadas válidas
-    const validServices = services.filter(service => 
-      service.latitude && 
-      service.longitude && 
-      !isNaN(service.latitude) && 
-      !isNaN(service.longitude)
-    );
+    const validServices = services.filter(service => {
+      const hasLat = service.latitude !== null && service.latitude !== undefined && service.latitude !== '';
+      const hasLng = service.longitude !== null && service.longitude !== undefined && service.longitude !== '';
+      const isLatNumber = !isNaN(Number(service.latitude));
+      const isLngNumber = !isNaN(Number(service.longitude));
+      
+      console.log(`🗺️ Validação ${service.title}:`, {
+        hasLat, hasLng, isLatNumber, isLngNumber,
+        lat: service.latitude, lng: service.longitude
+      });
+      
+      return hasLat && hasLng && isLatNumber && isLngNumber;
+    });
 
     console.log('🗺️ ServicesMap - Serviços válidos:', validServices.length);
 
