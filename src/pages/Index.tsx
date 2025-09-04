@@ -5,7 +5,7 @@ import Footer from '@/components/ui/footer';
 import HeroSection from '@/components/ui/hero-section';
 import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
-import GoogleMapsFilter from '@/components/ui/google-maps-filter';
+import SimpleGoogleMaps from '@/components/ui/simple-google-maps';
 import { Button } from '@/components/ui/button';
 import { Filter, Map as MapIcon, Flame } from 'lucide-react';
 import SEO from '@/components/SEO';
@@ -539,11 +539,11 @@ const Index = () => {
                 </div>
               </div>
               
-              <GoogleMapsFilter 
-                services={filteredServices}
-                onServiceSelect={(service) => navigate(`/anuncio/${service.id}`)}
+              <SimpleGoogleMaps 
+                latitude={-23.5505}
+                longitude={-46.6333}
+                title="Mapa de Teste"
                 height="400px"
-                mapType={google.maps.MapTypeId.ROADMAP}
               />
             </div>
           )}

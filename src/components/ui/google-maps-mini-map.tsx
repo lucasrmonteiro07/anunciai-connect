@@ -131,10 +131,24 @@ const GoogleMapsMiniMap: React.FC<GoogleMapsMiniMapProps> = ({
     return (
       <div 
         className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-gray-100 google-maps-loading google-maps-container"
-        className="google-maps-container"
         style={{ height }}
       >
         <p className="text-muted-foreground">Carregando mapa...</p>
+      </div>
+    );
+  }
+
+  // Verificar se a API do Google Maps está disponível
+  if (!window.google || !window.google.maps) {
+    return (
+      <div 
+        className="w-full rounded-lg overflow-hidden border border-border flex items-center justify-center bg-yellow-100 google-maps-container"
+        style={{ height }}
+      >
+        <div className="text-center">
+          <p className="text-yellow-800 text-sm">Google Maps não carregado</p>
+          <p className="text-yellow-600 text-xs mt-1">Verifique sua conexão</p>
+        </div>
       </div>
     );
   }
