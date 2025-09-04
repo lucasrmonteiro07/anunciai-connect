@@ -21,6 +21,7 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
   const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
   const [services, setServices] = useState<ServiceData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -182,7 +183,7 @@ const Index = () => {
     let filtered = services;
 
     console.log('🔍 Filtro - Serviços iniciais:', services.length);
-    console.log('🔍 Filtro - Parâmetros:', { searchTerm, selectedCategory, selectedLocation });
+    console.log('🔍 Filtro - Parâmetros:', { searchTerm, selectedCategory, selectedLocation, selectedType });
 
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
@@ -193,6 +194,13 @@ const Index = () => {
         service.denomination.toLowerCase().includes(searchLower)
       );
       console.log('🔍 Filtro - Após busca:', filtered.length);
+    }
+
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(service => 
+        service.type.toLowerCase() === selectedType.toLowerCase()
+      );
+      console.log('🔍 Filtro - Após tipo:', filtered.length);
     }
 
     if (selectedCategory !== 'all') {
@@ -211,7 +219,8 @@ const Index = () => {
         title: s.title, 
         uf: s.location?.uf,
         lat: s.latitude,
-        lng: s.longitude
+        lng: s.longitude,
+        type: s.type
       })));
     }
 
@@ -223,7 +232,7 @@ const Index = () => {
     });
 
     setFilteredServices(filtered);
-  }, [services, searchTerm, selectedCategory, selectedLocation]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedType]);
 
   const handleDirectCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {
@@ -491,6 +500,8 @@ const Index = () => {
             setSelectedCategory={setSelectedCategory}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
+            selectedType={selectedType}
+            setSelectedType={setSelectedType}
             onSearch={handleSearch}
             services={services}
           />

@@ -11,8 +11,10 @@ interface SearchBarProps {
   setSelectedCategory: (category: string) => void;
   selectedLocation: string;
   setSelectedLocation: (location: string) => void;
+  selectedType: string;
+  setSelectedType: (type: string) => void;
   onSearch: () => void;
-  services?: Array<{ category: string }>;
+  services?: Array<{ category: string; type: string }>;
 }
 
 const SearchBar = ({
@@ -22,6 +24,8 @@ const SearchBar = ({
   setSelectedCategory,
   selectedLocation,
   setSelectedLocation,
+  selectedType,
+  setSelectedType,
   onSearch,
   services = []
 }: SearchBarProps) => {
@@ -31,7 +35,7 @@ const SearchBar = ({
   console.log('📋 Categorias encontradas nos serviços:', uniqueCategories);
   return (
     <div className="w-full max-w-6xl mx-auto bg-card rounded-xl p-6 shadow-lg border border-border">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         {/* Search Input */}
         <div className="relative md:col-span-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -43,6 +47,18 @@ const SearchBar = ({
             onKeyPress={(e) => e.key === 'Enter' && onSearch()}
           />
         </div>
+
+        {/* Type Filter */}
+        <Select value={selectedType} onValueChange={setSelectedType}>
+          <SelectTrigger className="h-12 bg-input border-border">
+            <SelectValue placeholder="Tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Tipos</SelectItem>
+            <SelectItem value="prestador">Serviços</SelectItem>
+            <SelectItem value="empreendimento">Estabelecimentos</SelectItem>
+          </SelectContent>
+        </Select>
 
         {/* Category Filter */}
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
