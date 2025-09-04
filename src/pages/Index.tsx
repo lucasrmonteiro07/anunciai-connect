@@ -37,20 +37,54 @@ const Index = () => {
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Check VIP status if user is logged in
+      if (session?.user) {
+        await checkVipStatus(session.access_token);
+      }
     };
     
     checkAuth();
     
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Check VIP status when auth state changes
+        if (session?.user) {
+          await checkVipStatus(session.access_token);
+        }
       }
     );
     
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkVipStatus = async (accessToken: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+      if (error) {
+        console.error('Error checking VIP status:', error);
+        return;
+      }
+
+      console.log('VIP Status checked:', data);
+      
+      // Reload services to get updated VIP status
+      if (data.subscribed) {
+        await loadServices();
+      }
+    } catch (error) {
+      console.error('Error checking VIP status:', error);
+    }
+  };
 
   useEffect(() => {
     handleSearch();

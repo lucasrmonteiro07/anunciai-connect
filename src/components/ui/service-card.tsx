@@ -42,16 +42,16 @@ interface ServiceCardProps {
 
 const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
   const cardClasses = service.isVip 
-    ? "vip-glow card-hover cursor-pointer relative overflow-hidden" 
+    ? "vip-glow card-hover cursor-pointer relative overflow-hidden border-2 border-orange-500/50 shadow-lg shadow-orange-500/20" 
     : "card-hover cursor-pointer bg-card border border-border hover:border-primary/50";
 
   return (
     <Card className={cardClasses} onClick={onClick}>
       {service.isVip && (
         <div className="absolute top-2 right-2 z-10">
-          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold flex items-center gap-1">
-            <Flame className="h-3 w-3" />
-            FOGARÉU
+          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold flex items-center gap-1 px-3 py-1 text-sm shadow-lg animate-pulse">
+            <Flame className="h-4 w-4" />
+            FOGARÉU VIP
           </Badge>
         </div>
       )}
@@ -156,9 +156,10 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
 
           {service.isVip && (
             <div className="mt-3 text-center">
-              <div className="flex items-center justify-center text-xs text-orange-500 font-medium">
-                <Flame className="h-3 w-3 mr-1 fill-current" />
-                Anúncio Fogaréu
+              <div className="flex items-center justify-center text-sm text-orange-500 font-bold bg-orange-500/10 rounded-lg py-2 px-3">
+                <Flame className="h-4 w-4 mr-2 fill-current" />
+                Anúncio Fogaréu VIP
+                <div className="ml-2 w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
               </div>
             </div>
           )}

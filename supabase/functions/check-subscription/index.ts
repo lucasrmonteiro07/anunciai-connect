@@ -95,6 +95,23 @@ serve(async (req) => {
       logStep("No active subscription found");
     }
 
+    // Update user VIP status in profiles table with subscription dates
+    const subscriptionStart = hasActiveSub ? new Date().toISOString() : null;
+    
+    await supabaseClient.rpc('update_user_vip_status', {
+      user_id: user.id,
+      is_vip: hasActiveSub,
+      subscription_start: subscriptionStart,
+      subscription_end: subscriptionEnd,
+      subscription_tier: subscriptionTier
+    });
+    logStep("Updated user VIP status in profiles", { 
+      is_vip: hasActiveSub, 
+      subscription_start: subscriptionStart,
+      subscription_end: subscriptionEnd,
+      subscription_tier: subscriptionTier
+    });
+
     // Update user VIP status in services table
     if (hasActiveSub) {
       await supabaseClient.from("services").update({ 
