@@ -181,6 +181,9 @@ const Index = () => {
   const handleSearch = useCallback(() => {
     let filtered = services;
 
+    console.log('🔍 Filtro - Serviços iniciais:', services.length);
+    console.log('🔍 Filtro - Parâmetros:', { searchTerm, selectedCategory, selectedLocation });
+
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
       filtered = filtered.filter(service => 
@@ -189,18 +192,27 @@ const Index = () => {
         service.category.toLowerCase().includes(searchLower) ||
         service.denomination.toLowerCase().includes(searchLower)
       );
+      console.log('🔍 Filtro - Após busca:', filtered.length);
     }
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(service => 
         service.category.toLowerCase() === selectedCategory.toLowerCase()
       );
+      console.log('🔍 Filtro - Após categoria:', filtered.length);
     }
 
     if (selectedLocation !== 'all') {
       filtered = filtered.filter(service => 
         service.location.uf.toLowerCase() === selectedLocation.toLowerCase()
       );
+      console.log('🔍 Filtro - Após localização:', filtered.length);
+      console.log('🔍 Filtro - Serviços filtrados por UF:', filtered.map(s => ({ 
+        title: s.title, 
+        uf: s.location?.uf,
+        lat: s.latitude,
+        lng: s.longitude
+      })));
     }
 
     // Sort VIP first, then by creation date

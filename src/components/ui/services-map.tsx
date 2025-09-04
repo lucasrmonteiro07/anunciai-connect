@@ -17,6 +17,14 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
   useEffect(() => {
     if (!mapRef.current || !window.google || !window.google.maps) return;
 
+    console.log('🗺️ ServicesMap - Serviços recebidos:', services.length);
+    console.log('🗺️ ServicesMap - Serviços:', services.map(s => ({ 
+      title: s.title, 
+      lat: s.latitude, 
+      lng: s.longitude,
+      uf: s.location?.uf 
+    })));
+
     // Filtrar serviços com coordenadas válidas
     const validServices = services.filter(service => 
       service.latitude && 
@@ -24,6 +32,8 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       !isNaN(service.latitude) && 
       !isNaN(service.longitude)
     );
+
+    console.log('🗺️ ServicesMap - Serviços válidos:', validServices.length);
 
     if (validServices.length === 0) {
       // Se não há serviços válidos, mostrar mapa do Brasil
