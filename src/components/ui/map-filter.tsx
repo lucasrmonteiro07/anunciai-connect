@@ -46,20 +46,26 @@ const MapBounds: React.FC<{ services: ServiceData[]; leafletComponents: any }> =
       );
       
       if (validServices.length === 0) {
-        map.setView([-23.5505, -46.6333], 4);
+        map.setView([-29.6833, -51.1306], 6); // Novo Hamburgo
         return;
       }
       
       if (validServices.length === 1) {
         const service = validServices[0];
-        map.setView([service.location.latitude!, service.location.longitude!], 13);
+        map.setView([service.location.latitude!, service.location.longitude!], 15);
         return;
       }
       
+      // Para múltiplos serviços, ajustar bounds com padding adequado
       const bounds = leafletComponents.L.latLngBounds(
         validServices.map(service => [service.location.latitude!, service.location.longitude!])
       );
-      map.fitBounds(bounds, { padding: [20, 20] });
+      
+      // Ajustar bounds com padding maior para melhor visualização
+      map.fitBounds(bounds, { 
+        padding: [30, 30],
+        maxZoom: 15 // Limitar zoom máximo para não ficar muito próximo
+      });
     } catch (error) {
       console.error('Error setting map bounds:', error);
     }
@@ -84,7 +90,7 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
     if (typeof window === 'undefined' || !leafletComponents) return undefined;
     
     try {
-      return new leafletComponents.L.Icon({
+      return leafletComponents.L.icon({
         iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMzQiIHZpZXdCb3g9IjAgMCAyNCAzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDEuNUMyMCAyIDIwIDEwIDIwIDEyQzIwIDE3IDEyIDMxIDEyIDMxUzQgMTcgNDEyQzQgMTAgNCA4IDEyIDEuNVoiIGZpbGw9IiNGRjYzMzMiIHN0cm9rZT0iI0ZGNEQ0RCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjUiIGZpbGw9IndoaXRlIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkY0RDREIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5K5PC90ZXh0Pgo8L3N2Zz4K',
         iconSize: [24, 34],
         iconAnchor: [12, 34],
@@ -124,8 +130,8 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
   return (
     <div className="w-full h-96 rounded-lg overflow-hidden border border-border">
       <MapContainer
-        center={[-23.5505, -46.6333]}
-        zoom={4}
+        center={[-29.6833, -51.1306]} // Centro em Novo Hamburgo
+        zoom={validServices.length > 0 ? 12 : 6}
         style={{ height: '100%', width: '100%' }}
         zoomControl={true}
         scrollWheelZoom={true}
@@ -136,15 +142,24 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {validServices.map((service) => (
-          <Marker 
-            key={`marker-${service.id}`}
-            position={[service.location.latitude!, service.location.longitude!]}
-            icon={service.isVip && vipIcon ? vipIcon : undefined}
-            eventHandlers={{
-              click: () => handleServiceClick(service)
-            }}
-          >
+        {validServices.map((service) => {
+          // Garantir que as coordenadas são válidas
+          const lat = Number(service.location.latitude);
+          const lng = Number(service.location.longitude);
+          
+          if (isNaN(lat) || isNaN(lng)) {
+            return null;
+          }
+          
+          return (
+            <Marker 
+              key={`marker-${service.id}`}
+              position={[lat, lng]}
+              icon={service.isVip && vipIcon ? vipIcon : undefined}
+              eventHandlers={{
+                click: () => handleServiceClick(service)
+              }}
+            >
             <Popup>
               <div className="text-center min-w-48">
                 <div className="flex items-center justify-center gap-2 mb-2">
@@ -168,7 +183,8 @@ const MapFilter: React.FC<MapFilterProps> = ({ services, onServiceClick }) => {
               </div>
             </Popup>
           </Marker>
-        ))}
+          );
+        })}
       </MapContainer>
     </div>
   );
