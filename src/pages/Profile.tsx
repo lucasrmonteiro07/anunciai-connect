@@ -112,13 +112,15 @@ const Profile = () => {
         navigate('/login');
       } else {
         setEmail(session.user.email || "");
-        loadProfile(session.user.id);
+        // Se tem parâmetro user na URL, é admin editando outro usuário
+        const userIdToLoad = targetUserId || session.user.id;
+        loadProfile(userIdToLoad);
       }
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, targetUserId]);
 
   const loadProfile = async (userId: string) => {
     try {
@@ -228,19 +230,22 @@ const Profile = () => {
         marketing_consent: aceitoConteudo
       };
 
+      // Use targetUserId se admin estiver editando outro usuário, senão usa o usuário logado
+      const userIdToUpdate = targetUserId || user?.id || '';
+      
       const { error: profileError } = await supabase
         .from('profiles')
         .update(profileData)
-        .eq('id', user?.id || '');
+        .eq('id', userIdToUpdate);
 
       if (profileError) throw profileError;
 
       // Save service data only if all required fields are filled
-      if (endereco.cidade && endereco.uf && user?.id) {
+      if (endereco.cidade && endereco.uf && userIdToUpdate) {
         const { error: serviceError } = await supabase
           .from('services')
           .upsert({
-            user_id: user.id,
+            user_id: userIdToUpdate,
             title: nomeNegocio,
             type: tipoAnuncio,
             category: categoria,
@@ -284,8 +289,17 @@ const Profile = () => {
       <main className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
           <User className="h-8 w-8" />
-          Meu Perfil
+          {targetUserId ? 'Editando Perfil de Usuário' : 'Meu Perfil'}
         </h1>
+        
+        {targetUserId && (
+          <Alert className="mb-6 border-blue-500 bg-blue-50">
+            <AlertCircle className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-800">
+              <strong>Modo Administrador:</strong> Você está editando o perfil de outro usuário.
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="bg-card rounded-lg p-8 border shadow-sm max-w-4xl">
           <h2 className="text-xl font-semibold mb-4">Complete suas Informações</h2>
           <p className="text-muted-foreground mb-6">

@@ -56,6 +56,7 @@ const App = () => (
           <Route path="/anunciar" element={<Anunciar />} />
 
           <Route path="/perfil" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/editar-anuncio/:id" element={<EditarAnuncio />} />
           <Route path="/meus-anuncios" element={<MeusAnuncios />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
