@@ -11,8 +11,6 @@ interface SearchBarProps {
   setSelectedCategory: (category: string) => void;
   selectedLocation: string;
   setSelectedLocation: (location: string) => void;
-  selectedCity: string;
-  setSelectedCity: (city: string) => void;
   selectedType: string;
   setSelectedType: (type: string) => void;
   onSearch: () => void;
@@ -34,14 +32,12 @@ const SearchBar = ({
   setSelectedCategory,
   selectedLocation,
   setSelectedLocation,
-  selectedCity,
-  setSelectedCity,
   selectedType,
   setSelectedType,
   onSearch,
   services
 }: SearchBarProps) => {
-  // Categorias específicas por tipo - Sincronizadas com a página de cadastro
+  // Categorias específicas por tipo
   const serviceCategories = [
     'Construção', 'Reformas', 'Pintura', 'Elétrica', 'Hidráulica', 'Ar Condicionado',
     'Música', 'DJ', 'Som e Iluminação', 'Eventos', 'Fotografia', 'Vídeo',
@@ -49,17 +45,7 @@ const SearchBar = ({
     'Saúde', 'Fisioterapia', 'Psicologia', 'Nutrição', 'Estética',
     'Educação', 'Aulas Particulares', 'Cursos', 'Consultoria',
     'Transporte', 'Mudanças', 'Entregas', 'Turismo',
-    'Limpeza', 'Faxineira', 'Diarista', 'Manutenção', 'Segurança', 'Jardinagem',
-    'Pedreiro', 'Pintor', 'Eletricista', 'Encanador', 'Marceneiro', 'Serralheiro', 'Vidraceiro',
-    'Cuidador de Idosos', 'Babá', 'Passadeira', 'Professor Particular', 'Instrutor', 'Tutor', 'Coach', 'Consultor', 'Palestrante',
-    'Advogado', 'Contador', 'Arquiteto', 'Engenheiro', 'Designer', 'Publicitário',
-    'Cabeleireiro', 'Manicure', 'Esteticista', 'Massoterapeuta', 'Personal Trainer', 'Maquiador',
-    'Mecânico', 'Borracheiro', 'Funileiro', 'Soldador', 'Técnico em Eletrônicos', 'Chaveiro',
-    'Confeiteiro', 'Cozinheiro', 'Garçom', 'Bartender', 'Salgadeiro', 'Doceira',
-    'Costureira', 'Sapateiro', 'Relojoeiro', 'Técnico em Informática', 'Web Designer', 'Programador',
-    'Motorista', 'Entregador', 'Carregador', 'Frete', 'Motoboy',
-    'Veterinário', 'Adestrador', 'Tosador', 'Cuidador de Pets', 'Dog Walker',
-    'Enfermeiro', 'Dentista', 'Tradutor', 'Intérprete', 'Revisor', 'Redator', 'Jornalista'
+    'Limpeza', 'Manutenção', 'Segurança', 'Jardinagem'
   ];
 
   const establishmentCategories = [
@@ -88,7 +74,15 @@ const SearchBar = ({
 
   // Filtrar estados que têm anúncios
   const getAvailableStates = () => {
+    console.log('🔍 Services para estados:', services.length);
+    console.log('🔍 Services data:', services.map(s => ({ 
+      title: s.title, 
+      uf: s.location?.uf,
+      location: s.location 
+    })));
+    
     const statesWithServices = Array.from(new Set(services.map(s => s.location?.uf).filter(Boolean)));
+    console.log('🔍 Estados encontrados:', statesWithServices);
     
     const stateNames: { [key: string]: string } = {
       'sp': 'São Paulo',
@@ -121,6 +115,7 @@ const SearchBar = ({
 
     // Se não há estados com serviços, mostrar estados padrão
     if (statesWithServices.length === 0) {
+      console.log('⚠️ Nenhum estado encontrado, usando estados padrão');
       return [
         { value: 'sp', label: 'São Paulo' },
         { value: 'rj', label: 'Rio de Janeiro' },
@@ -134,50 +129,28 @@ const SearchBar = ({
     }
 
     const result = statesWithServices.map(uf => ({
-      value: uf!.toLowerCase(),
-      label: stateNames[uf!.toLowerCase()] || uf!.toUpperCase()
+      value: uf.toLowerCase(),
+      label: stateNames[uf.toLowerCase()] || uf.toUpperCase()
     }));
     
+    console.log('📍 Estados finais:', result);
     return result;
-  };
-
-  // Filtrar cidades que têm anúncios no estado selecionado
-  const getAvailableCities = () => {
-    if (selectedLocation === 'all') {
-      return [];
-    }
-
-    const citiesWithServices = Array.from(
-      new Set(
-        services
-          .filter(s => s.location?.uf?.toLowerCase() === selectedLocation.toLowerCase())
-          .map(s => s.location?.city)
-          .filter(Boolean)
-      )
-    );
-
-    return citiesWithServices.map(city => ({
-      value: city!.toLowerCase(),
-      label: city!
-    }));
   };
 
   const filteredCategories = getFilteredCategories();
   const availableStates = getAvailableStates();
-  const availableCities = getAvailableCities();
   
   // Resetar categoria quando o tipo mudar
   useEffect(() => {
     setSelectedCategory('all');
   }, [selectedType, setSelectedCategory]);
-
-  // Resetar cidade quando o estado mudar
-  useEffect(() => {
-    setSelectedCity('all');
-  }, [selectedLocation, setSelectedCity]);
+  
+  console.log('📋 Tipo selecionado:', selectedType);
+  console.log('📋 Categorias filtradas:', filteredCategories);
+  console.log('📍 Estados disponíveis:', availableStates);
   return (
     <div className="w-full max-w-6xl mx-auto bg-card rounded-xl p-6 shadow-lg border border-border">
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         {/* Search Input */}
         <div className="relative md:col-span-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -217,12 +190,12 @@ const SearchBar = ({
           </SelectContent>
         </Select>
 
-        {/* State Filter */}
+        {/* Location Filter */}
         <div className="relative">
           <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Select value={selectedLocation} onValueChange={setSelectedLocation}>
             <SelectTrigger className="h-12 bg-input border-border pl-10">
-              <SelectValue placeholder="Estado" />
+              <SelectValue placeholder="Localização" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todo o Brasil</SelectItem>
@@ -234,25 +207,6 @@ const SearchBar = ({
             </SelectContent>
           </Select>
         </div>
-
-        {/* City Filter */}
-        <Select 
-          value={selectedCity} 
-          onValueChange={setSelectedCity}
-          disabled={selectedLocation === 'all' || availableCities.length === 0}
-        >
-          <SelectTrigger className="h-12 bg-input border-border">
-            <SelectValue placeholder={selectedLocation === 'all' ? 'Selecione um estado' : 'Cidade'} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas as Cidades</SelectItem>
-            {availableCities.map(city => (
-              <SelectItem key={city.value} value={city.value}>
-                {city.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       <div className="flex justify-center mt-4">
