@@ -69,3 +69,4 @@ Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
 - ✅ Fallback implementado
 - ⚠️ Precisa de slots reais para funcionar completamente
 
+
