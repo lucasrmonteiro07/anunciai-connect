@@ -112,7 +112,7 @@ const Index = () => {
       
       if (servicesData && servicesData.length > 0) {
         // Get unique user IDs from services
-        const userIds = [...new Set(servicesData.map(s => s.id).filter(Boolean))];
+        const userIds = [...new Set(servicesData.map(s => s.user_id).filter((id): id is string => Boolean(id)))];
         
         // Get VIP status from profiles table (using a separate query due to privacy constraints)
         const { data: profilesData } = await supabase
@@ -148,7 +148,7 @@ const Index = () => {
             images: (service.images && Array.isArray(service.images)) 
               ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
               : [],
-            isVip: vipMap.get(service.id) || false,
+            isVip: service.user_id ? vipMap.get(service.user_id) || false : false,
             denomination: service.denomination || '',
             ownerName: '',
             valor: undefined, // Not available in public table

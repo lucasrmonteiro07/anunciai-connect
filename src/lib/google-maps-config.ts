@@ -52,7 +52,6 @@ export const GOOGLE_MAPS_CONFIG = {
   defaultInfoWindowOptions: {
     maxWidth: 300,
     pixelOffset: new google.maps.Size(0, -30),
-    position: { lat: 0, lng: 0 },
     zIndex: 1
   }
 };
@@ -103,7 +102,6 @@ export const createCustomInfoWindow = (
 ): google.maps.InfoWindow => {
   return new google.maps.InfoWindow({
     content,
-    position,
     ...GOOGLE_MAPS_CONFIG.defaultInfoWindowOptions
   });
 };

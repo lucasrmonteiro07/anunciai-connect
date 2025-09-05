@@ -134,8 +134,8 @@ const SearchBar = ({
     }
 
     const result = statesWithServices.map(uf => ({
-      value: uf.toLowerCase(),
-      label: stateNames[uf.toLowerCase()] || uf.toUpperCase()
+      value: uf!.toLowerCase(),
+      label: stateNames[uf!.toLowerCase()] || uf!.toUpperCase()
     }));
     
     return result;
@@ -157,8 +157,8 @@ const SearchBar = ({
     );
 
     return citiesWithServices.map(city => ({
-      value: city.toLowerCase(),
-      label: city
+      value: city!.toLowerCase(),
+      label: city!
     }));
   };
 

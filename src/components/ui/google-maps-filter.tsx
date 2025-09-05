@@ -34,10 +34,10 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
 
   // Filtrar serviços com coordenadas válidas
   const validServices = services.filter(service => 
-    service.latitude && 
-    service.longitude && 
-    isValidCoordinate(service.latitude, 'lat') && 
-    isValidCoordinate(service.longitude, 'lng')
+    service.location?.latitude && 
+    service.location?.longitude && 
+    isValidCoordinate(Number(service.location.latitude), 'lat') && 
+    isValidCoordinate(Number(service.location.longitude), 'lng')
   );
 
   // Calcular centro do mapa baseado nos serviços
@@ -46,8 +46,8 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
       return GOOGLE_MAPS_CONFIG.defaultMapOptions.center;
     }
 
-    const lngs = validServices.map(s => s.longitude!);
-    const lats = validServices.map(s => s.latitude!);
+    const lngs = validServices.map(s => Number(s.location!.longitude!));
+    const lats = validServices.map(s => Number(s.location!.latitude!));
     
     const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
     const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
@@ -113,7 +113,7 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
     clearMarkers();
 
     validServices.forEach((service, index) => {
-      const validCoords = getValidCoordinates(service.latitude!, service.longitude!);
+      const validCoords = getValidCoordinates(Number(service.location!.latitude!), Number(service.location!.longitude!));
       
       // Criar marcador
       const marker = createCustomMarker(
@@ -130,7 +130,7 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
         <div class="p-2 min-w-[200px]">
           <div class="flex items-start gap-3">
             <img 
-              src="${service.image || '/placeholder.svg'}" 
+              src="${service.images?.[0] || '/placeholder.svg'}" 
               alt="${service.title}"
               class="w-12 h-12 rounded-lg object-cover"
               onerror="this.src='/placeholder.svg'"
@@ -138,9 +138,9 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
             <div class="flex-1">
               <h3 class="font-semibold text-sm text-gray-900">${service.title}</h3>
               <p class="text-xs text-gray-600 mt-1">${service.category}</p>
-              ${service.address ? `<p class="text-xs text-gray-500 mt-1">${service.address}</p>` : ''}
+              ${service.location?.address ? `<p class="text-xs text-gray-500 mt-1">${service.location.address}</p>` : ''}
               <div class="flex items-center justify-between mt-2">
-                <span class="text-sm font-bold text-green-600">R$ ${service.price?.toFixed(2) || '0,00'}</span>
+                <span class="text-sm font-bold text-green-600">R$ ${service.valor || '0,00'}</span>
                 <button 
                   onclick="window.selectService(${service.id})"
                   class="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
@@ -172,7 +172,7 @@ const GoogleMapsFilter: React.FC<GoogleMapsFilterProps> = ({
     });
 
     // Adicionar função global para seleção de serviço
-    (window as any).selectService = (serviceId: number) => {
+    (window as any).selectService = (serviceId: string) => {
       const service = services.find(s => s.id === serviceId);
       if (service) {
         onServiceSelect(service);
