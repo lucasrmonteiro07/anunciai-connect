@@ -34,8 +34,8 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       const lat = service.location?.latitude;
       const lng = service.location?.longitude;
       
-      const hasLat = lat !== null && lat !== undefined && lat !== '';
-      const hasLng = lng !== null && lng !== undefined && lng !== '';
+      const hasLat = lat !== null && lat !== undefined && String(lat) !== '';
+      const hasLng = lng !== null && lng !== undefined && String(lng) !== '';
       const isLatNumber = !isNaN(Number(lat));
       const isLngNumber = !isNaN(Number(lng));
       
@@ -63,14 +63,14 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
       // Se há apenas um serviço, centralizar nele
       const service = validServices[0];
       map.current = new google.maps.Map(mapRef.current, {
-        center: { lat: service.location!.latitude!, lng: service.location!.longitude! },
+        center: { lat: Number(service.location!.latitude!), lng: Number(service.location!.longitude!) },
         zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       });
 
       // Adicionar marcador
       new google.maps.Marker({
-        position: { lat: service.location!.latitude!, lng: service.location!.longitude! },
+        position: { lat: Number(service.location!.latitude!), lng: Number(service.location!.longitude!) },
         map: map.current,
         title: service.title
       });
@@ -93,7 +93,7 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
 
     // Adicionar marcadores e calcular bounds
     validServices.forEach(service => {
-      const position = { lat: service.location!.latitude!, lng: service.location!.longitude! };
+      const position = { lat: Number(service.location!.latitude!), lng: Number(service.location!.longitude!) };
       bounds.extend(position);
 
       const marker = new google.maps.Marker({
@@ -123,7 +123,7 @@ const ServicesMap: React.FC<ServicesMapProps> = ({
 
     // Ajustar zoom para mostrar todos os marcadores
     if (validServices.length > 1) {
-      map.current.fitBounds(bounds, { padding: 20 });
+      map.current.fitBounds(bounds, 20);
     }
 
   }, [services]);

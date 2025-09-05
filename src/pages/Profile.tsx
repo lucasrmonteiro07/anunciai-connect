@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/ui/header";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 const Profile = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const targetUserId = searchParams.get('user'); // Para admin editar perfil de outro usuário
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);

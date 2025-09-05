@@ -417,7 +417,7 @@ const Admin = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => navigate('/perfil')}
+                              onClick={() => navigate(`/perfil?user=${profile.id}`)}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -542,7 +542,15 @@ const Admin = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => navigate(`/editar-anuncio/${service.id}`)}
+                              onClick={() => {
+                                if (isAdmin) {
+                                  // Admin pode editar qualquer anúncio
+                                  navigate(`/editar-anuncio/${service.id}`);
+                                } else {
+                                  // Usuário normal só pode ver detalhes
+                                  navigate(`/servico/${service.id}`);
+                                }
+                              }}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
