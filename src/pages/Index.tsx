@@ -493,8 +493,6 @@ const Index = () => {
             setSelectedCategory={setSelectedCategory}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
-            selectedCity={selectedCity}
-            setSelectedCity={setSelectedCity}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
             onSearch={handleSearch}

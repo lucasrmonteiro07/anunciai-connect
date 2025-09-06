@@ -90,7 +90,7 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1">
               <h3 className="text-xl font-bold text-foreground mb-1 line-clamp-1">
-                {service.title}
+                {service.title.toUpperCase()}
               </h3>
               <p className="text-sm text-muted-foreground">{service.ownerName}</p>
             </div>
@@ -159,7 +159,7 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
             <div className="mt-3 text-center">
               <div className="flex items-center justify-center text-sm text-orange-500 font-bold bg-orange-500/10 rounded-lg py-2 px-3">
                 <Flame className="h-4 w-4 mr-2 fill-current" />
-                Anúncio Fogaréu VIP
+                Chat Exclusivo VIP Disponível
                 <div className="ml-2 w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
               </div>
             </div>

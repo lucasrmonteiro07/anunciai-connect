@@ -129,8 +129,8 @@ const SearchBar = ({
     }
 
     const result = statesWithServices.map(uf => ({
-      value: uf.toLowerCase(),
-      label: stateNames[uf.toLowerCase()] || uf.toUpperCase()
+      value: uf?.toLowerCase() || '',
+      label: stateNames[uf?.toLowerCase() || ''] || uf?.toUpperCase() || ''
     }));
     
     console.log('📍 Estados finais:', result);
