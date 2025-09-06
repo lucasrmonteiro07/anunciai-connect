@@ -78,6 +78,7 @@ const MeusAnuncios = () => {
         isVip: false, // VIP is now from user profile, not service
         denomination: service.denomination || '',
         ownerName: '',
+        userId: service.user_id || undefined,
         socialMedia: {
           instagram: service.instagram || undefined,
           facebook: service.facebook || undefined,

@@ -1,8 +1,9 @@
-import React from 'react';
-import { MapPin, Star, Crown, Phone, Mail, Flame } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Star, Crown, Phone, Mail, Flame, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from './card';
 import { Badge } from './badge';
 import { Button } from './button';
+import FloatingChat from './floating-chat';
 
 export interface ServiceData {
   id: string;
@@ -29,6 +30,7 @@ export interface ServiceData {
   denomination: string;
   ownerName: string;
   valor?: string;
+  userId?: string;
   socialMedia?: {
     instagram?: string;
     facebook?: string;
@@ -42,6 +44,8 @@ interface ServiceCardProps {
 }
 
 const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
+  const [showChat, setShowChat] = useState(false);
+
   const cardClasses = service.isVip 
     ? "vip-glow card-hover cursor-pointer relative overflow-hidden border-2 border-orange-500/50 shadow-lg shadow-orange-500/20" 
     : "card-hover cursor-pointer bg-card border border-border hover:border-primary/50";
@@ -128,30 +132,46 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
           </div>
 
           {/* Contact Actions */}
-          <div className="flex gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 border-primary/30 hover:border-primary hover:bg-primary/10"
+              className="border-primary/30 hover:border-primary hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(`tel:${service.contact.phone}`, '_self');
               }}
             >
-              <Phone className="h-4 w-4 mr-2" />
+              <Phone className="h-4 w-4 mr-1" />
               Ligar
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              className="flex-1 border-primary/30 hover:border-primary hover:bg-primary/10"
+              className="border-primary/30 hover:border-primary hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(`mailto:${service.contact.email}`, '_self');
               }}
             >
-              <Mail className="h-4 w-4 mr-2" />
+              <Mail className="h-4 w-4 mr-1" />
               Email
+            </Button>
+            <Button 
+              variant={service.isVip ? "default" : "outline"}
+              size="sm" 
+              className={`${
+                service.isVip 
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-orange-400/50' 
+                  : 'border-primary/30 hover:border-primary hover:bg-primary/10'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowChat(true);
+              }}
+            >
+              <MessageCircle className="h-4 w-4 mr-1" />
+              Chat
             </Button>
           </div>
 
@@ -166,6 +186,15 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
           )}
         </div>
       </CardContent>
+      
+      {/* Floating Chat Component */}
+      {showChat && service.userId && (
+        <FloatingChat 
+          receiverId={service.userId}
+          receiverName={service.ownerName || service.title}
+          isVip={service.isVip}
+        />
+      )}
     </Card>
   );
 };
