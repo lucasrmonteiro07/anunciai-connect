@@ -120,6 +120,14 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: `vip_status_${!currentVip ? 'enabled' : 'disabled'}`,
+        target_type: 'user',
+        target_id: userId,
+        details: { previous_status: currentVip, new_status: !currentVip }
+      });
+
       setProfiles(profiles.map(p => 
         p.id === userId ? { ...p, is_vip: !currentVip } : p
       ) as Profile[]);
@@ -139,6 +147,14 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: 'service_status_updated',
+        target_type: 'service',
+        target_id: serviceId,
+        details: { new_status: newStatus }
+      });
+
       setServices(services.map(s => 
         s.id === serviceId ? { ...s, status: newStatus } : s
       ));
@@ -150,7 +166,10 @@ const Admin = () => {
   };
 
   const deleteService = async (serviceId: string) => {
-    if (!confirm('Tem certeza que deseja excluir este anúncio?')) return;
+    const service = services.find(s => s.id === serviceId);
+    if (!service) return;
+    
+    if (!confirm(`Tem certeza que deseja excluir o anúncio "${service.title}"?`)) return;
 
     try {
       const { error } = await supabase
@@ -159,6 +178,14 @@ const Admin = () => {
         .eq('id', serviceId);
 
       if (error) throw error;
+
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: 'service_deleted',
+        target_type: 'service',
+        target_id: serviceId,
+        details: { service_title: service.title, service_category: service.category }
+      });
 
       setServices(services.filter(s => s.id !== serviceId));
       toast.success('Anúncio excluído com sucesso');
@@ -169,6 +196,11 @@ const Admin = () => {
   };
 
   const makeUserAdmin = async (userId: string) => {
+    const profile = profiles.find(p => p.id === userId);
+    if (!profile) return;
+    
+    if (!confirm(`Tem certeza que deseja promover "${profile.first_name || profile.email}" a administrador?`)) return;
+    
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -178,6 +210,14 @@ const Admin = () => {
         });
 
       if (error) throw error;
+
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: 'user_promoted_to_admin',
+        target_type: 'user',
+        target_id: userId,
+        details: { user_name: profile.first_name || profile.email }
+      });
 
       toast.success('Usuário promovido a admin com sucesso');
       loadData(isAdmin, user?.id);
