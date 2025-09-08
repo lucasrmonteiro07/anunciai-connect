@@ -93,36 +93,26 @@ const Anunciar = () => {
   };
 
   const estabelecimentos = [
-    "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria", "Churrascaria",
-    "Igreja", "Templo", "Capela", "Ministério", "Casa de Oração", "Centro de Culto", "Comunidade",
-    "Escola", "Faculdade", "Curso Técnico", "Curso de Idiomas", "Reforço Escolar", "Creche", "Berçário",
-    "Hospital", "Clínica", "Consultório", "Laboratório", "Farmácia", "Ótica", "Fisioterapia",
-    "Loja de Roupas", "Calçados", "Acessórios", "Perfumaria", "Livraria", "Papelaria", "Casa de Presentes",
-    "Supermercado", "Mercado", "Açougue", "Hortifruti", "Casa de Carnes", "Loja de Conveniência",
-    "Oficina Mecânica", "Lava Jato", "Auto Peças", "Borracharia", "Funilaria", "Auto Center",
-    "Salão de Beleza", "Barbearia", "Estética", "Manicure", "Depilação", "Spa", "Massoterapia",
-    "Academia", "Studio de Dança", "Artes Marciais", "Pilates", "Yoga", "Crossfit",
-    "Pet Shop", "Veterinária", "Hotel para Pets", "Adestramento", "Banho e Tosa",
-    "Imobiliária", "Corretora", "Financeira", "Seguros", "Contabilidade",
-    "Gráfica", "Serigrafia", "Editora", "Copiadora", "Centro de Impressão",
-    "Joalheria", "Relojoaria", "Ótica", "Casa de Câmbio", "Lotérica"
-  ];
+    "Academia", "Açougue", "Acessórios", "Auto Center", "Auto Peças", "Barbearia", "Borracharia", "Buffet",
+    "Calçados", "Capela", "Casa de Carnes", "Casa de Câmbio", "Casa de Oração", "Casa de Presentes", "Centro de Culto", "Centro de Impressão",
+    "Churrascaria", "Clínica", "Comunidade", "Confeitaria", "Consultório", "Contabilidade", "Copiadora", "Corretora", "Creche", "Crossfit",
+    "Curso de Idiomas", "Curso Técnico", "Depilação", "Editora", "Escola", "Estética", "Faculdade", "Farmácia", "Financeira", "Fisioterapia", "Funilaria",
+    "Gráfica", "Hamburgueria", "Hortifruti", "Hospital", "Hotel para Pets", "Igreja", "Imobiliária", "Joalheria", "Laboratório", "Lanchonete", "Lava Jato",
+    "Livraria", "Loja de Conveniência", "Loja de Roupas", "Loja Virtual", "Lotérica", "Manicure", "Massoterapia", "Mercado", "Ministério",
+    "Oficina Mecânica", "Ótica", "Padaria", "Papelaria", "Perfumaria", "Pet Shop", "Pilates", "Pizzaria", "Reforço Escolar", "Relojoaria",
+    "Restaurante", "Salão de Beleza", "Seguros", "Serigrafia", "Sorveteria", "Spa", "Studio de Dança", "Supermercado", "Templo", "Veterinária", "Yoga"
+  ].sort();
 
   const prestadorServicos = [
-    "Pedreiro", "Pintor", "Eletricista", "Encanador", "Marceneiro", "Serralheiro", "Vidraceiro",
-    "Jardineiro", "Faxineira", "Diarista", "Cuidador de Idosos", "Babá", "Passadeira",
-    "Professor Particular", "Instrutor", "Tutor", "Coach", "Consultor", "Palestrante",
-    "Advogado", "Contador", "Arquiteto", "Engenheiro", "Designer", "Publicitário",
-    "Fotógrafo", "Videomaker", "DJ", "Músico", "Cantor", "Organizador de Eventos", "Buffet",
-    "Cabeleireiro", "Manicure", "Esteticista", "Massoterapeuta", "Personal Trainer", "Maquiador",
-    "Mecânico", "Borracheiro", "Funileiro", "Soldador", "Técnico em Eletrônicos", "Chaveiro",
-    "Confeiteiro", "Cozinheiro", "Garçom", "Bartender", "Salgadeiro", "Doceira",
-    "Costureira", "Sapateiro", "Relojoeiro", "Técnico em Informática", "Web Designer", "Programador",
-    "Motorista", "Entregador", "Carregador", "Mudanças", "Frete", "Motoboy",
-    "Veterinário", "Adestrador", "Tosador", "Cuidador de Pets", "Dog Walker",
-    "Psicólogo", "Fisioterapeuta", "Nutricionista", "Enfermeiro", "Dentista",
-    "Tradutor", "Intérprete", "Revisor", "Redator", "Jornalista"
-  ];
+    "Adestrador", "Advogado", "Arquiteto", "Babá", "Bartender", "Borracheiro", "Buffet", "Cabeleireiro", "Cantor", "Carregador", "Chaveiro", "Coach",
+    "Confeiteiro", "Consultor", "Contador", "Costureira", "Cozinheiro", "Cuidador de Idosos", "Cuidador de Pets", "Dentista", "Designer", "Diarista",
+    "DJ", "Doceira", "Dog Walker", "Eletricista", "Encanador", "Enfermeiro", "Engenheiro", "Entregador", "Esteticista", "Faxineira", "Fisioterapeuta",
+    "Fotógrafo", "Frete", "Funileiro", "Garçom", "Instrutor", "Intérprete", "Jardineiro", "Jornalista", "Manicure", "Maquiador", "Marceneiro",
+    "Massoterapeuta", "Mecânico", "Motoboy", "Motorista", "Mudanças", "Músico", "Nutricionista", "Organizador de Eventos", "Palestrante", "Passadeira",
+    "Pedreiro", "Personal Trainer", "Pintor", "Programador", "Professor Particular", "Psicólogo", "Publicitário", "Redator", "Relojoeiro", "Revisor",
+    "Salgadeiro", "Sapateiro", "Serralheiro", "Soldador", "Técnico em Eletrônicos", "Técnico em Informática", "Tosador", "Tradutor", "Tutor",
+    "Veterinário", "Videomaker", "Vidraceiro", "Web Designer"
+  ].sort();
 
   const buscarCep = async (cepValue: string) => {
     if (cepValue.length === 8) {
@@ -298,6 +288,34 @@ const Anunciar = () => {
         toast.error("Você precisa estar logado para cadastrar um anúncio");
         navigate('/login');
         return;
+      }
+
+      // Verificar se usuário é VIP
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_vip')
+        .eq('id', user.id)
+        .single();
+
+      const userIsVip = profile?.is_vip || false;
+
+      // Se não for VIP, verificar limite de anúncios
+      if (!userIsVip) {
+        const { data: existingServices, error: countError } = await supabase
+          .from('services')
+          .select('id')
+          .eq('user_id', user.id);
+
+        if (countError) {
+          console.error('Erro ao verificar anúncios existentes:', countError);
+          toast.error('Erro ao verificar limite de anúncios');
+          return;
+        }
+
+        if (existingServices && existingServices.length >= 1) {
+          toast.error('Usuários gratuitos podem ter apenas 1 anúncio. Torne-se VIP para criar anúncios ilimitados!');
+          return;
+        }
       }
 
       // Upload das fotos se houver

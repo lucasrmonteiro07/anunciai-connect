@@ -46,29 +46,26 @@ const Profile = () => {
   const [aceitoConteudo, setAceitoConteudo] = useState(false);
 
   const estabelecimentos = [
-    "Restaurante", "Lanchonete", "Padaria", "Confeitaria", "Sorveteria", "Pizzaria", "Hamburgueria",
-    "Igreja", "Templo", "Capela", "Ministério", "Casa de Oração", "Centro de Culto",
-    "Escola", "Faculdade", "Curso Técnico", "Curso de Idiomas", "Reforço Escolar",
-    "Hospital", "Clínica", "Consultório", "Laboratório", "Farmácia", "Ótica",
-    "Loja de Roupas", "Calçados", "Acessórios", "Perfumaria", "Livraria", "Papelaria",
-    "Supermercado", "Mercado", "Açougue", "Hortifruti", "Casa de Carnes",
-    "Oficina Mecânica", "Lava Jato", "Auto Peças", "Borracharia", "Funilaria",
-    "Salão de Beleza", "Barbearia", "Estética", "Manicure", "Depilação",
-    "Academia", "Studio de Dança", "Artes Marciais", "Pilates", "Yoga"
-  ];
+    "Academia", "Açougue", "Acessórios", "Auto Center", "Auto Peças", "Barbearia", "Borracharia", "Buffet",
+    "Calçados", "Capela", "Casa de Carnes", "Casa de Câmbio", "Casa de Oração", "Casa de Presentes", "Centro de Culto", "Centro de Impressão",
+    "Churrascaria", "Clínica", "Comunidade", "Confeitaria", "Consultório", "Contabilidade", "Copiadora", "Corretora", "Creche", "Crossfit",
+    "Curso de Idiomas", "Curso Técnico", "Depilação", "Editora", "Escola", "Estética", "Faculdade", "Farmácia", "Financeira", "Fisioterapia", "Funilaria",
+    "Gráfica", "Hamburgueria", "Hortifruti", "Hospital", "Hotel para Pets", "Igreja", "Imobiliária", "Joalheria", "Laboratório", "Lanchonete", "Lava Jato",
+    "Livraria", "Loja de Conveniência", "Loja de Roupas", "Loja Virtual", "Lotérica", "Manicure", "Massoterapia", "Mercado", "Ministério",
+    "Oficina Mecânica", "Ótica", "Padaria", "Papelaria", "Perfumaria", "Pet Shop", "Pilates", "Pizzaria", "Reforço Escolar", "Relojoaria",
+    "Restaurante", "Salão de Beleza", "Seguros", "Serigrafia", "Sorveteria", "Spa", "Studio de Dança", "Supermercado", "Templo", "Veterinária", "Yoga"
+  ].sort();
 
   const prestadorServicos = [
-    "Pedreiro", "Pintor", "Eletricista", "Encanador", "Marceneiro", "Serralheiro",
-    "Jardineiro", "Faxineira", "Diarista", "Cuidador de Idosos", "Babá",
-    "Professor Particular", "Instrutor", "Tutor", "Coach", "Consultor",
-    "Advogado", "Contador", "Arquiteto", "Engenheiro", "Designer",
-    "Fotógrafo", "Videomaker", "DJ", "Músico", "Cantor", "Organizador de Eventos",
-    "Cabeleireiro", "Manicure", "Esteticista", "Massoterapeuta", "Personal Trainer",
-    "Mecânico", "Borracheiro", "Funileiro", "Soldador", "Técnico em Eletrônicos",
-    "Confeiteiro", "Cozinheiro", "Garçom", "Bartender", "Salgadeiro",
-    "Costureira", "Sapateiro", "Relojoeiro", "Técnico em Informática", "Web Designer",
-    "Motorista", "Entregador", "Carregador", "Mudanças", "Frete"
-  ];
+    "Adestrador", "Advogado", "Arquiteto", "Babá", "Bartender", "Borracheiro", "Buffet", "Cabeleireiro", "Cantor", "Carregador", "Chaveiro", "Coach",
+    "Confeiteiro", "Consultor", "Contador", "Costureira", "Cozinheiro", "Cuidador de Idosos", "Cuidador de Pets", "Dentista", "Designer", "Diarista",
+    "DJ", "Doceira", "Dog Walker", "Eletricista", "Encanador", "Enfermeiro", "Engenheiro", "Entregador", "Esteticista", "Faxineira", "Fisioterapeuta",
+    "Fotógrafo", "Frete", "Funileiro", "Garçom", "Instrutor", "Intérprete", "Jardineiro", "Jornalista", "Manicure", "Maquiador", "Marceneiro",
+    "Massoterapeuta", "Mecânico", "Motoboy", "Motorista", "Mudanças", "Músico", "Nutricionista", "Organizador de Eventos", "Palestrante", "Passadeira",
+    "Pedreiro", "Personal Trainer", "Pintor", "Programador", "Professor Particular", "Psicólogo", "Publicitário", "Redator", "Relojoeiro", "Revisor",
+    "Salgadeiro", "Sapateiro", "Serralheiro", "Soldador", "Técnico em Eletrônicos", "Técnico em Informática", "Tosador", "Tradutor", "Tutor",
+    "Veterinário", "Videomaker", "Vidraceiro", "Web Designer"
+  ].sort();
 
   const denominacoes = [
     "Assembleia de Deus",
