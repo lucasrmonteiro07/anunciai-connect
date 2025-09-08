@@ -1,194 +1,117 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/ui/header';
-import SEO from '@/components/SEO';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { supabase } from '@/integrations/supabase/client';
+import { Eye, Edit, Trash2, UserPlus, Crown, Flame } from 'lucide-react';
 import { toast } from 'sonner';
-import { Users, FileText, Crown, Trash2, Eye, Edit, Flame, CreditCard } from 'lucide-react';
-import type { User, Session } from '@supabase/supabase-js';
+import Header from '@/components/ui/header';
+import Footer from '@/components/ui/footer';
 
 interface Profile {
   id: string;
-  email: string | null;
   first_name: string | null;
   last_name: string | null;
+  email: string | null;
   is_vip: boolean | null;
   created_at: string | null;
-  crie_member?: boolean | null;
-  marketing_consent?: boolean | null;
-}
-
-interface Subscriber {
-  id: string;
-  email: string;
-  user_id: string | null;
-  subscribed: boolean;
-  subscription_tier: string | null;
-  subscription_end: string | null;
-  stripe_customer_id: string | null;
 }
 
 interface Service {
   id: string;
   title: string;
+  description: string | null;
   category: string;
+  type: string;
   city: string;
   uf: string;
-  owner_name: string | null;
-  status: string;
+  status: string | null;
   created_at: string | null;
+  user_id: string;
 }
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [editingUser, setEditingUser] = useState<Profile | null>(null);
-  const [editForm, setEditForm] = useState({ first_name: '', last_name: '' });
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Check authentication and admin role
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        // Check if user is admin
-        const { data: roles, error: rolesError } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id)
-          .eq('role', 'admin');
-
-        const isUserAdmin = roles && roles.length > 0;
-        setIsAdmin(!!isUserAdmin);
-        
-
-        
-        // Load data after setting admin status
-        loadData(!!isUserAdmin, session.user.id);
-      } else {
-        navigate('/login');
-      }
-      setLoading(false);
-    };
-
     checkAuth();
+  }, []);
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (!session) {
-          navigate('/login');
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const loadData = async (adminStatus?: boolean, userId?: string) => {
-    const currentUserId = userId || user?.id;
-    if (!currentUserId) {
-
-      return;
-    }
-    
-    const currentAdminStatus = adminStatus !== undefined ? adminStatus : isAdmin;
-    
-    console.log('🔍 DEBUG LOAD DATA:');
-    console.log('- User ID:', currentUserId);
-    console.log('- Admin Status from param:', adminStatus);
-    console.log('- Admin Status from state:', isAdmin);
-    console.log('- Current Admin Status:', currentAdminStatus);
-    
+  const checkAuth = async () => {
     try {
-      // Load profiles (always all for admin)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        navigate('/login');
+        return;
+      }
+
+      setUser(session.user);
+
+      // Check if user is admin
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id);
+
+      const adminRole = roles?.find(r => r.role === 'admin');
+      
+      if (!adminRole) {
+        navigate('/');
+        toast.error('Acesso negado. Apenas administradores podem acessar esta página.');
+        return;
+      }
+
+      setIsAdmin(true);
+      loadData(true, session.user.id);
+    } catch (error) {
+      console.error('Error checking auth:', error);
+      navigate('/login');
+    }
+  };
+
+  const loadData = async (isAdminUser: boolean, userId?: string) => {
+    if (!isAdminUser) return;
+
+    try {
+      setLoading(true);
+
+      // Load profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('🔍 PROFILES QUERY:');
-      console.log('- Data:', profilesData);
-      console.log('- Error:', profilesError);
-      console.log('- Count:', profilesData?.length || 0);
-
       if (profilesError) throw profilesError;
-      setProfiles((profilesData || []) as Profile[]);
-      
-      console.log('🔍 PROFILES SET:');
-      console.log('- Profiles state set to:', profilesData?.length || 0, 'items');
+      setProfiles(profilesData as Profile[] || []);
 
-            // Load services - all for admin, only user's own for non-admin
-      let servicesQuery = supabase
+      // Load services
+      const { data: servicesData, error: servicesError } = await supabase
         .from('services')
-        .select('*');
-
-      if (!currentAdminStatus) {
-        servicesQuery = servicesQuery.eq('user_id', currentUserId);
-      }
-
-      const { data: servicesData, error: servicesError } = await servicesQuery
+        .select('*')
         .order('created_at', { ascending: false });
-
-      console.log('🔍 SERVICES QUERY:');
-      console.log('- Data:', servicesData);
-      console.log('- Error:', servicesError);
-      console.log('- Count:', servicesData?.length || 0);
 
       if (servicesError) throw servicesError;
-      setServices((servicesData || []) as Service[]);
-      
-      console.log('🔍 SERVICES SET:');
-      console.log('- Services state set to:', servicesData?.length || 0, 'items');
+      setServices(servicesData as Service[] || []);
 
-            // Load subscribers - all for admin, only user's own for non-admin  
-      let subscribersQuery = supabase
-        .from('subscribers')
-        .select('*');
-
-      if (!currentAdminStatus) {
-        subscribersQuery = subscribersQuery.eq('user_id', currentUserId);
-      }
-
-      const { data: subscribersData, error: subscribersError } = await subscribersQuery
-        .order('created_at', { ascending: false });
-
-      console.log('🔍 SUBSCRIBERS QUERY:');
-      console.log('- Data:', subscribersData);
-      console.log('- Error:', subscribersError);
-      console.log('- Count:', subscribersData?.length || 0);
-
-      if (subscribersError) throw subscribersError;
-      setSubscribers((subscribersData || []) as Subscriber[]);
-      
-      console.log('🔍 SUBSCRIBERS SET:');
-      console.log('- Subscribers state set to:', subscribersData?.length || 0, 'items');
     } catch (error) {
       console.error('Error loading data:', error);
       toast.error('Erro ao carregar dados');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const toggleUserVip = async (userId: string, currentVip: boolean) => {
+  const updateVipStatus = async (userId: string, currentVip: boolean) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -197,16 +120,23 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: `vip_status_${!currentVip ? 'enabled' : 'disabled'}`,
+        target_type: 'user',
+        target_id: userId,
+        details: { previous_status: currentVip, new_status: !currentVip }
+      });
+
       setProfiles(profiles.map(p => 
         p.id === userId ? { ...p, is_vip: !currentVip } : p
-      ));
+      ) as Profile[]);
       toast.success(`Status Fogaréu ${!currentVip ? 'ativado' : 'desativado'} com sucesso`);
     } catch (error) {
       console.error('Error updating VIP status:', error);
       toast.error('Erro ao atualizar status VIP');
     }
   };
-
 
   const updateServiceStatus = async (serviceId: string, newStatus: string) => {
     try {
@@ -216,6 +146,14 @@ const Admin = () => {
         .eq('id', serviceId);
 
       if (error) throw error;
+
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: 'service_status_updated',
+        target_type: 'service',
+        target_id: serviceId,
+        details: { new_status: newStatus }
+      });
 
       setServices(services.map(s => 
         s.id === serviceId ? { ...s, status: newStatus } : s
@@ -228,7 +166,10 @@ const Admin = () => {
   };
 
   const deleteService = async (serviceId: string) => {
-    if (!confirm('Tem certeza que deseja excluir este anúncio?')) return;
+    const service = services.find(s => s.id === serviceId);
+    if (!service) return;
+    
+    if (!confirm(`Tem certeza que deseja excluir o anúncio "${service.title}"?`)) return;
 
     try {
       const { error } = await supabase
@@ -238,6 +179,14 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: 'service_deleted',
+        target_type: 'service',
+        target_id: serviceId,
+        details: { service_title: service.title, service_category: service.category }
+      });
+
       setServices(services.filter(s => s.id !== serviceId));
       toast.success('Anúncio excluído com sucesso');
     } catch (error) {
@@ -246,43 +195,12 @@ const Admin = () => {
     }
   };
 
-  const openEditUser = (profile: Profile) => {
-    setEditingUser(profile);
-    setEditForm({
-      first_name: profile.first_name || '',
-      last_name: profile.last_name || ''
-    });
-  };
-
-  const updateUserName = async () => {
-    if (!editingUser) return;
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          first_name: editForm.first_name.trim() || null,
-          last_name: editForm.last_name.trim() || null
-        })
-        .eq('id', editingUser.id);
-
-      if (error) throw error;
-
-      setProfiles(profiles.map(p => 
-        p.id === editingUser.id 
-          ? { ...p, first_name: editForm.first_name.trim() || null, last_name: editForm.last_name.trim() || null }
-          : p
-      ) as Profile[]);
-      
-      setEditingUser(null);
-      toast.success('Nome do usuário atualizado com sucesso');
-    } catch (error) {
-      console.error('Error updating user name:', error);
-      toast.error('Erro ao atualizar nome do usuário');
-    }
-  };
-
   const makeUserAdmin = async (userId: string) => {
+    const profile = profiles.find(p => p.id === userId);
+    if (!profile) return;
+    
+    if (!confirm(`Tem certeza que deseja promover "${profile.first_name || profile.email}" a administrador?`)) return;
+    
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -293,8 +211,15 @@ const Admin = () => {
 
       if (error) throw error;
 
+      // Log admin action
+      await supabase.rpc('log_admin_action', {
+        action_type: 'user_promoted_to_admin',
+        target_type: 'user',
+        target_id: userId,
+        details: { user_name: profile.first_name || profile.email }
+      });
+
       toast.success('Usuário promovido a admin com sucesso');
-      // Reload data to reflect changes
       loadData(isAdmin, user?.id);
     } catch (error) {
       console.error('Error making user admin:', error);
@@ -304,87 +229,64 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Verificando permissões...</p>
-        </div>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg">Carregando...</div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
 
-  console.log('🔍 RENDER STATE:');
-  console.log('- Loading:', loading);
-  console.log('- Is Admin:', isAdmin);
-  console.log('- Profiles count:', profiles.length);
-  console.log('- Services count:', services.length);
-  console.log('- Subscribers count:', subscribers.length);
-
-  // Remove the admin check - allow access to all authenticated users
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Acesso Negado</h1>
+            <p>Apenas administradores podem acessar esta página.</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO
-        title="Administração - Anunciai"
-        description="Painel administrativo do Anunciai"
-        canonical="https://anunciai.app.br/admin"
-      />
       <Header />
-      
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">{isAdmin ? 'Painel Administrativo' : 'Meus Dados'}</h1>
-          <p className="text-muted-foreground">{isAdmin ? 'Gerencie usuários, anúncios e configurações do sistema' : 'Gerencie seus anúncios e assinatura'}</p>
-          
-          {!isAdmin && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800 mb-2">
-                Você não tem permissões de administrador. Para acessar todas as funcionalidades, você precisa ser promovido a admin.
-              </p>
-              <Button 
-                onClick={() => makeUserAdmin(user?.id || '')}
-                variant="outline"
-                className="border-yellow-300 text-yellow-800 hover:bg-yellow-100"
-              >
-                Solicitar Acesso de Admin
-              </Button>
-            </div>
-          )}
+          <h1 className="text-3xl font-bold mb-2">Painel Administrativo</h1>
+          <p className="text-muted-foreground">Gerencie usuários e anúncios da plataforma</p>
         </div>
 
-        <Tabs defaultValue={isAdmin ? "users" : "services"} className="space-y-6">
-          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-3' : 'grid-cols-2'}`}>
-            {isAdmin && (
-              <TabsTrigger value="users" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Usuários
-              </TabsTrigger>
-            )}
-            <TabsTrigger value="services" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              {isAdmin ? 'Anúncios' : 'Meus Anúncios'}
-            </TabsTrigger>
-            <TabsTrigger value="subscriptions" className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              {isAdmin ? 'Assinaturas' : 'Minha Assinatura'}
-            </TabsTrigger>
+        <Tabs defaultValue="users" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="services">Anúncios</TabsTrigger>
           </TabsList>
 
-          {/* Users Tab - Only for admins */}
-          {isAdmin && (
-            <TabsContent value="users" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gerenciar Usuários</CardTitle>
-                </CardHeader>
+          <TabsContent value="users" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserPlus className="h-5 w-5" />
+                  Gerenciar Usuários ({profiles.length})
+                </CardTitle>
+              </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Nome</TableHead>
                       <TableHead>Email</TableHead>
-                      <TableHead>Fogaréu</TableHead>
                       <TableHead>Data de Cadastro</TableHead>
+                      <TableHead>Status Fogaréu</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -393,24 +295,36 @@ const Admin = () => {
                       <TableRow key={profile.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            {profile.first_name || profile.last_name ? 
-                              `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : 
-                              'Nome não informado'
-                            }
+                            <span className="font-medium">
+                              {profile.first_name && profile.last_name 
+                                ? `${profile.first_name} ${profile.last_name}`
+                                : profile.first_name || profile.last_name || 'Nome não informado'
+                              }
+                            </span>
                             {profile.is_vip && (
-                              <Flame className="h-4 w-4 text-orange-500" />
+                              <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                                <Flame className="h-3 w-3 mr-1" />
+                                VIP
+                              </Badge>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>{profile.email || 'Email não informado'}</TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={!!profile.is_vip}
-                            onCheckedChange={() => toggleUserVip(profile.id, !!profile.is_vip)}
-                          />
+                        <TableCell className="text-muted-foreground">
+                          {profile.email || 'Email não informado'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {profile.created_at ? new Date(profile.created_at).toLocaleDateString('pt-BR') : 'N/A'}
                         </TableCell>
                         <TableCell>
-                          {profile.created_at ? new Date(profile.created_at).toLocaleDateString('pt-BR') : 'Data não disponível'}
+                          <div className="flex items-center gap-2">
+                            <Switch 
+                              checked={!!profile.is_vip}
+                              onCheckedChange={() => updateVipStatus(profile.id, !!profile.is_vip)}
+                            />
+                            <span className="text-sm text-muted-foreground">
+                              {profile.is_vip ? 'Ativo' : 'Inativo'}
+                            </span>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
@@ -422,68 +336,22 @@ const Admin = () => {
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
-                              <Dialog
-                                open={editingUser?.id === profile.id}
-                                onOpenChange={(open) => {
-                                  if (open) {
-                                    openEditUser(profile)
-                                  } else {
-                                    setEditingUser(null)
-                                  }
-                                }}
-                              >
-                                <DialogTrigger asChild>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    onClick={() => openEditUser(profile)}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Editar Nome do Usuário</DialogTitle>
-                                  </DialogHeader>
-                                  <div className="space-y-4">
-                                    <div>
-                                      <Label htmlFor="first_name">Primeiro Nome</Label>
-                                      <Input
-                                        id="first_name"
-                                        value={editForm.first_name}
-                                        onChange={(e) => setEditForm(prev => ({
-                                          ...prev,
-                                          first_name: e.target.value
-                                        }))}
-                                        placeholder="Digite o primeiro nome"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label htmlFor="last_name">Sobrenome</Label>
-                                      <Input
-                                        id="last_name"
-                                        value={editForm.last_name}
-                                        onChange={(e) => setEditForm(prev => ({
-                                          ...prev,
-                                          last_name: e.target.value
-                                        }))}
-                                        placeholder="Digite o sobrenome"
-                                      />
-                                    </div>
-                                    <div className="flex gap-2 justify-end">
-                                      <Button 
-                                        variant="outline" 
-                                        onClick={() => setEditingUser(null)}
-                                      >
-                                        Cancelar
-                                      </Button>
-                                      <Button onClick={updateUserName}>
-                                        Salvar
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => navigate(`/profile?user=${profile.id}`)}
+                            >
+                              <Edit className="h-4 w-4" />
+                              Editar Perfil
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => makeUserAdmin(profile.id)}
+                              title="Promover a administrador"
+                            >
+                              <Crown className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -493,13 +361,11 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          )}
 
-          {/* Services Tab */}
           <TabsContent value="services" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>{isAdmin ? 'Gerenciar Anúncios' : 'Meus Anúncios'}</CardTitle>
+                <CardTitle>Gerenciar Anúncios ({services.length})</CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -507,67 +373,68 @@ const Admin = () => {
                     <TableRow>
                       <TableHead>Título</TableHead>
                       <TableHead>Categoria</TableHead>
+                      <TableHead>Tipo</TableHead>
                       <TableHead>Localização</TableHead>
-                      <TableHead>Proprietário</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Data</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {services.map((service) => (
                       <TableRow key={service.id}>
-                        <TableCell>
-                          {service.title}
+                        <TableCell 
+                          className="font-medium cursor-pointer hover:text-primary"
+                          onClick={() => navigate(`/servico/${service.id}`)}
+                        >
+                          {service.title.toUpperCase()}
                         </TableCell>
+                        <TableCell>{service.category}</TableCell>
                         <TableCell>
-                          <Badge variant="secondary">{service.category}</Badge>
-                        </TableCell>
-                        <TableCell>{service.city}, {service.uf}</TableCell>
-                        <TableCell>{service.owner_name}</TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={service.status === 'active' ? 'default' : 'secondary'}
-                          >
-                            {service.status}
+                          <Badge variant={service.type === 'prestador' ? 'default' : 'secondary'}>
+                            {service.type === 'prestador' ? 'Serviço' : 'Estabelecimento'}
                           </Badge>
                         </TableCell>
+                        <TableCell>{service.city}, {service.uf}</TableCell>
                         <TableCell>
-                          <div className="flex gap-2">
+                          <Badge variant={service.status === 'active' ? 'default' : 'destructive'}>
+                            {service.status === 'active' ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {service.created_at ? new Date(service.created_at).toLocaleDateString('pt-BR') : 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => navigate(`/anuncio/${service.id}`)}
+                              onClick={() => navigate(`/servico/${service.id}`)}
+                              title="Ver anúncio"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => {
-                                if (isAdmin) {
-                                  // Admin pode editar qualquer anúncio
-                                  navigate(`/editar-anuncio/${service.id}`);
-                                } else {
-                                  // Usuário normal só pode ver detalhes
-                                  navigate(`/servico/${service.id}`);
-                                }
-                              }}
+                              onClick={() => navigate(`/editar-anuncio/${service.id}`)}
+                              title="Editar anúncio"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => updateServiceStatus(service.id, 
-                                service.status === 'active' ? 'inactive' : 'active'
-                              )}
+                              onClick={() => updateServiceStatus(service.id, service.status === 'active' ? 'inactive' : 'active')}
+                              title={service.status === 'active' ? 'Desativar' : 'Ativar'}
                             >
-                              {service.status === 'active' ? 'Desativar' : 'Ativar'}
+                              {service.status === 'active' ? '❌' : '✅'}
                             </Button>
                             <Button 
                               variant="destructive" 
                               size="sm"
                               onClick={() => deleteService(service.id)}
+                              title="Excluir anúncio"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -580,63 +447,9 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Subscriptions Tab */}
-          <TabsContent value="subscriptions" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{isAdmin ? 'Gerenciar Assinaturas Fogaréu' : 'Minha Assinatura Fogaréu'}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Plano</TableHead>
-                      <TableHead>Vencimento</TableHead>
-                      <TableHead>Stripe ID</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {subscribers.map((subscriber) => (
-                      <TableRow key={subscriber.id}>
-                        <TableCell className="flex items-center gap-2">
-                          {subscriber.email}
-                          {subscriber.subscribed && (
-                            <Flame className="h-4 w-4 text-orange-500" />
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={subscriber.subscribed ? 'default' : 'secondary'}
-                          >
-                            {subscriber.subscribed ? 'Ativo' : 'Inativo'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-orange-500">
-                            {subscriber.subscription_tier || 'N/A'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {subscriber.subscription_end ? 
-                            new Date(subscriber.subscription_end).toLocaleDateString('pt-BR') : 
-                            'N/A'
-                          }
-                        </TableCell>
-                        <TableCell className="font-mono text-xs">
-                          {subscriber.stripe_customer_id || 'N/A'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </main>
+      <Footer />
     </div>
   );
 };

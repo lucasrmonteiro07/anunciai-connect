@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action_type: string
+          admin_user_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          target_id: string | null
+          target_type: string
+        }
+        Insert: {
+          action_type: string
+          admin_user_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          target_id?: string | null
+          target_type: string
+        }
+        Update: {
+          action_type?: string
+          admin_user_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          target_id?: string | null
+          target_type?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -388,9 +418,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: {
+        Args: { user_id?: string }
+        Returns: boolean
+      }
       is_subscription_active: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      log_admin_action: {
+        Args: {
+          action_type: string
+          details?: Json
+          target_id?: string
+          target_type: string
+        }
+        Returns: undefined
       }
       make_user_admin: {
         Args: { user_email: string }

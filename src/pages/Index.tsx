@@ -152,6 +152,7 @@ const Index = () => {
             denomination: service.denomination || '',
             ownerName: '',
             valor: undefined, // Not available in public table
+            userId: service.user_id || undefined,
             socialMedia: {
               instagram: service.instagram || undefined,
               facebook: service.facebook || undefined,
@@ -493,8 +494,6 @@ const Index = () => {
             setSelectedCategory={setSelectedCategory}
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}
-            selectedCity={selectedCity}
-            setSelectedCity={setSelectedCity}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
             onSearch={handleSearch}
