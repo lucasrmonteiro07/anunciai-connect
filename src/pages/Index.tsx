@@ -235,30 +235,19 @@ const Index = () => {
       return;
     }
 
-    setCheckoutLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error('Sessão expirada. Faça login novamente.');
-        return;
-      }
+      // InfinitePay payment links
+      const paymentUrl = planType === 'annual' 
+        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/25bkUBt3CD'
+        : 'https://invoice.infinitepay.io/plans/aurorabusiness/hAKGBbJG3';
 
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { planType },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
+      // Open InfinitePay checkout in a new tab
+      window.open(paymentUrl, '_blank');
+      
+      toast.success('Redirecionando para pagamento...');
     } catch (error) {
-      console.error('Error creating checkout:', error);
-      toast.error('Erro ao processar pagamento. Tente novamente.');
-    } finally {
-      setCheckoutLoading(false);
+      console.error('Error opening payment:', error);
+      toast.error('Erro ao abrir página de pagamento. Tente novamente.');
     }
   };
 
