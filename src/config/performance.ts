@@ -2,8 +2,8 @@
 
 export const PERFORMANCE_CONFIG = {
   // Cache durations
-  CACHE_DURATION: 5 * 60 * 1000, // 5 minutos
-  GC_TIME: 10 * 60 * 1000, // 10 minutos
+  CACHE_DURATION: 2 * 60 * 1000, // 2 minutos - reduzido para melhor atualização
+  GC_TIME: 5 * 60 * 1000, // 5 minutos - reduzido
   
   // Retry settings
   MAX_RETRIES: 1,
@@ -18,7 +18,84 @@ export const PERFORMANCE_CONFIG = {
   
   // Bundle optimization
   CHUNK_SIZE_WARNING: 1000, // KB
+  
+  // Cache control
+  FORCE_REFRESH_INTERVAL: 30 * 60 * 1000, // 30 minutos
+  STALE_TIME: 60 * 1000, // 1 minuto
 };
+
+// Cache management utilities
+export class CacheManager {
+  private static readonly CACHE_VERSION = 'v1.0.0';
+  private static readonly CACHE_PREFIX = 'aurora_cache_';
+
+  static generateCacheKey(key: string): string {
+    return `${this.CACHE_PREFIX}${this.CACHE_VERSION}_${key}`;
+  }
+
+  static invalidateCache(pattern?: string): void {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith(this.CACHE_PREFIX)) {
+        if (!pattern || key.includes(pattern)) {
+          localStorage.removeItem(key);
+        }
+      }
+    });
+  }
+
+  static setCacheItem(key: string, data: any, ttl: number = PERFORMANCE_CONFIG.CACHE_DURATION): void {
+    const cacheKey = this.generateCacheKey(key);
+    const item = {
+      data,
+      timestamp: Date.now(),
+      ttl
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(item));
+  }
+
+  static getCacheItem<T>(key: string): T | null {
+    const cacheKey = this.generateCacheKey(key);
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (!cached) return null;
+    
+    try {
+      const item = JSON.parse(cached);
+      const now = Date.now();
+      
+      if (now - item.timestamp > item.ttl) {
+        localStorage.removeItem(cacheKey);
+        return null;
+      }
+      
+      return item.data;
+    } catch {
+      localStorage.removeItem(cacheKey);
+      return null;
+    }
+  }
+
+  static clearExpiredCache(): void {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith(this.CACHE_PREFIX)) {
+        const cached = localStorage.getItem(key);
+        if (cached) {
+          try {
+            const item = JSON.parse(cached);
+            const now = Date.now();
+            if (now - item.timestamp > item.ttl) {
+              localStorage.removeItem(key);
+            }
+          } catch {
+            localStorage.removeItem(key);
+          }
+        }
+      }
+    });
+  }
+}
 
 export const getOptimizedImageUrl = (url: string, width?: number, quality?: number): string => {
   if (url.includes('unsplash.com')) {
@@ -46,4 +123,38 @@ export const preloadCriticalResources = () => {
     link.href = font;
     document.head.appendChild(link);
   });
+  
+  // Cleanup expired cache on app start
+  CacheManager.clearExpiredCache();
+};
+
+// Force refresh utilities
+export const shouldForceRefresh = (lastRefresh?: number): boolean => {
+  if (!lastRefresh) return true;
+  
+  const now = Date.now();
+  return now - lastRefresh > PERFORMANCE_CONFIG.FORCE_REFRESH_INTERVAL;
+};
+
+export const markRefreshTime = (): void => {
+  localStorage.setItem('last_refresh', Date.now().toString());
+};
+
+export const getLastRefreshTime = (): number | null => {
+  const lastRefresh = localStorage.getItem('last_refresh');
+  return lastRefresh ? parseInt(lastRefresh, 10) : null;
+};
+
+// Image optimization with cache busting
+export const addCacheBuster = (url: string): string => {
+  if (!url) return url;
+  
+  // Don't add cache buster to external URLs unless it's Supabase storage
+  if (!url.includes('supabase.co') && !url.startsWith('/')) {
+    return url;
+  }
+  
+  const separator = url.includes('?') ? '&' : '?';
+  const timestamp = Math.floor(Date.now() / (1000 * 60 * 10)); // 10 minute intervals
+  return `${url}${separator}_t=${timestamp}`;
 };

@@ -4,6 +4,7 @@ import { Button } from './button';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { CacheRefreshButton } from './cache-refresh-button';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -141,6 +142,7 @@ const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     Entrar
                   </Button>
+                  <CacheRefreshButton variant="ghost" size="sm" className="hidden sm:inline-flex" />
                   <Button 
                     size="sm" 
                     className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
@@ -154,6 +156,7 @@ const Header = () => {
                 <>
                   {/* Authenticated User Menu */}
                   <div className="hidden sm:flex items-center space-x-2">
+                    <CacheRefreshButton variant="ghost" size="sm" />
                     <Button variant="ghost" size="sm" onClick={() => navigate('/anunciar')}>
                       <Plus className="mr-2 h-4 w-4" />
                       Anunciar
@@ -184,6 +187,7 @@ const Header = () => {
 
                   {/* Mobile User Menu */}
                   <div className="sm:hidden">
+                    <CacheRefreshButton variant="ghost" size="sm" />
                     <Button variant="ghost" size="sm" onClick={() => navigate('/perfil')}>
                       <User className="h-5 w-5" />
                     </Button>
@@ -192,9 +196,12 @@ const Header = () => {
               )}
 
               {/* Mobile Menu */}
-              <Button variant="ghost" size="sm" className="md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
+              <div className="flex items-center space-x-2">
+                <CacheRefreshButton variant="ghost" size="sm" className="sm:hidden" />
+                <Button variant="ghost" size="sm" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
