@@ -30,18 +30,16 @@ const HeroSection = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Conecte-se com
-            <span className="gold-accent block">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <span className="gold-accent">
               Profissionais Cristãos
             </span>
             de Confiança
           </h1>
 
           {/* Description */}
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Encontre prestadores de serviços e empreendimentos com os valores que você compartilha. 
-            Uma comunidade cristã de profissionais qualificados.
+          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
+            Conecte-se com prestadores que compartilham seus valores cristãos.
           </p>
 
           {/* CTA Buttons */}
