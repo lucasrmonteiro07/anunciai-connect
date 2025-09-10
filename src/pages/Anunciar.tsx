@@ -93,25 +93,49 @@ const Anunciar = () => {
   };
 
   const estabelecimentos = [
-    "Academia", "Açougue", "Acessórios", "Auto Center", "Auto Peças", "Barbearia", "Borracharia", "Buffet",
-    "Calçados", "Capela", "Casa de Carnes", "Casa de Câmbio", "Casa de Oração", "Casa de Presentes", "Centro de Culto", "Centro de Impressão",
-    "Churrascaria", "Clínica", "Comunidade", "Confeitaria", "Consultório", "Contabilidade", "Copiadora", "Corretora", "Creche", "Crossfit",
-    "Curso de Idiomas", "Curso Técnico", "Depilação", "Editora", "Escola", "Estética", "Faculdade", "Farmácia", "Financeira", "Fisioterapia", "Funilaria",
-    "Gráfica", "Hamburgueria", "Hortifruti", "Hospital", "Hotel para Pets", "Igreja", "Imobiliária", "Joalheria", "Laboratório", "Lanchonete", "Lava Jato",
-    "Livraria", "Loja de Conveniência", "Loja de Roupas", "Loja Virtual", "Lotérica", "Manicure", "Massoterapia", "Mercado", "Ministério",
-    "Oficina Mecânica", "Ótica", "Padaria", "Papelaria", "Perfumaria", "Pet Shop", "Pilates", "Pizzaria", "Reforço Escolar", "Relojoaria",
-    "Restaurante", "Salão de Beleza", "Seguros", "Serigrafia", "Sorveteria", "Spa", "Studio de Dança", "Supermercado", "Templo", "Veterinária", "Yoga"
+    "Academia", "Açaiteria", "Açougue", "Acessórios", "Auto Center", "Auto Peças", 
+    "Banco", "Bar", "Barbearia", "Borracharia", "Boutique", "Buffet",
+    "Cafeteria", "Calçados", "Capela", "Casa de Carnes", "Casa de Câmbio", "Casa de Oração", 
+    "Casa de Presentes", "Centro de Culto", "Centro de Impressão", "Churrascaria", 
+    "Clínica", "Comunidade", "Confeitaria", "Consultório", "Contabilidade", 
+    "Copiadora", "Corretora", "Creche", "Crossfit", "Curso de Idiomas", 
+    "Curso Técnico", "Depilação", "Editora", "Escola", "Estética", 
+    "Faculdade", "Farmácia", "Financeira", "Fisioterapia", "Funilaria",
+    "Gráfica", "Hamburgueria", "Hortifruti", "Hospital", "Hostel", "Hotel", 
+    "Hotel para Pets", "Igreja", "Imobiliária", "Joalheria", "Laboratório", 
+    "Lanchonete", "Lava Jato", "Lavagem de Carros", "Livraria", "Loja", 
+    "Loja de Conveniência", "Loja de Roupas", "Loja Virtual", "Lotérica", 
+    "Manicure", "Massoterapia", "Mercado", "Ministério", "Oficina", 
+    "Oficina Mecânica", "Ótica", "Padaria", "Papelaria", "Pastelaria", 
+    "Perfumaria", "Pet Shop", "Pilates", "Pizzaria", "Posto de Gasolina", 
+    "Pousada", "Pub", "Reforço Escolar", "Relojoaria", "Resort", "Restaurante", 
+    "Salão de Beleza", "Seguros", "Serigrafia", "Sorveteria", "Spa", 
+    "Studio", "Studio de Dança", "Supermercado", "Templo", "Universidade", 
+    "Veterinária", "Yoga"
   ].sort();
 
   const prestadorServicos = [
-    "Adestrador", "Advogado", "Arquiteto", "Babá", "Bartender", "Borracheiro", "Buffet", "Cabeleireiro", "Cantor", "Carregador", "Chaveiro", "Coach",
-    "Confeiteiro", "Consultor", "Contador", "Costureira", "Cozinheiro", "Cuidador de Idosos", "Cuidador de Pets", "Dentista", "Designer", "Diarista",
-    "DJ", "Doceira", "Dog Walker", "Eletricista", "Encanador", "Enfermeiro", "Engenheiro", "Entregador", "Esteticista", "Faxineira", "Fisioterapeuta",
-    "Fotógrafo", "Frete", "Funileiro", "Garçom", "Instrutor", "Intérprete", "Jardineiro", "Jornalista", "Manicure", "Maquiador", "Marceneiro",
-    "Massoterapeuta", "Mecânico", "Motoboy", "Motorista", "Mudanças", "Músico", "Nutricionista", "Organizador de Eventos", "Palestrante", "Passadeira",
-    "Pedreiro", "Personal Trainer", "Pintor", "Programador", "Professor Particular", "Psicólogo", "Publicitário", "Redator", "Relojoeiro", "Revisor",
-    "Salgadeiro", "Sapateiro", "Serralheiro", "Soldador", "Técnico em Eletrônicos", "Técnico em Informática", "Tosador", "Tradutor", "Tutor",
-    "Veterinário", "Videomaker", "Vidraceiro", "Web Designer"
+    "Adestrador", "Advogado", "Ar Condicionado", "Arquiteto", "Aulas Particulares", 
+    "Babá", "Bartender", "Borracheiro", "Buffet", "Cabeleireiro", "Cantor", 
+    "Carregador", "Chaveiro", "Coach", "Confeiteiro", "Construção", "Consultoria", 
+    "Consultor", "Contador", "Costureira", "Cozinheiro", "Cuidador de Idosos", 
+    "Cuidador de Pets", "Cursos", "Dentista", "Design Gráfico", "Designer", 
+    "Desenvolvimento Web", "Diarista", "DJ", "Doceira", "Dog Walker", 
+    "Educação", "Elétrica", "Eletricista", "Encanador", "Enfermeiro", 
+    "Engenheiro", "Entregas", "Entregador", "Estética", "Esteticista", 
+    "Eventos", "Faxineira", "Fisioterapia", "Fisioterapeuta", "Fotografia", 
+    "Fotógrafo", "Frete", "Funileiro", "Garçom", "Hidráulica", "Instrutor", 
+    "Intérprete", "Jardinagem", "Jardineiro", "Jornalista", "Limpeza", 
+    "Manutenção", "Manicure", "Maquiador", "Marceneiro", "Marketing Digital", 
+    "Massoterapeuta", "Mecânico", "Motoboy", "Motorista", "Mudanças", 
+    "Música", "Músico", "Nutrição", "Nutricionista", "Organizador de Eventos", 
+    "Palestrante", "Passadeira", "Pedreiro", "Personal Trainer", "Pintura", 
+    "Pintor", "Programador", "Professor Particular", "Psicologia", "Psicólogo", 
+    "Publicitário", "Redator", "Reformas", "Relojoeiro", "Revisor", 
+    "Salgadeiro", "Sapateiro", "Saúde", "Segurança", "Serralheiro", 
+    "Soldador", "Som e Iluminação", "Tecnologia", "Técnico em Eletrônicos", 
+    "Técnico em Informática", "Tosador", "Tradutor", "Transporte", "Turismo", 
+    "Tutor", "Veterinário", "Vídeo", "Videomaker", "Vidraceiro", "Web Designer"
   ].sort();
 
   const buscarCep = async (cepValue: string) => {

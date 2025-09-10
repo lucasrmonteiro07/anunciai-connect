@@ -54,7 +54,7 @@ const HeroSection = () => {
               }}
             >
               <Search className="mr-2 h-5 w-5" />
-              Buscar Anúncios
+              Encontrar Profissionais
             </Button>
             <Button 
               variant="outline" 

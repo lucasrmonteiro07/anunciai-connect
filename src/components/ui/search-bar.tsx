@@ -37,28 +37,26 @@ const SearchBar = ({
   onSearch,
   services
 }: SearchBarProps) => {
-  // Categorias específicas por tipo
+  // Categorias específicas por tipo - ordem alfabética
   const serviceCategories = [
-    'Construção', 'Reformas', 'Pintura', 'Elétrica', 'Hidráulica', 'Ar Condicionado',
-    'Música', 'DJ', 'Som e Iluminação', 'Eventos', 'Fotografia', 'Vídeo',
-    'Tecnologia', 'Desenvolvimento Web', 'Design Gráfico', 'Marketing Digital',
-    'Saúde', 'Fisioterapia', 'Psicologia', 'Nutrição', 'Estética',
-    'Educação', 'Aulas Particulares', 'Cursos', 'Consultoria',
-    'Transporte', 'Mudanças', 'Entregas', 'Turismo',
-    'Limpeza', 'Manutenção', 'Segurança', 'Jardinagem'
-  ];
+    'Ar Condicionado', 'Aulas Particulares', 'Construção', 'Consultoria', 'Cursos',
+    'Design Gráfico', 'Desenvolvimento Web', 'DJ', 'Educação', 'Elétrica',
+    'Entregas', 'Estética', 'Eventos', 'Fisioterapia', 'Fotografia',
+    'Hidráulica', 'Jardinagem', 'Limpeza', 'Manutenção', 'Marketing Digital',
+    'Mudanças', 'Música', 'Nutrição', 'Pintura', 'Psicologia',
+    'Reformas', 'Saúde', 'Segurança', 'Som e Iluminação', 'Tecnologia',
+    'Transporte', 'Turismo', 'Vídeo'
+  ].sort();
 
   const establishmentCategories = [
-    'Restaurante', 'Cafeteria', 'Açaiteria', 'Pastelaria', 'Padaria', 'Confeitaria',
-    'Bar', 'Pub', 'Lanchonete', 'Pizzaria', 'Hamburgueria', 'Churrascaria',
-    'Hotel', 'Pousada', 'Hostel', 'Resort',
-    'Loja', 'Boutique', 'Farmácia', 'Supermercado', 'Mercado',
-    'Academia', 'Studio', 'Spa', 'Salão de Beleza', 'Barbearia',
-    'Escola', 'Creche', 'Universidade', 'Curso Técnico',
-    'Clínica', 'Hospital', 'Laboratório', 'Consultório',
-    'Oficina', 'Auto Peças', 'Posto de Gasolina', 'Lavagem de Carros',
-    'Imobiliária', 'Corretora', 'Banco', 'Seguros'
-  ];
+    'Academia', 'Açaiteria', 'Auto Peças', 'Banco', 'Bar', 'Barbearia',
+    'Boutique', 'Cafeteria', 'Churrascaria', 'Clínica', 'Confeitaria', 'Consultório',
+    'Corretora', 'Creche', 'Curso Técnico', 'Escola', 'Farmácia', 'Hamburgueria',
+    'Hospital', 'Hostel', 'Hotel', 'Imobiliária', 'Laboratório', 'Lanchonete',
+    'Lavagem de Carros', 'Loja', 'Mercado', 'Oficina', 'Padaria', 'Pastelaria',
+    'Pizzaria', 'Posto de Gasolina', 'Pousada', 'Pub', 'Resort', 'Restaurante',
+    'Salão de Beleza', 'Seguros', 'Spa', 'Studio', 'Supermercado', 'Universidade'
+  ].sort();
 
   // Filtrar categorias baseado no tipo selecionado
   const getFilteredCategories = () => {
@@ -182,7 +180,7 @@ const SearchBar = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as Categorias</SelectItem>
-            {filteredCategories.map(category => (
+            {filteredCategories.sort().map(category => (
               <SelectItem key={category} value={category.toLowerCase()}>
                 {category}
               </SelectItem>
