@@ -107,25 +107,11 @@ const Index = () => {
         return;
       }
 
-      // Get VIP status for each service by checking user profiles
+      // Transform Supabase data to ServiceData format using is_vip directly from services_public
       let servicesWithVip: ServiceData[] = [];
       
       if (servicesData && servicesData.length > 0) {
-        // Get unique user IDs from services
-        const userIds = [...new Set(servicesData.map(s => s.user_id).filter((id): id is string => Boolean(id)))];
-        
-        // Get VIP status from profiles table (using a separate query due to privacy constraints)
-        const { data: profilesData } = await supabase
-          .from('profiles')
-          .select('id, is_vip')
-          .in('id', userIds);
-
-        const vipMap = new Map((profilesData || []).map(p => [p.id, p.is_vip]));
-
-        // Transform Supabase data to ServiceData format
         servicesWithVip = servicesData.map(service => {
-
-          
           return {
             id: service.id,
             title: service.title,
@@ -148,7 +134,7 @@ const Index = () => {
             images: (service.images && Array.isArray(service.images)) 
               ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
               : [],
-            isVip: service.user_id ? vipMap.get(service.user_id) || false : false,
+            isVip: service.is_vip || false, // Use is_vip directly from services_public table
             denomination: service.denomination || '',
             ownerName: '',
             valor: undefined, // Not available in public table
