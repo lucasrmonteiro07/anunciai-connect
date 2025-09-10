@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, Users, ShieldCheck, Crown } from 'lucide-react';
 import { Button } from './button';
 import { Link } from 'react-router-dom';
-import heroBanner from '@/assets/hero-banner.jpg';
+import heroBanner from '@/assets/hero-professional.jpg';
 
 const HeroSection = () => {
   return (
@@ -31,15 +31,16 @@ const HeroSection = () => {
 
           {/* Main Heading */}
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            <span className="gold-accent">
-              Profissionais Cristãos
+            Encontre
+            <span className="gold-accent block">
+              Profissionais de Confiança
             </span>
-            de Confiança
+            na Sua Região
           </h1>
 
           {/* Description */}
           <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
-            Conecte-se com prestadores que compartilham seus valores cristãos.
+            Plataforma que conecta você aos melhores prestadores de serviços cristãos.
           </p>
 
           {/* CTA Buttons */}
