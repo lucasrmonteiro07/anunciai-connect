@@ -12,6 +12,7 @@ export interface ServiceData {
   description: string;
   category: string;
   type: 'prestador' | 'empreendimento';
+  product_type?: 'service' | 'product';
   location: {
     city: string;
     uf: string;
@@ -31,6 +32,13 @@ export interface ServiceData {
   denomination: string;
   ownerName: string;
   valor?: string;
+  price?: number;
+  condition?: string;
+  brand?: string;
+  model?: string;
+  warranty_months?: number;
+  delivery_available?: boolean;
+  stock_quantity?: number;
   userId?: string;
   socialMedia?: {
     instagram?: string;
@@ -85,7 +93,8 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
           {/* Service Type Badge */}
           <div className="absolute bottom-3 left-3">
             <Badge className={`service-badge ${service.type}`}>
-              {service.type === 'prestador' ? 'Prestador de Serviço' : 'Empreendimento'}
+              {service.product_type === 'product' ? 'Produto' : 
+               service.type === 'prestador' ? 'Prestador de Serviço' : 'Empreendimento'}
             </Badge>
           </div>
         </div>
@@ -116,12 +125,59 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
             </div>
           </div>
 
-          {/* Valor do Serviço */}
-          {service.valor && (
+          {/* Valor do Serviço/Produto */}
+          {(service.valor || service.price) && (
             <div className="mb-4">
               <div className="bg-primary/10 text-primary px-3 py-2 rounded-lg text-center">
-                <span className="font-semibold text-sm">{service.valor}</span>
+                <span className="font-semibold text-sm">
+                  {service.price ? `R$ ${service.price.toFixed(2)}` : service.valor}
+                </span>
               </div>
+            </div>
+          )}
+
+          {/* Informações do Produto */}
+          {service.product_type === 'product' && (
+            <div className="mb-4 space-y-2">
+              {service.brand && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Marca:</span>
+                  <span className="ml-2">{service.brand}</span>
+                </div>
+              )}
+              {service.model && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Modelo:</span>
+                  <span className="ml-2">{service.model}</span>
+                </div>
+              )}
+              {service.condition && (
+                <div className="flex items-center text-sm">
+                  <span className="font-medium">Estado:</span>
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    {service.condition === 'new' ? 'Novo' : 
+                     service.condition === 'used' ? 'Usado' : 
+                     service.condition === 'refurbished' ? 'Recondicionado' : service.condition}
+                  </Badge>
+                </div>
+              )}
+              {service.stock_quantity && service.stock_quantity > 0 && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Estoque:</span>
+                  <span className="ml-2">{service.stock_quantity} unidades</span>
+                </div>
+              )}
+              {service.warranty_months && service.warranty_months > 0 && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Garantia:</span>
+                  <span className="ml-2">{service.warranty_months} meses</span>
+                </div>
+              )}
+              {service.delivery_available && (
+                <div className="flex items-center text-sm text-green-600">
+                  <span className="font-medium">✓ Entrega disponível</span>
+                </div>
+              )}
             </div>
           )}
 

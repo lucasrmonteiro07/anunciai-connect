@@ -19,11 +19,19 @@ const Anunciar = () => {
   const [formData, setFormData] = useState({
     nomeNegocio: "",
     tipoAnuncio: "",
+    productType: "service", // 'service' or 'product'
     categoria: "",
     descricao: "",
     telefone: "",
     email: "",
     valor: "",
+    price: "",
+    condition: "",
+    brand: "",
+    model: "",
+    warranty: "",
+    deliveryAvailable: false,
+    stockQuantity: "",
     numero: "",
     facebook: "",
     instagram: "",
@@ -136,6 +144,17 @@ const Anunciar = () => {
     "Soldador", "Som e Iluminação", "Tecnologia", "Técnico em Eletrônicos", 
     "Técnico em Informática", "Tosador", "Tradutor", "Transporte", "Turismo", 
     "Tutor", "Veterinário", "Vídeo", "Videomaker", "Vidraceiro", "Web Designer"
+  ].sort();
+
+  const categoriaProdutos = [
+    "Acessórios", "Artigos Religiosos", "Artigos para Casa", "Artigos para Festa",
+    "Artigos para Pets", "Automotivo", "Bíblias e Livros", "Brinquedos",
+    "Calçados", "Casa e Decoração", "Celulares e Tablets", "Computadores",
+    "Cosméticos", "Eletrônicos", "Eletrodomésticos", "Esporte e Lazer",
+    "Ferramentas", "Flores e Plantas", "Instrumentos Musicais", "Jóias e Relógios",
+    "Livros", "Moda Feminina", "Moda Infantil", "Moda Masculina", "Móveis",
+    "Produtos de Limpeza", "Produtos Naturais", "Roupas", "Saúde e Beleza",
+    "Tecnologia", "Utensílios Domésticos", "Veículos"
   ].sort();
 
   const buscarCep = async (cepValue: string) => {
@@ -281,8 +300,8 @@ const Anunciar = () => {
       toast.error("Nome do negócio é obrigatório");
       return;
     }
-    if (!formData.tipoAnuncio) {
-      toast.error("Tipo de anúncio é obrigatório");
+    if (formData.productType === "service" && !formData.tipoAnuncio) {
+      toast.error("Tipo de serviço é obrigatório");
       return;
     }
     if (!formData.categoria) {
@@ -370,8 +389,16 @@ const Anunciar = () => {
         .from('services')
         .insert({
           title: formData.nomeNegocio,
-          type: formData.tipoAnuncio,
+          type: formData.productType === "product" ? "produto" : formData.tipoAnuncio,
+          product_type: formData.productType,
           category: formData.categoria,
+          price: formData.price ? parseFloat(formData.price) : null,
+          condition: formData.condition || null,
+          brand: formData.brand || null,
+          model: formData.model || null,
+          warranty_months: formData.warranty ? parseInt(formData.warranty) : null,
+          delivery_available: formData.deliveryAvailable,
+          stock_quantity: formData.stockQuantity ? parseInt(formData.stockQuantity) : null,
           description: formData.descricao,
           address: `${endereco.logradouro}${formData.numero ? ', ' + formData.numero : ''}, ${endereco.bairro}`,
           number: formData.numero || null,
@@ -451,50 +478,91 @@ const Anunciar = () => {
               />
             </div>
 
-            {/* Tipo de Anúncio */}
+            {/* Tipo de Conteúdo */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Tipo de Anúncio <span className="text-red-500">*</span>
+                O que você quer anunciar? <span className="text-red-500">*</span>
               </label>
               <p className="text-xs text-muted-foreground mb-2">
-                Escolha se você tem um estabelecimento físico ou oferece serviços.
+                Escolha se você quer anunciar um serviço ou produto.
               </p>
               <div className="flex gap-4">
                 <label className="flex items-center">
                   <input 
                     type="radio" 
-                    name="tipo" 
-                    value="empreendimento"
-                    checked={formData.tipoAnuncio === "empreendimento"}
-                    onChange={(e) => handleInputChange("tipoAnuncio", e.target.value)}
+                    name="productType" 
+                    value="service"
+                    checked={formData.productType === "service"}
+                    onChange={(e) => handleInputChange("productType", e.target.value)}
                     className="mr-2"
                     required
                   />
-                  Estabelecimento
+                  Serviço
                 </label>
                 <label className="flex items-center">
                   <input 
                     type="radio" 
-                    name="tipo" 
-                    value="prestador"
-                    checked={formData.tipoAnuncio === "prestador"}
-                    onChange={(e) => handleInputChange("tipoAnuncio", e.target.value)}
+                    name="productType" 
+                    value="product"
+                    checked={formData.productType === "product"}
+                    onChange={(e) => handleInputChange("productType", e.target.value)}
                     className="mr-2"
                     required
                   />
-                  Prestador de Serviço
+                  Produto
                 </label>
               </div>
             </div>
 
+            {/* Tipo de Anúncio - só para serviços */}
+            {formData.productType === "service" && (
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Tipo de Serviço <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Escolha se você tem um estabelecimento físico ou oferece serviços.
+                </p>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input 
+                      type="radio" 
+                      name="tipo" 
+                      value="empreendimento"
+                      checked={formData.tipoAnuncio === "empreendimento"}
+                      onChange={(e) => handleInputChange("tipoAnuncio", e.target.value)}
+                      className="mr-2"
+                      required={formData.productType === "service"}
+                    />
+                    Estabelecimento
+                  </label>
+                  <label className="flex items-center">
+                    <input 
+                      type="radio" 
+                      name="tipo" 
+                      value="prestador"
+                      checked={formData.tipoAnuncio === "prestador"}
+                      onChange={(e) => handleInputChange("tipoAnuncio", e.target.value)}
+                      className="mr-2"
+                      required={formData.productType === "service"}
+                    />
+                    Prestador de Serviço
+                  </label>
+                </div>
+              </div>
+            )}
+
             {/* Categoria Dinâmica */}
-            {formData.tipoAnuncio && (
+            {(formData.productType === "service" && formData.tipoAnuncio) || formData.productType === "product" ? (
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Categoria <span className="text-red-500">*</span>
                 </label>
                 <p className="text-xs text-muted-foreground mb-2">
-                  Selecione a categoria que melhor define seu negócio ou serviço.
+                  {formData.productType === "product" 
+                    ? "Selecione a categoria do produto que você está vendendo."
+                    : "Selecione a categoria que melhor define seu negócio ou serviço."
+                  }
                 </p>
                 <select 
                   value={formData.categoria}
@@ -504,11 +572,93 @@ const Anunciar = () => {
                   aria-label="Selecione uma categoria"
                 >
                   <option value="">Selecione uma categoria</option>
-                  {(formData.tipoAnuncio === "empreendimento" ? estabelecimentos : prestadorServicos).map((item) => (
+                  {(formData.productType === "product" ? categoriaProdutos :
+                    formData.tipoAnuncio === "empreendimento" ? estabelecimentos : prestadorServicos
+                  ).map((item) => (
                     <option key={item} value={item}>{item}</option>
                   ))}
                 </select>
               </div>
+            ) : null}
+
+            {/* Campos específicos para produtos */}
+            {formData.productType === "product" && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Preço (R$)</label>
+                    <Input 
+                      type="number" 
+                      step="0.01"
+                      value={formData.price}
+                      onChange={(e) => handleInputChange("price", e.target.value)}
+                      placeholder="0,00"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Condição</label>
+                    <select 
+                      value={formData.condition}
+                      onChange={(e) => handleInputChange("condition", e.target.value)}
+                      className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-black text-white"
+                    >
+                      <option value="">Selecione</option>
+                      <option value="new">Novo</option>
+                      <option value="used">Usado</option>
+                      <option value="refurbished">Recondicionado</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Marca</label>
+                    <Input 
+                      value={formData.brand}
+                      onChange={(e) => handleInputChange("brand", e.target.value)}
+                      placeholder="Marca do produto"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Modelo</label>
+                    <Input 
+                      value={formData.model}
+                      onChange={(e) => handleInputChange("model", e.target.value)}
+                      placeholder="Modelo do produto"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Garantia (meses)</label>
+                    <Input 
+                      type="number"
+                      value={formData.warranty}
+                      onChange={(e) => handleInputChange("warranty", e.target.value)}
+                      placeholder="12"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Estoque</label>
+                    <Input 
+                      type="number"
+                      value={formData.stockQuantity}
+                      onChange={(e) => handleInputChange("stockQuantity", e.target.value)}
+                      placeholder="Quantidade disponível"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="flex items-center">
+                    <input 
+                      type="checkbox"
+                      checked={formData.deliveryAvailable}
+                      onChange={(e) => setFormData(prev => ({...prev, deliveryAvailable: e.target.checked}))}
+                      className="mr-2"
+                    />
+                    Entrega disponível
+                  </label>
+                </div>
+              </>
             )}
 
             {/* Descrição */}

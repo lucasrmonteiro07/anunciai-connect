@@ -160,10 +160,13 @@ export type Database = {
       services: {
         Row: {
           address: string | null
+          brand: string | null
           category: string
           cep: string | null
           city: string
+          condition: string | null
           created_at: string | null
+          delivery_available: boolean | null
           denomination: string | null
           description: string | null
           email: string | null
@@ -174,26 +177,34 @@ export type Database = {
           latitude: number | null
           logo_url: string | null
           longitude: number | null
+          model: string | null
           neighborhood: string | null
           number: string | null
           owner_name: string | null
           phone: string | null
+          price: number | null
+          product_type: string | null
           status: string | null
+          stock_quantity: number | null
           title: string
           type: string
           uf: string
           updated_at: string | null
           user_id: string
           valor: string | null
+          warranty_months: number | null
           website: string | null
           whatsapp: string | null
         }
         Insert: {
           address?: string | null
+          brand?: string | null
           category: string
           cep?: string | null
           city: string
+          condition?: string | null
           created_at?: string | null
+          delivery_available?: boolean | null
           denomination?: string | null
           description?: string | null
           email?: string | null
@@ -204,26 +215,34 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          model?: string | null
           neighborhood?: string | null
           number?: string | null
           owner_name?: string | null
           phone?: string | null
+          price?: number | null
+          product_type?: string | null
           status?: string | null
+          stock_quantity?: number | null
           title: string
           type: string
           uf: string
           updated_at?: string | null
           user_id: string
           valor?: string | null
+          warranty_months?: number | null
           website?: string | null
           whatsapp?: string | null
         }
         Update: {
           address?: string | null
+          brand?: string | null
           category?: string
           cep?: string | null
           city?: string
+          condition?: string | null
           created_at?: string | null
+          delivery_available?: boolean | null
           denomination?: string | null
           description?: string | null
           email?: string | null
@@ -234,17 +253,22 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          model?: string | null
           neighborhood?: string | null
           number?: string | null
           owner_name?: string | null
           phone?: string | null
+          price?: number | null
+          product_type?: string | null
           status?: string | null
+          stock_quantity?: number | null
           title?: string
           type?: string
           uf?: string
           updated_at?: string | null
           user_id?: string
           valor?: string | null
+          warranty_months?: number | null
           website?: string | null
           whatsapp?: string | null
         }
@@ -253,10 +277,13 @@ export type Database = {
       services_public: {
         Row: {
           address: string | null
+          brand: string | null
           category: string
           cep: string | null
           city: string
+          condition: string | null
           created_at: string | null
+          delivery_available: boolean | null
           denomination: string | null
           description: string | null
           email: string | null
@@ -268,25 +295,33 @@ export type Database = {
           latitude: number | null
           logo_url: string | null
           longitude: number | null
+          model: string | null
           neighborhood: string | null
           number: string | null
           phone: string | null
+          price: number | null
+          product_type: string | null
           status: string | null
+          stock_quantity: number | null
           title: string
           type: string
           uf: string
           updated_at: string | null
           user_id: string | null
           valor: string | null
+          warranty_months: number | null
           website: string | null
           whatsapp: string | null
         }
         Insert: {
           address?: string | null
+          brand?: string | null
           category: string
           cep?: string | null
           city: string
+          condition?: string | null
           created_at?: string | null
+          delivery_available?: boolean | null
           denomination?: string | null
           description?: string | null
           email?: string | null
@@ -298,25 +333,33 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          model?: string | null
           neighborhood?: string | null
           number?: string | null
           phone?: string | null
+          price?: number | null
+          product_type?: string | null
           status?: string | null
+          stock_quantity?: number | null
           title: string
           type: string
           uf: string
           updated_at?: string | null
           user_id?: string | null
           valor?: string | null
+          warranty_months?: number | null
           website?: string | null
           whatsapp?: string | null
         }
         Update: {
           address?: string | null
+          brand?: string | null
           category?: string
           cep?: string | null
           city?: string
+          condition?: string | null
           created_at?: string | null
+          delivery_available?: boolean | null
           denomination?: string | null
           description?: string | null
           email?: string | null
@@ -328,16 +371,21 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          model?: string | null
           neighborhood?: string | null
           number?: string | null
           phone?: string | null
+          price?: number | null
+          product_type?: string | null
           status?: string | null
+          stock_quantity?: number | null
           title?: string
           type?: string
           uf?: string
           updated_at?: string | null
           user_id?: string | null
           valor?: string | null
+          warranty_months?: number | null
           website?: string | null
           whatsapp?: string | null
         }

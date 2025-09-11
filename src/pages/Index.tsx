@@ -23,6 +23,7 @@ const Index = () => {
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
+  const [selectedProductType, setSelectedProductType] = useState('all');
   const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
   const [services, setServices] = useState<ServiceData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +91,7 @@ const Index = () => {
 
   useEffect(() => {
     handleSearch();
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedProductType, selectedType]);
 
   const loadServices = async () => {
     try {
@@ -137,7 +138,15 @@ const Index = () => {
             isVip: service.is_vip || false, // Use is_vip directly from services_public table
             denomination: service.denomination || '',
             ownerName: '',
-            valor: undefined, // Not available in public table
+            valor: service.valor || undefined,
+            product_type: (service.product_type as 'service' | 'product') || 'service',
+            price: service.price || undefined,
+            condition: service.condition || undefined,
+            brand: service.brand || undefined,
+            model: service.model || undefined,
+            warranty_months: service.warranty_months || undefined,
+            delivery_available: service.delivery_available || false,
+            stock_quantity: service.stock_quantity || undefined,
             userId: service.user_id || undefined,
             socialMedia: {
               instagram: service.instagram || undefined,
@@ -177,6 +186,13 @@ const Index = () => {
         service.description.toLowerCase().includes(searchLower) ||
         service.category.toLowerCase().includes(searchLower) ||
         service.denomination.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Filter by product type (service vs product)
+    if (selectedProductType !== 'all') {
+      filtered = filtered.filter(service => 
+        service.product_type === selectedProductType
       );
     }
 
@@ -471,6 +487,8 @@ const Index = () => {
             setSelectedLocation={setSelectedLocation}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
+            selectedProductType={selectedProductType}
+            setSelectedProductType={setSelectedProductType}
             onSearch={handleSearch}
             services={services}
           />
