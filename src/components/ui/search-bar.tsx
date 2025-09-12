@@ -192,78 +192,102 @@ const SearchBar = ({
   console.log('📍 Estados disponíveis:', availableStates);
   return (
     <div className="w-full max-w-6xl mx-auto bg-card rounded-xl p-6 shadow-lg border border-border">
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        {/* Search Input */}
-        <div className="relative md:col-span-2">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Buscar por serviço ou empresa..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
-            onKeyPress={(e) => e.key === 'Enter' && onSearch()}
-          />
-        </div>
+      {/* Header com explicação */}
+      <div className="text-center mb-4">
+        <h2 className="text-lg font-semibold text-foreground mb-1">Encontre o que você precisa</h2>
+        <p className="text-sm text-muted-foreground">
+          Busque por <span className="font-medium text-primary">serviços profissionais</span>, 
+          <span className="font-medium text-primary"> estabelecimentos</span> ou 
+          <span className="font-medium text-primary"> produtos</span>
+        </p>
+      </div>
 
-        {/* Product Type Filter */}
-        <Select value={selectedProductType} onValueChange={setSelectedProductType}>
-          <SelectTrigger className="h-12 bg-input border-border">
-            <SelectValue placeholder="Tipo" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="service">Serviços</SelectItem>
-            <SelectItem value="product">Produtos</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="space-y-4">
+        {/* Primeira linha: Busca + Tipo Principal */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search Input */}
+          <div className="relative md:col-span-2">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Digite o que você está procurando..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
+              onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+            />
+          </div>
 
-        {/* Type Filter (for services) */}
-        <Select value={selectedType} onValueChange={setSelectedType}>
-          <SelectTrigger className="h-12 bg-input border-border">
-            <SelectValue placeholder="Categoria" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
-            <SelectItem value="prestador">Prestadores</SelectItem>
-            <SelectItem value="empreendimento">Estabelecimentos</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Category Filter */}
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="h-12 bg-input border-border">
-            <SelectValue placeholder="Subcategoria" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
-            {filteredCategories.sort().map(category => (
-              <SelectItem key={category} value={category.toLowerCase()}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Location Filter */}
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-            <SelectTrigger className="h-12 bg-input border-border pl-10">
-              <SelectValue placeholder="Localização" />
+          {/* Tipo Principal */}
+          <Select value={selectedProductType} onValueChange={setSelectedProductType}>
+            <SelectTrigger className="h-12 bg-input border-border">
+              <SelectValue placeholder="O que você procura?" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todo o Brasil</SelectItem>
-              {availableStates.map(state => (
-                <SelectItem key={state.value} value={state.value}>
-                  {state.label}
-                </SelectItem>
-              ))}
+              <SelectItem value="all">🔍 Tudo</SelectItem>
+              <SelectItem value="service">💼 Serviços</SelectItem>
+              <SelectItem value="product">📦 Produtos</SelectItem>
             </SelectContent>
           </Select>
         </div>
+
+        {/* Segunda linha: Filtros específicos */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Subtipo (apenas para serviços) */}
+          {selectedProductType === 'service' && (
+            <Select value={selectedType} onValueChange={setSelectedType}>
+              <SelectTrigger className="h-12 bg-input border-border">
+                <SelectValue placeholder="Tipo de serviço" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os tipos</SelectItem>
+                <SelectItem value="prestador">👤 Profissional Autônomo</SelectItem>
+                <SelectItem value="empreendimento">🏢 Estabelecimento</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+
+          {/* Categoria específica */}
+          {filteredCategories.length > 0 && (
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="h-12 bg-input border-border">
+                <SelectValue placeholder={
+                  selectedProductType === 'product' ? 'Categoria do produto' :
+                  selectedProductType === 'service' ? 'Área de atuação' :
+                  'Categoria'
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as categorias</SelectItem>
+                {filteredCategories.sort().map(category => (
+                  <SelectItem key={category} value={category.toLowerCase()}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+
+          {/* Localização */}
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <SelectTrigger className="h-12 bg-input border-border pl-10">
+                <SelectValue placeholder="Estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">🇧🇷 Todo o Brasil</SelectItem>
+                {availableStates.map(state => (
+                  <SelectItem key={state.value} value={state.value}>
+                    {state.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-6">
         <Button 
           onClick={onSearch}
           className="px-8 py-3 bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
