@@ -90,6 +90,13 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           
+          {/* Photo Gallery Indicator */}
+          {service.images && service.images.length > 1 && (
+            <div className="absolute top-3 left-3 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
+              +{service.images.length - 1} fotos
+            </div>
+          )}
+          
           {/* Service Type Badge */}
           <div className="absolute bottom-3 left-3">
             <Badge className={`service-badge ${service.type}`}>

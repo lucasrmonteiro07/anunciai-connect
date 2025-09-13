@@ -33,9 +33,9 @@ const HeroSection = () => {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
             Encontre
             <span className="gold-accent block">
-              Profissionais de Confiança
+              Profissionais, Empreendimentos e Produtos
             </span>
-            na Sua Região
+            de Confiança na Sua Região
           </h1>
 
           {/* Description */}
@@ -54,7 +54,7 @@ const HeroSection = () => {
               }}
             >
               <Search className="mr-2 h-5 w-5" />
-              Encontrar Profissionais
+              Buscar Anúncio
             </Button>
             <Button 
               variant="outline" 

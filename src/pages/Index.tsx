@@ -396,28 +396,36 @@ const Index = () => {
                   <p className="text-sm opacity-75">(R$ 142,80/ano)</p>
                   <p className="text-xs opacity-75 mt-2">Economia de R$ 36/ano</p>
                 </div>
-                <ul className="text-left space-y-3 mb-6">
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    5 fotos do seu negócio
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Destaque nas buscas
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Contorno dourado nos anúncios
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Badge Fogaréu especial
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Aparece primeiro na busca
-                  </li>
-                </ul>
+                 <ul className="text-left space-y-3 mb-6">
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     5 fotos do seu negócio
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Destaque nas buscas
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Contorno dourado nos anúncios
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Badge Fogaréu especial
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Aparece primeiro na busca
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Adicional de consultoria de anúncios gratuita
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Pra você vender mais e com mais assertividade
+                   </li>
+                 </ul>
                 <Button 
                   variant="secondary" 
                   className="w-full bg-white text-green-600 hover:bg-green-50 mb-3"
