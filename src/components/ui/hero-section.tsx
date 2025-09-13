@@ -40,7 +40,7 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
-            Plataforma que conecta você aos melhores prestadores de serviços cristãos.
+            Plataforma que conecta você aos melhores profissionais, empreendimentos e produtos cristãos.
           </p>
 
           {/* CTA Buttons */}
@@ -77,7 +77,7 @@ const HeroSection = () => {
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-primary mb-2">50+</div>
-              <div className="text-sm text-muted-foreground">Categorias de Serviços</div>
+              <div className="text-sm text-muted-foreground">Categorias Disponíveis</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">

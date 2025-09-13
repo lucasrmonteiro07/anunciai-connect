@@ -517,7 +517,7 @@ const Index = () => {
                 )}
               </h2>
               <p className="text-muted-foreground">
-                Encontre profissionais e estabelecimentos cristãos qualificados em sua região
+                Encontre profissionais, empreendimentos e produtos cristãos qualificados em sua região
               </p>
             </div>
             <div className="flex gap-2">

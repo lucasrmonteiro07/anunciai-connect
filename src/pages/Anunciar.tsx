@@ -521,7 +521,7 @@ const Anunciar = () => {
                   Tipo de Serviço <span className="text-red-500">*</span>
                 </label>
                 <p className="text-xs text-muted-foreground mb-2">
-                  Escolha se você tem um estabelecimento físico ou oferece serviços.
+                  Escolha se você tem um estabelecimento físico, oferece serviços ou vende produtos.
                 </p>
                 <div className="flex gap-4">
                   <label className="flex items-center">

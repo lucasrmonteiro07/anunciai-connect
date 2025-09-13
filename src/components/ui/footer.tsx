@@ -24,7 +24,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground text-sm mb-4">
-              A plataforma que conecta prestadores de serviços e estabelecimentos cristãos, 
+              A plataforma que conecta profissionais, empreendimentos e produtos cristãos, 
               facilitando negócios baseados em valores e princípios cristãos.
             </p>
             <div className="flex space-x-4">
