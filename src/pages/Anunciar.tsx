@@ -101,21 +101,21 @@ const Anunciar = () => {
   };
 
   const estabelecimentos = [
-    "Academia", "Açaiteria", "Açougue", "Acessórios", "Auto Center", "Auto Peças", 
+    "Academia", "Açaiteria", "Açougue", "Acessórios", "Agropecuária", "Auto Center", "Auto Peças", 
     "Banco", "Bar", "Barbearia", "Borracharia", "Boutique", "Buffet",
     "Cafeteria", "Calçados", "Capela", "Casa de Carnes", "Casa de Câmbio", "Casa de Oração", 
     "Casa de Presentes", "Centro de Culto", "Centro de Impressão", "Churrascaria", 
-    "Clínica", "Comunidade", "Confeitaria", "Consultório", "Contabilidade", 
-    "Copiadora", "Corretora", "Creche", "Crossfit", "Curso de Idiomas", 
+    "Clínica", "Clínica Veterinária", "Comunidade", "Confeitaria", "Consultório", "Contabilidade", 
+    "Copiadora", "Corretora", "Creche", "Creche para Pets", "Crossfit", "Curso de Idiomas", 
     "Curso Técnico", "Depilação", "Editora", "Escola", "Estética", 
-    "Faculdade", "Farmácia", "Financeira", "Fisioterapia", "Funilaria",
-    "Gráfica", "Hamburgueria", "Hortifruti", "Hospital", "Hostel", "Hotel", 
+    "Faculdade", "Farmácia", "Farmácia Veterinária", "Financeira", "Fisioterapia", "Funilaria",
+    "Gráfica", "Hamburgueria", "Hortifruti", "Hospital", "Hospital Veterinário", "Hostel", "Hotel", 
     "Hotel para Pets", "Igreja", "Imobiliária", "Joalheria", "Laboratório", 
     "Lanchonete", "Lava Jato", "Lavagem de Carros", "Livraria", "Loja", 
     "Loja de Conveniência", "Loja de Roupas", "Loja Virtual", "Lotérica", 
     "Manicure", "Massoterapia", "Mercado", "Ministério", "Oficina", 
     "Oficina Mecânica", "Ótica", "Padaria", "Papelaria", "Pastelaria", 
-    "Perfumaria", "Pet Shop", "Pilates", "Pizzaria", "Posto de Gasolina", 
+    "Perfumaria", "Pet Shop", "Petiscaria para Pets", "Pilates", "Pizzaria", "Posto de Gasolina", 
     "Pousada", "Pub", "Reforço Escolar", "Relojoaria", "Resort", "Restaurante", 
     "Salão de Beleza", "Seguros", "Serigrafia", "Sorveteria", "Spa", 
     "Studio", "Studio de Dança", "Supermercado", "Templo", "Universidade", 
@@ -123,7 +123,7 @@ const Anunciar = () => {
   ].sort();
 
   const prestadorServicos = [
-    "Adestrador", "Advogado", "Ar Condicionado", "Arquiteto", "Aulas Particulares", 
+    "Adestrador", "Adestrador de Cães", "Advogado", "Ar Condicionado", "Arquiteto", "Aulas Particulares", 
     "Babá", "Bartender", "Borracheiro", "Buffet", "Cabeleireiro", "Cantor", 
     "Carregador", "Chaveiro", "Coach", "Confeiteiro", "Construção", "Consultoria", 
     "Consultor", "Contador", "Costureira", "Cozinheiro", "Cuidador de Idosos", 
@@ -137,23 +137,23 @@ const Anunciar = () => {
     "Manutenção", "Manicure", "Maquiador", "Marceneiro", "Marketing Digital", 
     "Massoterapeuta", "Mecânico", "Motoboy", "Motorista", "Mudanças", 
     "Música", "Músico", "Nutrição", "Nutricionista", "Organizador de Eventos", 
-    "Palestrante", "Passadeira", "Pedreiro", "Personal Trainer", "Pintura", 
+    "Palestrante", "Passadeira", "Passeador de Cães", "Pedreiro", "Personal Trainer", "Pet Sitter", "Pintura", 
     "Pintor", "Programador", "Professor Particular", "Psicologia", "Psicólogo", 
     "Publicitário", "Redator", "Reformas", "Relojoeiro", "Revisor", 
     "Salgadeiro", "Sapateiro", "Saúde", "Segurança", "Serralheiro", 
     "Soldador", "Som e Iluminação", "Tecnologia", "Técnico em Eletrônicos", 
-    "Técnico em Informática", "Tosador", "Tradutor", "Transporte", "Turismo", 
+    "Técnico em Informática", "Tosador", "Tosador de Pets", "Tradutor", "Transporte", "Turismo", 
     "Tutor", "Veterinário", "Vídeo", "Videomaker", "Vidraceiro", "Web Designer"
   ].sort();
 
   const categoriaProdutos = [
-    "Acessórios", "Artigos Religiosos", "Artigos para Casa", "Artigos para Festa",
-    "Artigos para Pets", "Automotivo", "Bíblias e Livros", "Brinquedos",
-    "Calçados", "Casa e Decoração", "Celulares e Tablets", "Computadores",
+    "Acessórios", "Acessórios para Pets", "Alimentação para Pets", "Artigos Religiosos", "Artigos para Casa", "Artigos para Festa",
+    "Artigos para Pets", "Automotivo", "Bíblias e Livros", "Brinquedos", "Brinquedos para Pets",
+    "Calçados", "Camas e Almofadas para Pets", "Casa e Decoração", "Celulares e Tablets", "Coleiras e Guias", "Computadores",
     "Cosméticos", "Eletrônicos", "Eletrodomésticos", "Esporte e Lazer",
-    "Ferramentas", "Flores e Plantas", "Instrumentos Musicais", "Jóias e Relógios",
-    "Livros", "Moda Feminina", "Moda Infantil", "Moda Masculina", "Móveis",
-    "Produtos de Limpeza", "Produtos Naturais", "Roupas", "Saúde e Beleza",
+    "Ferramentas", "Flores e Plantas", "Higiene para Pets", "Instrumentos Musicais", "Jóias e Relógios",
+    "Livros", "Medicamentos para Pets", "Moda Feminina", "Moda Infantil", "Moda Masculina", "Móveis",
+    "Petiscos para Pets", "Produtos de Limpeza", "Produtos Naturais", "Produtos Veterinários", "Ração", "Roupas", "Roupas para Pets", "Saúde e Beleza",
     "Tecnologia", "Utensílios Domésticos", "Veículos"
   ].sort();
 
