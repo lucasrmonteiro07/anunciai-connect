@@ -97,7 +97,7 @@ const Index = () => {
     try {
       // First get services data
       const { data: servicesData, error: servicesError } = await supabase
-        .from('services_public')
+        .from('services_public_safe')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -114,14 +114,14 @@ const Index = () => {
       if (servicesData && servicesData.length > 0) {
         servicesWithVip = servicesData.map(service => {
           return {
-            id: service.id,
-            title: service.title,
+            id: service.id || '',
+            title: service.title || '',
             description: service.description || '',
-            category: service.category,
-            type: service.type as 'prestador' | 'empreendimento',
+            category: service.category || '',
+            type: (service.type as 'prestador' | 'empreendimento') || 'prestador',
             location: { 
-              city: service.city, 
-              uf: service.uf,
+              city: service.city || '', 
+              uf: service.uf || '',
               latitude: service.latitude ? Number(service.latitude) : undefined,
               longitude: service.longitude ? Number(service.longitude) : undefined,
               address: undefined // Not available in public table

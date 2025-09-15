@@ -74,7 +74,7 @@ const ServiceDetail = () => {
     try {
       // Primeiro buscar dados públicos do serviço
       const { data: publicData, error: publicError } = await supabase
-        .from('services_public')
+        .from('services_public_safe')
         .select('*')
         .eq('id', id || '')
         .single();
@@ -108,14 +108,14 @@ const ServiceDetail = () => {
       }
 
       const transformedService: Service = {
-        id: publicData.id,
-        title: publicData.title,
+        id: publicData.id || '',
+        title: publicData.title || '',
         description: publicData.description || '',
-        category: publicData.category,
-        type: publicData.type as 'prestador' | 'empreendimento',
+        category: publicData.category || '',
+        type: (publicData.type as 'prestador' | 'empreendimento') || 'prestador',
         location: {
-          city: publicData.city,
-          uf: publicData.uf,
+          city: publicData.city || '',
+          uf: publicData.uf || '',
           latitude: publicData.latitude ? Number(publicData.latitude) : undefined,
           longitude: publicData.longitude ? Number(publicData.longitude) : undefined,
           address: undefined // Not available in public table
