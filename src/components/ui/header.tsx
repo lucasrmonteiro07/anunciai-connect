@@ -195,12 +195,46 @@ const Header = () => {
                 </>
               )}
 
-              {/* Mobile Menu */}
+              {/* Mobile Menu - Melhorado para mostrar navegação */}
               <div className="flex items-center space-x-2">
                 <CacheRefreshButton variant="ghost" size="sm" className="sm:hidden" />
-                <Button variant="ghost" size="sm" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                </Button>
+                <div className="md:hidden relative">
+                  <Button variant="ghost" size="sm" onClick={() => {
+                    const mobileNav = document.getElementById('mobile-nav');
+                    if (mobileNav) {
+                      mobileNav.classList.toggle('hidden');
+                    }
+                  }}>
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                  
+                  {/* Mobile Navigation Menu */}
+                  <div id="mobile-nav" className="hidden absolute top-12 right-0 bg-card border border-border rounded-lg shadow-lg w-48 z-50">
+                    <nav className="p-4 space-y-2">
+                      <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary" asChild>
+                        <Link to="/">Início</Link>
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary" asChild>
+                        <Link to="/sobre">Sobre</Link>
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary" asChild>
+                        <Link to="/contato">Contato</Link>
+                      </Button>
+                      {!user && (
+                        <Button variant="ghost" className="w-full justify-start text-foreground hover:text-primary" asChild>
+                          <Link to="/login">Entrar</Link>
+                        </Button>
+                      )}
+                      <Button 
+                        className="w-full bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
+                        onClick={() => navigate('/anunciar')}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Anunciar
+                      </Button>
+                    </nav>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

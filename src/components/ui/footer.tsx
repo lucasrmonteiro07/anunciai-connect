@@ -147,13 +147,13 @@ const Footer = () => {
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link 
-                to="/sobre" 
+                to="/sobre#termos" 
                 className="text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 Termos de Uso & LGPD
               </Link>
               <Link 
-                to="/sobre" 
+                to="/sobre#politica" 
                 className="text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 Política de Privacidade

@@ -566,7 +566,10 @@ const Index = () => {
                 <ServiceCard 
                   key={service.id} 
                   service={service}
-                  onClick={() => navigate(`/anuncio/${service.id}`)}
+                  onClick={() => {
+                    console.log('Navegando para:', `/anuncio/${service.id}`);
+                    navigate(`/anuncio/${service.id}`);
+                  }}
                 />
               ))
             )}

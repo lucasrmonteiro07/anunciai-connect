@@ -203,8 +203,11 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
               className="border-primary/30 hover:border-primary hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(`tel:${service.contact.phone}`, '_self');
+                // Botão será habilitado quando houver informações de contato disponíveis
+                alert('Para ver informações de contato, clique no anúncio para abrir os detalhes completos.');
               }}
+              disabled={!service.contact.phone}
+              title={service.contact.phone ? `Ligar para ${service.contact.phone}` : 'Informações de contato disponíveis nos detalhes'}
             >
               <Phone className="h-4 w-4 mr-1" />
               Ligar
@@ -215,8 +218,11 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
               className="border-primary/30 hover:border-primary hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(`mailto:${service.contact.email}`, '_self');
+                // Botão será habilitado quando houver informações de contato disponíveis
+                alert('Para ver informações de contato, clique no anúncio para abrir os detalhes completos.');
               }}
+              disabled={!service.contact.email}
+              title={service.contact.email ? `Email para ${service.contact.email}` : 'Informações de contato disponíveis nos detalhes'}
             >
               <Mail className="h-4 w-4 mr-1" />
               Email
