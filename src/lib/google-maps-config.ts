@@ -1,7 +1,7 @@
 // Configuração global do Google Maps
 export const GOOGLE_MAPS_CONFIG = {
   // Sua chave de API do Google Maps
-  apiKey: process.env.VITE_GOOGLE_MAPS_API_KEY || '',
+  apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
   
   // Bibliotecas necessárias
   libraries: ['places', 'geometry'] as const,
