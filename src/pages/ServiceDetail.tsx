@@ -309,7 +309,7 @@ const ServiceDetail = () => {
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h1 className="text-2xl font-bold">{service.title}</h1>
+                      <h1 className="text-2xl font-bold">{service.title.toUpperCase()}</h1>
                       {service.isVip && (
                         <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">DESTAQUE</Badge>
                       )}
