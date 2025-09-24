@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -177,7 +178,7 @@ const Profile = () => {
     try {
       // Encode the address properly for the API
       const encodedAddress = encodeURIComponent(address);
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=br&email=contato@anunciai.com.br&accept-language=pt-BR`);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1&countrycodes=br&email=anunciai@anunciai.app.br&accept-language=pt-BR`);
       const data = await response.json();
       
       if (data && data.length > 0) {
@@ -561,6 +562,7 @@ const Profile = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

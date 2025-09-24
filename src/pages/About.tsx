@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
 
 const About = () => (
@@ -38,7 +39,7 @@ const About = () => (
         </article>
       </section>
 
-      <section className="mt-12">
+      <section id="politica" className="mt-12">
         <article className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Política de Privacidade e LGPD</h2>
           <div className="space-y-4 text-muted-foreground">
@@ -73,7 +74,28 @@ const About = () => (
           </div>
         </article>
       </section>
+
+      <section id="termos" className="mt-12">
+        <article className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Termos de Uso</h2>
+          <div className="space-y-4 text-muted-foreground">
+            <p>
+              <strong>Aceitação dos Termos:</strong> Ao utilizar o Anunciai.app.br, você concorda com estes termos de uso e nossa política de privacidade.
+            </p>
+            <p>
+              <strong>Uso da Plataforma:</strong> O Anunciai é uma plataforma de divulgação e busca de serviços, produtos e empreendimentos. O uso da plataforma deve ser feito de forma ética e em conformidade com a legislação brasileira.
+            </p>
+            <p>
+              <strong>Responsabilidades:</strong> Os usuários são responsáveis pela veracidade das informações fornecidas e pela qualidade dos serviços/produtos anunciados. O Anunciai não se responsabiliza por transações realizadas entre usuários.
+            </p>
+            <p>
+              <strong>Proibições:</strong> É proibido usar a plataforma para atividades ilegais, spam, conteúdo ofensivo ou que violem direitos de terceiros.
+            </p>
+          </div>
+        </article>
+      </section>
     </main>
+    <Footer />
   </div>
 );
 

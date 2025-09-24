@@ -224,7 +224,7 @@ const Anunciar = () => {
       for (const query of searchQueries) {
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query || '')}&limit=1&countrycodes=br&addressdetails=1&email=contato@anunciai.com.br&accept-language=pt-BR`
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query || '')}&limit=1&countrycodes=br&addressdetails=1&email=anunciai@anunciai.app.br&accept-language=pt-BR`
           );
           
           if (!response.ok) {
