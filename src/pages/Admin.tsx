@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Eye, Edit, Trash2, UserPlus, Crown, Flame } from 'lucide-react';
+import { Eye, Edit, Trash2, UserPlus, Crown, Flame, Database } from 'lucide-react';
 import { toast } from 'sonner';
 import Header from '@/components/ui/header';
 import Footer from '@/components/ui/footer';
@@ -41,6 +41,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [cleanupLoading, setCleanupLoading] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -227,6 +228,27 @@ const Admin = () => {
     }
   };
 
+  const cleanupDuplicates = async () => {
+    setCleanupLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('cleanup-duplicates');
+      
+      if (error) throw error;
+      
+      if (data.success) {
+        toast.success(`Limpeza concluída: ${data.details.total_removed} duplicados removidos`);
+        loadData(isAdmin, user?.id);
+      } else {
+        throw new Error(data.error || 'Erro na limpeza');
+      }
+    } catch (error: any) {
+      console.error('Error cleaning duplicates:', error);
+      toast.error('Erro ao limpar duplicados: ' + (error?.message || 'Erro desconhecido'));
+    } finally {
+      setCleanupLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -260,9 +282,20 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Painel Administrativo</h1>
-          <p className="text-muted-foreground">Gerencie usuários e anúncios da plataforma</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Painel Administrativo</h1>
+            <p className="text-muted-foreground">Gerencie usuários e anúncios da plataforma</p>
+          </div>
+          <Button
+            onClick={cleanupDuplicates}
+            disabled={cleanupLoading}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Database className="h-4 w-4" />
+            {cleanupLoading ? 'Limpando...' : 'Limpar Duplicados'}
+          </Button>
         </div>
 
         <Tabs defaultValue="users" className="w-full">
@@ -365,7 +398,12 @@ const Admin = () => {
           <TabsContent value="services" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciar Anúncios ({services.length})</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Gerenciar Anúncios ({services.length})</span>
+                  <Badge variant="outline" className="ml-2">
+                    {services.filter(s => s.status === 'active').length} ativos
+                  </Badge>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
