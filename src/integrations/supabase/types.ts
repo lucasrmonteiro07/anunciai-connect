@@ -588,6 +588,13 @@ export type Database = {
         Args: { user_email: string }
         Returns: undefined
       }
+      remove_duplicate_services: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          details: Json
+          removed_count: number
+        }[]
+      }
       update_service: {
         Args: { service_data: Json; service_id: string; user_id: string }
         Returns: Json
