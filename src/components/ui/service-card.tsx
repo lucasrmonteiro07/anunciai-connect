@@ -5,6 +5,7 @@ import { Badge } from './badge';
 import { Button } from './button';
 import FloatingChat from './floating-chat';
 import { optimizeImageUrl } from '@/utils/cacheUtils';
+import { getBestAvailableImage } from '@/utils/defaultImages';
 
 export interface ServiceData {
   id: string;
@@ -75,15 +76,18 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
         <div className="relative h-48 bg-muted rounded-t-lg overflow-hidden">
           <img 
             src={optimizeImageUrl(
-              service.images?.[0] || 
-              (service.logo_url && service.logo_url !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop' ? service.logo_url : null) || 
-              'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+              getBestAvailableImage(
+                service.images,
+                service.logo_url,
+                service.category,
+                service.product_type
+              )
             )} 
             alt={`Capa ${service.title}`}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              target.src = getBestAvailableImage(null, null, service.category, service.product_type);
             }}
             loading="lazy"
             decoding="async"
