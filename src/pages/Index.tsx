@@ -240,13 +240,15 @@ const Index = () => {
     try {
       // InfinitePay payment links
       const paymentUrl = planType === 'annual' 
-        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/25bkUBt3CD'
+        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/PxA2x6V5x'
         : 'https://invoice.infinitepay.io/plans/aurorabusiness/hAKGBbJG3';
 
       // Open InfinitePay checkout in a new tab
       window.open(paymentUrl, '_blank');
       
-      toast.success('Redirecionando para pagamento...');
+      toast.success('Redirecionando para pagamento...', {
+        description: 'Após o pagamento, envie seu comprovante para aurorabi@aurorabi.com.br'
+      });
     } catch (error) {
       console.error('Error opening payment:', error);
       toast.error('Erro ao abrir página de pagamento. Tente novamente.');

@@ -145,13 +145,15 @@ const GerenciarPagamento = () => {
     try {
       // InfinitePay payment links
       const paymentUrl = planType === 'annual' 
-        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/25bkUBt3CD'
+        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/PxA2x6V5x'
         : 'https://invoice.infinitepay.io/plans/aurorabusiness/hAKGBbJG3';
 
       // Open InfinitePay checkout in a new tab
       window.open(paymentUrl, '_blank');
       
-      toast.success('Redirecionando para pagamento...');
+      toast.success('Redirecionando para pagamento...', {
+        description: 'Após o pagamento, envie seu comprovante para aurorabi@aurorabi.com.br'
+      });
     } catch (error) {
       console.error('Error opening payment:', error);
       toast.error('Erro ao abrir página de pagamento. Tente novamente.');
@@ -345,6 +347,9 @@ const GerenciarPagamento = () => {
                         </div>
                         <Flame className="h-6 w-6 text-orange-500" />
                       </div>
+                      <p className="text-xs text-muted-foreground mb-3 p-2 bg-blue-50 border border-blue-200 rounded">
+                        📧 Após o pagamento, envie seu comprovante para <strong>aurorabi@aurorabi.com.br</strong>
+                      </p>
                       <Button 
                         onClick={() => handleCheckout('monthly')}
                         className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
@@ -367,6 +372,9 @@ const GerenciarPagamento = () => {
                         </div>
                         <Crown className="h-6 w-6 text-green-500" />
                       </div>
+                      <p className="text-xs text-muted-foreground mb-3 p-2 bg-blue-50 border border-blue-200 rounded">
+                        📧 Após o pagamento, envie seu comprovante para <strong>aurorabi@aurorabi.com.br</strong>
+                      </p>
                       <Button 
                         onClick={() => handleCheckout('annual')}
                         className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0"
