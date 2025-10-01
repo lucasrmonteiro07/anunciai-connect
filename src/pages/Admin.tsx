@@ -228,6 +228,41 @@ const Admin = () => {
     }
   };
 
+  const deleteUser = async (userId: string) => {
+    const profile = profiles.find(p => p.id === userId);
+    if (!profile) return;
+
+    // Prevent self-deletion
+    if (userId === user?.id) {
+      toast.error('Você não pode excluir sua própria conta');
+      return;
+    }
+    
+    const userName = profile.first_name && profile.last_name 
+      ? `${profile.first_name} ${profile.last_name}`
+      : profile.first_name || profile.last_name || profile.email;
+
+    if (!confirm(`⚠️ ATENÇÃO: Tem certeza que deseja EXCLUIR permanentemente o usuário "${userName}"?\n\nEsta ação irá:\n- Remover o usuário do sistema\n- Excluir todos os anúncios deste usuário\n- Remover todas as avaliações\n- Esta ação NÃO pode ser desfeita!`)) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId }
+      });
+
+      if (error) throw error;
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Erro ao excluir usuário');
+      }
+
+      setProfiles(profiles.filter(p => p.id !== userId));
+      toast.success('Usuário excluído com sucesso');
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      toast.error('Erro ao excluir usuário: ' + (error?.message || 'Erro desconhecido'));
+    }
+  };
+
   const cleanupDuplicates = async () => {
     setCleanupLoading(true);
     try {
@@ -384,6 +419,15 @@ const Admin = () => {
                               title="Promover a administrador"
                             >
                               <Crown className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => deleteUser(profile.id)}
+                              title="Excluir usuário permanentemente"
+                              disabled={profile.id === user?.id}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </TableCell>
