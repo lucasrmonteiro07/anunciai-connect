@@ -1,12 +1,12 @@
 // Configurações de performance para a aplicação
 
 export const PERFORMANCE_CONFIG = {
-  // Cache durations
-  CACHE_DURATION: 2 * 60 * 1000, // 2 minutos - reduzido para melhor atualização
-  GC_TIME: 5 * 60 * 1000, // 5 minutos - reduzido
+  // Cache durations (React Query)
+  STALE_TIME: 30 * 1000, // 30 segundos - dados considerados frescos
+  CACHE_TIME: 5 * 60 * 1000, // 5 minutos - tempo que dados ficam em cache
   
   // Retry settings
-  MAX_RETRIES: 1,
+  MAX_RETRIES: 2,
   RETRY_DELAY: 1000,
   
   // Image optimization
@@ -20,8 +20,8 @@ export const PERFORMANCE_CONFIG = {
   CHUNK_SIZE_WARNING: 1000, // KB
   
   // Cache control
-  FORCE_REFRESH_INTERVAL: 30 * 60 * 1000, // 30 minutos
-  STALE_TIME: 60 * 1000, // 1 minuto
+  REFETCH_INTERVAL: 60 * 1000, // 1 minuto - atualização em background
+  REFETCH_ON_WINDOW_FOCUS: true, // Atualizar ao focar janela
 };
 
 // Cache management utilities
@@ -44,7 +44,7 @@ export class CacheManager {
     });
   }
 
-  static setCacheItem(key: string, data: any, ttl: number = PERFORMANCE_CONFIG.CACHE_DURATION): void {
+  static setCacheItem(key: string, data: any, ttl: number = PERFORMANCE_CONFIG.CACHE_TIME): void {
     const cacheKey = this.generateCacheKey(key);
     const item = {
       data,
@@ -133,7 +133,8 @@ export const shouldForceRefresh = (lastRefresh?: number): boolean => {
   if (!lastRefresh) return true;
   
   const now = Date.now();
-  return now - lastRefresh > PERFORMANCE_CONFIG.FORCE_REFRESH_INTERVAL;
+  const FORCE_REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutos
+  return now - lastRefresh > FORCE_REFRESH_INTERVAL;
 };
 
 export const markRefreshTime = (): void => {

@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: PERFORMANCE_CONFIG.STALE_TIME,
-      gcTime: PERFORMANCE_CONFIG.CACHE_DURATION,
+      gcTime: PERFORMANCE_CONFIG.CACHE_TIME,
       refetchOnWindowFocus: true,
       refetchOnMount: 'always',
       refetchOnReconnect: true,

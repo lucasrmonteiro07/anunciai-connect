@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import Footer from '@/components/ui/footer';
@@ -7,17 +7,19 @@ import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import ServicesMap from '@/components/ui/services-map';
 import { Button } from '@/components/ui/button';
-import { Filter, Map as MapIcon, Flame } from 'lucide-react';
+import { Filter, Map as MapIcon, Flame, RefreshCw } from 'lucide-react';
 import SEO from '@/components/SEO';
 import ChristianAd from '@/components/ui/christian-ad';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User, Session } from '@supabase/supabase-js';
+import { useServices } from '@/hooks/useServices';
 
 // Service categories and trusted community indicators remain
 
 const Index = () => {
   const navigate = useNavigate();
+  const { services, isLoading, refreshServices } = useServices();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -25,16 +27,13 @@ const Index = () => {
   const [selectedType, setSelectedType] = useState('all');
   const [selectedProductType, setSelectedProductType] = useState('all');
   const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
-  const [services, setServices] = useState<ServiceData[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showMap, setShowMap] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    loadServices();
-    
     // Check authentication status
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -82,97 +81,27 @@ const Index = () => {
       
       // Reload services to get updated VIP status
       if (data.subscribed) {
-        await loadServices();
+        await refreshServices();
       }
     } catch (error) {
       console.error('Error checking VIP status:', error);
     }
   };
 
+  // Atualizar quando os dados dos serviços mudarem
   useEffect(() => {
     handleSearch();
   }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedProductType, selectedType]);
 
-  const loadServices = async () => {
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
     try {
-      // First get services data
-      const { data: servicesData, error: servicesError } = await supabase
-        .from('services_public_safe')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (servicesError) {
-        console.error('Error fetching services:', servicesError);
-        setServices([]);
-        setFilteredServices([]);
-        return;
-      }
-
-      // Transform Supabase data to ServiceData format using is_vip directly from services_public
-      let servicesWithVip: ServiceData[] = [];
-      
-      if (servicesData && servicesData.length > 0) {
-        servicesWithVip = servicesData.map(service => {
-          return {
-            id: service.id || '',
-            title: service.title || '',
-            description: service.description || '',
-            category: service.category || '',
-            type: (service.type as 'prestador' | 'empreendimento') || 'prestador',
-            location: { 
-              city: service.city || '', 
-              uf: service.uf || '',
-              latitude: service.latitude ? Number(service.latitude) : undefined,
-              longitude: service.longitude ? Number(service.longitude) : undefined,
-              address: undefined // Not available in public table
-            },
-            contact: { 
-              phone: '', 
-              email: '',
-              whatsapp: undefined
-            },
-            logo: service.logo_url && service.logo_url.trim() !== '' ? service.logo_url : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-            images: (service.images && Array.isArray(service.images)) 
-              ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
-              : [],
-            isVip: service.is_vip || false, // Use is_vip directly from services_public table
-            denomination: service.denomination || '',
-            ownerName: '',
-            valor: service.valor || undefined,
-            product_type: (service.product_type as 'service' | 'product') || 'service',
-            price: service.price || undefined,
-            condition: service.condition || undefined,
-            brand: service.brand || undefined,
-            model: service.model || undefined,
-            warranty_months: service.warranty_months || undefined,
-            delivery_available: service.delivery_available || false,
-            stock_quantity: service.stock_quantity || undefined,
-            userId: service.user_id || undefined,
-            socialMedia: {
-              instagram: service.instagram || undefined,
-              facebook: service.facebook || undefined,
-              website: service.website || undefined
-            }
-          };
-        });
-      }
-
-      // Sort with VIP services first
-      const sortedServices = servicesWithVip.sort((a, b) => {
-        if (a.isVip && !b.isVip) return -1;
-        if (!a.isVip && b.isVip) return 1;
-        return 0;
-      });
-
-      // Use only real services data (no mock data)
-      setServices(sortedServices);
-      setFilteredServices(sortedServices);
+      await refreshServices();
+      toast.success('Dados atualizados com sucesso!');
     } catch (error) {
-      console.error('Error loading services:', error);
-      setServices([]);
-      setFilteredServices([]);
+      toast.error('Erro ao atualizar dados');
     } finally {
-      setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -550,8 +479,21 @@ const Index = () => {
             </div>
           )}
 
+          <div className="flex items-center justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleManualRefresh}
+              disabled={isRefreshing}
+              className="gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Atualizando...' : 'Atualizar'}
+            </Button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading ? (
+            {isLoading ? (
               // Loading skeleton
               Array.from({ length: 6 }).map((_, index) => (
                 <div key={`skeleton-${index}`} className="animate-pulse">
@@ -578,13 +520,13 @@ const Index = () => {
           </div>
 
           {/* Anúncio discreto após grid de serviços - apenas se houver conteúdo suficiente */}
-          {filteredServices.length > 6 && !loading && (
+          {filteredServices.length > 6 && !isLoading && (
             <div className="mt-8 max-w-lg mx-auto">
               <ChristianAd slot="7295932163" className="rounded-lg border border-border/50" />
             </div>
           )}
 
-          {filteredServices.length === 0 && !loading && (
+          {filteredServices.length === 0 && !isLoading && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
                 <div className="text-6xl mb-4">🔍</div>
