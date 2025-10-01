@@ -86,10 +86,27 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
-      navigate('/');
+      // Clear user state immediately
+      setUser(null);
+      setIsAdmin(false);
+      setShowEmailVerificationBanner(false);
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+      
+      // Navigate to home page
+      navigate('/', { replace: true });
+      
+      // Force reload to clear all cache
+      window.location.href = '/';
     } catch (error) {
       console.error('Error logging out:', error);
+      // Even if there's an error, clear local state and redirect
+      setUser(null);
+      setIsAdmin(false);
+      navigate('/', { replace: true });
     }
   };
 
