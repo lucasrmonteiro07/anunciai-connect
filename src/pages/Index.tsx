@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import Footer from '@/components/ui/footer';
@@ -7,33 +7,40 @@ import SearchBar from '@/components/ui/search-bar';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import ServicesMap from '@/components/ui/services-map';
 import { Button } from '@/components/ui/button';
-import { Filter, Map as MapIcon, Flame } from 'lucide-react';
+import { Filter, Map as MapIcon, Flame, RefreshCw } from 'lucide-react';
 import SEO from '@/components/SEO';
 import ChristianAd from '@/components/ui/christian-ad';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User, Session } from '@supabase/supabase-js';
+import { useServices } from '@/hooks/useServices';
 
 // Service categories and trusted community indicators remain
 
 const Index = () => {
   const navigate = useNavigate();
+  const { services, isLoading, refreshServices } = useServices();
+  
+  console.log('🏠 Index - Services:', { 
+    count: services.length, 
+    isLoading, 
+    services: services.slice(0, 3) 
+  });
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
+  const [selectedProductType, setSelectedProductType] = useState('all');
   const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
-  const [services, setServices] = useState<ServiceData[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showMap, setShowMap] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    loadServices();
-    
     // Check authentication status
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -81,107 +88,40 @@ const Index = () => {
       
       // Reload services to get updated VIP status
       if (data.subscribed) {
-        await loadServices();
+        await refreshServices();
       }
     } catch (error) {
       console.error('Error checking VIP status:', error);
     }
   };
 
+  // Atualizar quando os dados dos serviços mudarem
   useEffect(() => {
     handleSearch();
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedProductType, selectedType]);
 
-  const loadServices = async () => {
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
     try {
-      // First get services data
-      const { data: servicesData, error: servicesError } = await supabase
-        .from('services_public')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (servicesError) {
-        console.error('Error fetching services:', servicesError);
-        setServices([]);
-        setFilteredServices([]);
-        return;
-      }
-
-      // Get VIP status for each service by checking user profiles
-      let servicesWithVip: ServiceData[] = [];
-      
-      if (servicesData && servicesData.length > 0) {
-        // Get unique user IDs from services
-        const userIds = [...new Set(servicesData.map(s => s.user_id).filter((id): id is string => Boolean(id)))];
-        
-        // Get VIP status from profiles table (using a separate query due to privacy constraints)
-        const { data: profilesData } = await supabase
-          .from('profiles')
-          .select('id, is_vip')
-          .in('id', userIds);
-
-        const vipMap = new Map((profilesData || []).map(p => [p.id, p.is_vip]));
-
-        // Transform Supabase data to ServiceData format
-        servicesWithVip = servicesData.map(service => {
-
-          
-          return {
-            id: service.id,
-            title: service.title,
-            description: service.description || '',
-            category: service.category,
-            type: service.type as 'prestador' | 'empreendimento',
-            location: { 
-              city: service.city, 
-              uf: service.uf,
-              latitude: service.latitude ? Number(service.latitude) : undefined,
-              longitude: service.longitude ? Number(service.longitude) : undefined,
-              address: undefined // Not available in public table
-            },
-            contact: { 
-              phone: '', 
-              email: '',
-              whatsapp: undefined
-            },
-            logo: service.logo_url && service.logo_url.trim() !== '' ? service.logo_url : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-            images: (service.images && Array.isArray(service.images)) 
-              ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
-              : [],
-            isVip: service.user_id ? vipMap.get(service.user_id) || false : false,
-            denomination: service.denomination || '',
-            ownerName: '',
-            valor: undefined, // Not available in public table
-            userId: service.user_id || undefined,
-            socialMedia: {
-              instagram: service.instagram || undefined,
-              facebook: service.facebook || undefined,
-              website: service.website || undefined
-            }
-          };
-        });
-      }
-
-      // Sort with VIP services first
-      const sortedServices = servicesWithVip.sort((a, b) => {
-        if (a.isVip && !b.isVip) return -1;
-        if (!a.isVip && b.isVip) return 1;
-        return 0;
-      });
-
-      // Use only real services data (no mock data)
-      setServices(sortedServices);
-      setFilteredServices(sortedServices);
+      await refreshServices();
+      toast.success('Dados atualizados com sucesso!');
     } catch (error) {
-      console.error('Error loading services:', error);
-      setServices([]);
-      setFilteredServices([]);
+      toast.error('Erro ao atualizar dados');
     } finally {
-      setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
   const handleSearch = useCallback(() => {
+    console.log('🔎 handleSearch chamado:', {
+      totalServices: services.length,
+      searchTerm,
+      selectedCategory,
+      selectedLocation,
+      selectedType,
+      selectedProductType
+    });
+    
     let filtered = services;
 
     if (searchTerm.trim()) {
@@ -192,30 +132,43 @@ const Index = () => {
         service.category.toLowerCase().includes(searchLower) ||
         service.denomination.toLowerCase().includes(searchLower)
       );
+      console.log('🔎 Após filtro de busca:', filtered.length);
+    }
+
+    // Filter by product type (service vs product)
+    if (selectedProductType !== 'all') {
+      filtered = filtered.filter(service => 
+        service.product_type === selectedProductType
+      );
+      console.log('🔎 Após filtro de product_type:', filtered.length);
     }
 
     if (selectedType !== 'all') {
       filtered = filtered.filter(service => 
         service.type.toLowerCase() === selectedType.toLowerCase()
       );
+      console.log('🔎 Após filtro de type:', filtered.length);
     }
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(service => 
         service.category.toLowerCase() === selectedCategory.toLowerCase()
       );
+      console.log('🔎 Após filtro de category:', filtered.length);
     }
 
     if (selectedLocation !== 'all') {
       filtered = filtered.filter(service => 
         service.location.uf.toLowerCase() === selectedLocation.toLowerCase()
       );
+      console.log('🔎 Após filtro de location:', filtered.length);
     }
 
     if (selectedCity !== 'all') {
       filtered = filtered.filter(service => 
         service.location.city.toLowerCase() === selectedCity.toLowerCase()
       );
+      console.log('🔎 Após filtro de city:', filtered.length);
     }
 
     // Sort VIP first, then by creation date
@@ -225,8 +178,9 @@ const Index = () => {
       return 0;
     });
 
+    console.log('✅ Serviços filtrados final:', filtered.length);
     setFilteredServices(filtered);
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
 
   const handleDirectCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {
@@ -238,13 +192,15 @@ const Index = () => {
     try {
       // InfinitePay payment links
       const paymentUrl = planType === 'annual' 
-        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/25bkUBt3CD'
+        ? 'https://invoice.infinitepay.io/plans/aurorabusiness/PxA2x6V5x'
         : 'https://invoice.infinitepay.io/plans/aurorabusiness/hAKGBbJG3';
 
       // Open InfinitePay checkout in a new tab
       window.open(paymentUrl, '_blank');
       
-      toast.success('Redirecionando para pagamento...');
+      toast.success('Redirecionando para pagamento...', {
+        description: 'Após o pagamento, envie seu comprovante para aurorabi@aurorabi.com.br'
+      });
     } catch (error) {
       console.error('Error opening payment:', error);
       toast.error('Erro ao abrir página de pagamento. Tente novamente.');
@@ -394,28 +350,36 @@ const Index = () => {
                   <p className="text-sm opacity-75">(R$ 142,80/ano)</p>
                   <p className="text-xs opacity-75 mt-2">Economia de R$ 36/ano</p>
                 </div>
-                <ul className="text-left space-y-3 mb-6">
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    5 fotos do seu negócio
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Destaque nas buscas
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Contorno dourado nos anúncios
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Badge Fogaréu especial
-                  </li>
-                  <li className="flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
-                    Aparece primeiro na busca
-                  </li>
-                </ul>
+                 <ul className="text-left space-y-3 mb-6">
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     5 fotos do seu negócio
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Destaque nas buscas
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Contorno dourado nos anúncios
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Badge Fogaréu especial
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Aparece primeiro na busca
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Adicional de consultoria de anúncios gratuita
+                   </li>
+                   <li className="flex items-center">
+                     <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
+                     Pra você vender mais e com mais assertividade
+                   </li>
+                 </ul>
                 <Button 
                   variant="secondary" 
                   className="w-full bg-white text-green-600 hover:bg-green-50 mb-3"
@@ -485,6 +449,8 @@ const Index = () => {
             setSelectedLocation={setSelectedLocation}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
+            selectedProductType={selectedProductType}
+            setSelectedProductType={setSelectedProductType}
             onSearch={handleSearch}
             services={services}
           />
@@ -505,7 +471,7 @@ const Index = () => {
                 )}
               </h2>
               <p className="text-muted-foreground">
-                Encontre profissionais e estabelecimentos cristãos qualificados em sua região
+                Encontre profissionais, empreendimentos e produtos cristãos qualificados em sua região
               </p>
             </div>
             <div className="flex gap-2">
@@ -536,8 +502,21 @@ const Index = () => {
             </div>
           )}
 
+          <div className="flex items-center justify-end mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleManualRefresh}
+              disabled={isRefreshing}
+              className="gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Atualizando...' : 'Atualizar'}
+            </Button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading ? (
+            {isLoading ? (
               // Loading skeleton
               Array.from({ length: 6 }).map((_, index) => (
                 <div key={`skeleton-${index}`} className="animate-pulse">
@@ -554,20 +533,23 @@ const Index = () => {
                 <ServiceCard 
                   key={service.id} 
                   service={service}
-                  onClick={() => navigate(`/anuncio/${service.id}`)}
+                  onClick={() => {
+                    console.log('Navegando para:', `/anuncio/${service.id}`);
+                    navigate(`/anuncio/${service.id}`);
+                  }}
                 />
               ))
             )}
           </div>
 
           {/* Anúncio discreto após grid de serviços - apenas se houver conteúdo suficiente */}
-          {filteredServices.length > 6 && !loading && (
+          {filteredServices.length > 6 && !isLoading && (
             <div className="mt-8 max-w-lg mx-auto">
               <ChristianAd slot="7295932163" className="rounded-lg border border-border/50" />
             </div>
           )}
 
-          {filteredServices.length === 0 && !loading && (
+          {filteredServices.length === 0 && !isLoading && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
                 <div className="text-6xl mb-4">🔍</div>

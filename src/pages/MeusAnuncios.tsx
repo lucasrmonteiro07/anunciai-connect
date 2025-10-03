@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '@/components/ui/header';
+import Footer from '@/components/ui/footer';
 import ServiceCard, { ServiceData } from '@/components/ui/service-card';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
@@ -225,6 +226,7 @@ const MeusAnuncios = () => {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };

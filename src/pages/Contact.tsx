@@ -185,10 +185,10 @@ const Contact = () => {
                 <h2 className="text-2xl font-bold mb-4">Sobre o Anunciai</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
                   O Anunciai é uma plataforma dedicada à comunidade cristã brasileira, 
-                  conectando prestadores de serviços e empreendimentos que compartilham 
+                  conectando profissionais, empreendimentos e vendedores de produtos que compartilham 
                   dos mesmos valores e princípios. Nossa missão é fortalecer os negócios 
-                  cristãos e facilitar o encontro entre quem oferece e quem busca serviços 
-                  de qualidade dentro da nossa comunidade de fé.
+                  cristãos e facilitar o encontro entre quem oferece e quem busca serviços, 
+                  produtos e estabelecimentos de qualidade dentro da nossa comunidade de fé.
                 </p>
               </div>
             </CardContent>

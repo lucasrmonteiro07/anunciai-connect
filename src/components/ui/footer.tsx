@@ -24,34 +24,25 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-muted-foreground text-sm mb-4">
-              A plataforma que conecta prestadores de serviços e estabelecimentos cristãos, 
+              A plataforma que conecta profissionais, empreendimentos e produtos cristãos, 
               facilitando negócios baseados em valores e princípios cristãos.
             </p>
             <div className="flex space-x-4">
               <a 
-                href="https://facebook.com/anunciai" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-                aria-label="Facebook do Anunciai"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a 
-                href="https://instagram.com/anunciai" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-                aria-label="Instagram do Anunciai"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a 
-                href="mailto:contato@anunciai.app.br"
+                href="mailto:anunciai@anunciai.app.br"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="Email de contato"
               >
                 <Mail className="h-5 w-5" />
+              </a>
+              <a 
+                href="https://wa.me/5551995607379" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="WhatsApp do Anunciai"
+              >
+                <Phone className="h-5 w-5" />
               </a>
             </div>
           </div>
@@ -147,13 +138,13 @@ const Footer = () => {
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link 
-                to="/sobre" 
+                to="/sobre#termos" 
                 className="text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 Termos de Uso & LGPD
               </Link>
               <Link 
-                to="/sobre" 
+                to="/sobre#politica" 
                 className="text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 Política de Privacidade

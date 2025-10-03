@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
 
 const About = () => (
@@ -19,26 +20,26 @@ const About = () => (
     <main className="container mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-4">Sobre o Anunciai</h1>
       <p className="text-muted-foreground max-w-3xl">
-        O Anunciai conecta a comunidade cristã a prestadores de serviços e empreendimentos que valorizam princípios de fé, ética e excelência.
+        O Anunciai conecta a comunidade cristã a profissionais, empreendimentos e produtos que valorizam princípios de fé, ética e excelência.
       </p>
 
       <section className="mt-8 grid gap-6 md:grid-cols-2">
         <article className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-2">Nossa Missão</h2>
           <p className="text-muted-foreground">
-            Facilitar a descoberta de serviços confiáveis, promover conexões e fortalecer a economia da fé.
+            Facilitar a descoberta de serviços, produtos e empreendimentos confiáveis, promover conexões e fortalecer a economia da fé.
           </p>
         </article>
 
         <article className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-2">Para Quem</h2>
           <p className="text-muted-foreground">
-            Para prestadores, empreendimentos e clientes que desejam um ambiente seguro e alinhado a valores cristãos.
+            Para profissionais, empreendimentos e clientes que desejam um ambiente seguro e alinhado a valores cristãos.
           </p>
         </article>
       </section>
 
-      <section className="mt-12">
+      <section id="politica" className="mt-12">
         <article className="bg-card border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Política de Privacidade e LGPD</h2>
           <div className="space-y-4 text-muted-foreground">
@@ -54,10 +55,10 @@ const About = () => (
               <strong>Finalidade dos Dados:</strong> Os dados fornecidos são utilizados apenas para:
             </p>
             <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>Permitir que usuários encontrem e contatem prestadores de serviços</li>
+              <li>Permitir que usuários encontrem e contatem profissionais, empreendimentos e vendedores de produtos</li>
               <li>Facilitar o cadastro e gerenciamento de anúncios</li>
               <li>Melhorar a experiência de navegação na plataforma</li>
-              <li>Comunicação relacionada aos serviços oferecidos</li>
+              <li>Comunicação relacionada aos serviços, produtos e estabelecimentos oferecidos</li>
             </ul>
             <p>
               <strong>Isenção de Responsabilidade:</strong> O Anunciai.app.br atua exclusivamente como plataforma de 
@@ -73,7 +74,28 @@ const About = () => (
           </div>
         </article>
       </section>
+
+      <section id="termos" className="mt-12">
+        <article className="bg-card border border-border rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Termos de Uso</h2>
+          <div className="space-y-4 text-muted-foreground">
+            <p>
+              <strong>Aceitação dos Termos:</strong> Ao utilizar o Anunciai.app.br, você concorda com estes termos de uso e nossa política de privacidade.
+            </p>
+            <p>
+              <strong>Uso da Plataforma:</strong> O Anunciai é uma plataforma de divulgação e busca de serviços, produtos e empreendimentos. O uso da plataforma deve ser feito de forma ética e em conformidade com a legislação brasileira.
+            </p>
+            <p>
+              <strong>Responsabilidades:</strong> Os usuários são responsáveis pela veracidade das informações fornecidas e pela qualidade dos serviços/produtos anunciados. O Anunciai não se responsabiliza por transações realizadas entre usuários.
+            </p>
+            <p>
+              <strong>Proibições:</strong> É proibido usar a plataforma para atividades ilegais, spam, conteúdo ofensivo ou que violem direitos de terceiros.
+            </p>
+          </div>
+        </article>
+      </section>
     </main>
+    <Footer />
   </div>
 );
 

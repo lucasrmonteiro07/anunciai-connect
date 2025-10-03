@@ -101,7 +101,7 @@ class NominatimService {
       limit: '1',
       countrycodes: 'br',
       addressdetails: '1',
-      email: 'contato@anunciai.com.br', // Identificação do usuário conforme diretrizes
+      email: 'anunciai@anunciai.app.br', // Identificação do usuário conforme diretrizes
       'accept-language': 'pt-BR', // Idioma preferido
       dedupe: '1', // Remove duplicatas
       bounded: '1', // Limita busca ao país especificado
@@ -113,7 +113,7 @@ class NominatimService {
       try {
         const response = await fetch(url, {
           headers: {
-            'User-Agent': 'Anunciai-Connect/1.0 (contato@anunciai.com.br)', // User-Agent identificando a aplicação
+            'User-Agent': 'Anunciai-Connect/1.0 (anunciai@anunciai.app.br)', // User-Agent identificando a aplicação
           },
         });
 
@@ -186,7 +186,7 @@ class NominatimService {
       lon: longitude.toString(),
       zoom: '18',
       addressdetails: '1',
-      email: 'contato@anunciai.com.br',
+      email: 'anunciai@anunciai.app.br',
       'accept-language': 'pt-BR',
     });
 
@@ -195,7 +195,7 @@ class NominatimService {
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Anunciai-Connect/1.0 (contato@anunciai.com.br)',
+          'User-Agent': 'Anunciai-Connect/1.0 (anunciai@anunciai.app.br)',
         },
       });
 

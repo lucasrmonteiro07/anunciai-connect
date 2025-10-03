@@ -5,6 +5,7 @@ import { Badge } from './badge';
 import { Button } from './button';
 import FloatingChat from './floating-chat';
 import { optimizeImageUrl } from '@/utils/cacheUtils';
+import { getBestAvailableImage } from '@/utils/defaultImages';
 
 export interface ServiceData {
   id: string;
@@ -12,6 +13,7 @@ export interface ServiceData {
   description: string;
   category: string;
   type: 'prestador' | 'empreendimento';
+  product_type?: 'service' | 'product';
   location: {
     city: string;
     uf: string;
@@ -31,6 +33,13 @@ export interface ServiceData {
   denomination: string;
   ownerName: string;
   valor?: string;
+  price?: number;
+  condition?: string;
+  brand?: string;
+  model?: string;
+  warranty_months?: number;
+  delivery_available?: boolean;
+  stock_quantity?: number;
   userId?: string;
   socialMedia?: {
     instagram?: string;
@@ -67,25 +76,36 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
         <div className="relative h-48 bg-muted rounded-t-lg overflow-hidden">
           <img 
             src={optimizeImageUrl(
-              service.images?.[0] || 
-              (service.logo_url && service.logo_url !== 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop' ? service.logo_url : null) || 
-              'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop'
+              getBestAvailableImage(
+                service.images,
+                service.logo_url,
+                service.category,
+                service.product_type
+              )
             )} 
             alt={`Capa ${service.title}`}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
+              target.src = getBestAvailableImage(null, null, service.category, service.product_type);
             }}
             loading="lazy"
             decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           
+          {/* Photo Gallery Indicator */}
+          {service.images && service.images.length > 1 && (
+            <div className="absolute top-3 left-3 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
+              +{service.images.length - 1} fotos
+            </div>
+          )}
+          
           {/* Service Type Badge */}
           <div className="absolute bottom-3 left-3">
             <Badge className={`service-badge ${service.type}`}>
-              {service.type === 'prestador' ? 'Prestador de Serviço' : 'Empreendimento'}
+              {service.product_type === 'product' ? 'Produto' : 
+               service.type === 'prestador' ? 'Prestador de Serviço' : 'Empreendimento'}
             </Badge>
           </div>
         </div>
@@ -116,12 +136,59 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
             </div>
           </div>
 
-          {/* Valor do Serviço */}
-          {service.valor && (
+          {/* Valor do Serviço/Produto */}
+          {(service.valor || service.price) && (
             <div className="mb-4">
               <div className="bg-primary/10 text-primary px-3 py-2 rounded-lg text-center">
-                <span className="font-semibold text-sm">{service.valor}</span>
+                <span className="font-semibold text-sm">
+                  {service.price ? `R$ ${service.price.toFixed(2)}` : service.valor}
+                </span>
               </div>
+            </div>
+          )}
+
+          {/* Informações do Produto */}
+          {service.product_type === 'product' && (
+            <div className="mb-4 space-y-2">
+              {service.brand && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Marca:</span>
+                  <span className="ml-2">{service.brand}</span>
+                </div>
+              )}
+              {service.model && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Modelo:</span>
+                  <span className="ml-2">{service.model}</span>
+                </div>
+              )}
+              {service.condition && (
+                <div className="flex items-center text-sm">
+                  <span className="font-medium">Estado:</span>
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    {service.condition === 'new' ? 'Novo' : 
+                     service.condition === 'used' ? 'Usado' : 
+                     service.condition === 'refurbished' ? 'Recondicionado' : service.condition}
+                  </Badge>
+                </div>
+              )}
+              {service.stock_quantity && service.stock_quantity > 0 && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Estoque:</span>
+                  <span className="ml-2">{service.stock_quantity} unidades</span>
+                </div>
+              )}
+              {service.warranty_months && service.warranty_months > 0 && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="font-medium">Garantia:</span>
+                  <span className="ml-2">{service.warranty_months} meses</span>
+                </div>
+              )}
+              {service.delivery_available && (
+                <div className="flex items-center text-sm text-green-600">
+                  <span className="font-medium">✓ Entrega disponível</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -140,8 +207,11 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
               className="border-primary/30 hover:border-primary hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(`tel:${service.contact.phone}`, '_self');
+                // Botão será habilitado quando houver informações de contato disponíveis
+                alert('Para ver informações de contato, clique no anúncio para abrir os detalhes completos.');
               }}
+              disabled={!service.contact.phone}
+              title={service.contact.phone ? `Ligar para ${service.contact.phone}` : 'Informações de contato disponíveis nos detalhes'}
             >
               <Phone className="h-4 w-4 mr-1" />
               Ligar
@@ -152,8 +222,11 @@ const ServiceCard = ({ service, onClick }: ServiceCardProps) => {
               className="border-primary/30 hover:border-primary hover:bg-primary/10"
               onClick={(e) => {
                 e.stopPropagation();
-                window.open(`mailto:${service.contact.email}`, '_self');
+                // Botão será habilitado quando houver informações de contato disponíveis
+                alert('Para ver informações de contato, clique no anúncio para abrir os detalhes completos.');
               }}
+              disabled={!service.contact.email}
+              title={service.contact.email ? `Email para ${service.contact.email}` : 'Informações de contato disponíveis nos detalhes'}
             >
               <Mail className="h-4 w-4 mr-1" />
               Email

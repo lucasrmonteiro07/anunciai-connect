@@ -14,6 +14,7 @@ import ContactInfo from "@/components/ui/contact-info";
 import FloatingChat from "@/components/ui/floating-chat";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getBestAvailableImage } from "@/utils/defaultImages";
 
 interface Service {
   id: string;
@@ -74,7 +75,7 @@ const ServiceDetail = () => {
     try {
       // Primeiro buscar dados públicos do serviço
       const { data: publicData, error: publicError } = await supabase
-        .from('services_public')
+        .from('services_public_safe')
         .select('*')
         .eq('id', id || '')
         .single();
@@ -108,14 +109,14 @@ const ServiceDetail = () => {
       }
 
       const transformedService: Service = {
-        id: publicData.id,
-        title: publicData.title,
+        id: publicData.id || '',
+        title: publicData.title || '',
         description: publicData.description || '',
-        category: publicData.category,
-        type: publicData.type as 'prestador' | 'empreendimento',
+        category: publicData.category || '',
+        type: (publicData.type as 'prestador' | 'empreendimento') || 'prestador',
         location: {
-          city: publicData.city,
-          uf: publicData.uf,
+          city: publicData.city || '',
+          uf: publicData.uf || '',
           latitude: publicData.latitude ? Number(publicData.latitude) : undefined,
           longitude: publicData.longitude ? Number(publicData.longitude) : undefined,
           address: undefined // Not available in public table
@@ -273,43 +274,21 @@ const ServiceDetail = () => {
               <CardContent className="p-6">
                 <div className="flex items-start gap-4 mb-4">
                   <img 
-                    src={(() => {
-                      // Lógica melhorada de fallback para imagens
-                      const defaultImage = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
-                      
-                      // 1. Verificar se há imagens válidas
-                      if (service.images && Array.isArray(service.images) && service.images.length > 0) {
-                        const firstImage = service.images[0];
-                        if (firstImage && typeof firstImage === 'string' && firstImage.trim() !== '') {
-                          return firstImage;
-                        }
-                      }
-                      
-                      // 2. Verificar se há logo válido
-                      if (service.logo && typeof service.logo === 'string' && service.logo.trim() !== '' && service.logo !== defaultImage) {
-                        return service.logo;
-                      }
-                      
-                      // 3. Usar imagem padrão
-                      return defaultImage;
-                    })()}
+                    src={getBestAvailableImage(
+                      service.images,
+                      service.logo,
+                      service.category
+                    )}
                     alt={service.title}
                     className="w-20 h-20 object-cover rounded-lg"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      const defaultImage = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop';
-                      console.log('❌ Erro ao carregar imagem na página de detalhes:', target.src);
-                      if (target.src !== defaultImage) {
-                        target.src = defaultImage;
-                      }
-                    }}
-                    onLoad={() => {
-                      console.log('✅ Imagem carregada com sucesso na página de detalhes:', service.title);
+                      target.src = getBestAvailableImage(null, null, service.category);
                     }}
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h1 className="text-2xl font-bold">{service.title}</h1>
+                      <h1 className="text-2xl font-bold">{service.title.toUpperCase()}</h1>
                       {service.isVip && (
                         <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">DESTAQUE</Badge>
                       )}

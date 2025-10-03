@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -165,7 +166,7 @@ const EditarAnuncio = () => {
       for (const query of searchQueries) {
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query || '')}&limit=1&countrycodes=br&addressdetails=1&email=contato@anunciai.com.br&accept-language=pt-BR`
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query || '')}&limit=1&countrycodes=br&addressdetails=1&email=anunciai@anunciai.app.br&accept-language=pt-BR`
           );
           
           if (!response.ok) {
@@ -718,6 +719,7 @@ const EditarAnuncio = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

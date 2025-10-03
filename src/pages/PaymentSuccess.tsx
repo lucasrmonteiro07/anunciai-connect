@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
+import Footer from '@/components/ui/footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -125,6 +126,7 @@ const PaymentSuccess = () => {
           </Card>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

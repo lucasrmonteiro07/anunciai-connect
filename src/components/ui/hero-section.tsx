@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, Users, ShieldCheck, Crown } from 'lucide-react';
 import { Button } from './button';
 import { Link } from 'react-router-dom';
-import heroBanner from '@/assets/hero-banner.jpg';
+import heroBanner from '@/assets/hero-professional.jpg';
 
 const HeroSection = () => {
   return (
@@ -30,18 +30,17 @@ const HeroSection = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Conecte-se com
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            Encontre
             <span className="gold-accent block">
-              Profissionais Cristãos
+              Profissionais, Empreendimentos e Produtos
             </span>
-            de Confiança
+            de Confiança na Sua Região
           </h1>
 
           {/* Description */}
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Encontre prestadores de serviços e empreendimentos com os valores que você compartilha. 
-            Uma comunidade cristã de profissionais qualificados.
+          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed">
+            Plataforma que conecta você aos melhores profissionais, empreendimentos e produtos cristãos.
           </p>
 
           {/* CTA Buttons */}
@@ -55,7 +54,7 @@ const HeroSection = () => {
               }}
             >
               <Search className="mr-2 h-5 w-5" />
-              Buscar Anúncios
+              Buscar Anúncio
             </Button>
             <Button 
               variant="outline" 
@@ -78,7 +77,7 @@ const HeroSection = () => {
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-primary mb-2">50+</div>
-              <div className="text-sm text-muted-foreground">Categorias de Serviços</div>
+              <div className="text-sm text-muted-foreground">Categorias Disponíveis</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
