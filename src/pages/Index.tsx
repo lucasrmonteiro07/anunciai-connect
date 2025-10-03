@@ -157,7 +157,7 @@ const Index = () => {
     });
 
     setFilteredServices(filtered);
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType]);
+  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
 
   const handleDirectCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {
