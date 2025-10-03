@@ -20,6 +20,13 @@ import { useServices } from '@/hooks/useServices';
 const Index = () => {
   const navigate = useNavigate();
   const { services, isLoading, refreshServices } = useServices();
+  
+  console.log('🏠 Index - Services:', { 
+    count: services.length, 
+    isLoading, 
+    services: services.slice(0, 3) 
+  });
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -106,6 +113,15 @@ const Index = () => {
   };
 
   const handleSearch = useCallback(() => {
+    console.log('🔎 handleSearch chamado:', {
+      totalServices: services.length,
+      searchTerm,
+      selectedCategory,
+      selectedLocation,
+      selectedType,
+      selectedProductType
+    });
+    
     let filtered = services;
 
     if (searchTerm.trim()) {
@@ -116,6 +132,7 @@ const Index = () => {
         service.category.toLowerCase().includes(searchLower) ||
         service.denomination.toLowerCase().includes(searchLower)
       );
+      console.log('🔎 Após filtro de busca:', filtered.length);
     }
 
     // Filter by product type (service vs product)
@@ -123,30 +140,35 @@ const Index = () => {
       filtered = filtered.filter(service => 
         service.product_type === selectedProductType
       );
+      console.log('🔎 Após filtro de product_type:', filtered.length);
     }
 
     if (selectedType !== 'all') {
       filtered = filtered.filter(service => 
         service.type.toLowerCase() === selectedType.toLowerCase()
       );
+      console.log('🔎 Após filtro de type:', filtered.length);
     }
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(service => 
         service.category.toLowerCase() === selectedCategory.toLowerCase()
       );
+      console.log('🔎 Após filtro de category:', filtered.length);
     }
 
     if (selectedLocation !== 'all') {
       filtered = filtered.filter(service => 
         service.location.uf.toLowerCase() === selectedLocation.toLowerCase()
       );
+      console.log('🔎 Após filtro de location:', filtered.length);
     }
 
     if (selectedCity !== 'all') {
       filtered = filtered.filter(service => 
         service.location.city.toLowerCase() === selectedCity.toLowerCase()
       );
+      console.log('🔎 Após filtro de city:', filtered.length);
     }
 
     // Sort VIP first, then by creation date
@@ -156,6 +178,7 @@ const Index = () => {
       return 0;
     });
 
+    console.log('✅ Serviços filtrados final:', filtered.length);
     setFilteredServices(filtered);
   }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
 
