@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User, Session } from '@supabase/supabase-js';
 import { useServices } from '@/hooks/useServices';
+import DebugPanel from '@/components/DebugPanel';
 
 // Service categories and trusted community indicators remain
 
@@ -583,6 +584,9 @@ const Index = () => {
 
       <Footer />
       </main>
+      
+      {/* Debug Panel - Temporário para diagnosticar problema */}
+      <DebugPanel />
     </div>
   );
 };

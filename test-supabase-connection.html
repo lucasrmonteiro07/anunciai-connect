@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Conexão Supabase - Anunciai</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        h1 { color: #f97316; }
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #2a2a2a;
+        }
+        .success { border-left: 4px solid #22c55e; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+        button {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover { background: #ea580c; }
+        pre {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .card {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #404040;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #f97316;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Teste de Conexão - Supabase (Anunciai)</h1>
+    
+    <div class="status info">
+        <strong>Status:</strong> <span id="status">Aguardando teste...</span>
+    </div>
+
+    <div>
+        <button onclick="testarConexao()">🔌 Testar Conexão</button>
+        <button onclick="buscarServicos()">📋 Buscar Serviços</button>
+        <button onclick="buscarDetalhes()">🔎 Ver Detalhes da View</button>
+        <button onclick="limparResultados()">🗑️ Limpar</button>
+    </div>
+
+    <div id="resultado"></div>
+
+    <script>
+        const SUPABASE_URL = "https://wkchztcfbwnbukpqejix.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndrY2h6dGNmYnduYnVrcHFlaml4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mjg1NjksImV4cCI6MjA3MjMwNDU2OX0.NK-ZWen5oFH8qbq8KX9p8tdZipTik2udQsfozb4eKs4";
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function setStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = message;
+            document.querySelector('.status').className = `status ${type}`;
+        }
+
+        function addResultado(title, content, type = 'info') {
+            const resultadoDiv = document.getElementById('resultado');
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h3>${title}</h3>
+                <div class="${type}">${content}</div>
+            `;
+            resultadoDiv.appendChild(card);
+        }
+
+        function limparResultados() {
+            document.getElementById('resultado').innerHTML = '';
+            setStatus('Resultados limpos', 'info');
+        }
+
+        async function testarConexao() {
+            setStatus('🔄 Testando conexão...', 'info');
+            limparResultados();
+
+            try {
+                // Teste 1: Verificar conexão básica
+                addResultado('1️⃣ Teste de Conexão', '<div class="loading"></div> Testando...', 'info');
+                
+                const { data, error } = await supabase
+                    .from('services_public_safe')
+                    .select('count', { count: 'exact', head: true });
+
+                if (error) {
+                    console.error('Erro de conexão:', error);
+                    addResultado('1️⃣ Teste de Conexão', `
+                        <strong style="color: #ef4444;">❌ ERRO</strong><br>
+                        <strong>Mensagem:</strong> ${error.message}<br>
+                        <strong>Código:</strong> ${error.code || 'N/A'}<br>
+                        <strong>Detalhes:</strong> ${error.details || 'N/A'}<br>
+                        <strong>Hint:</strong> ${error.hint || 'N/A'}
+                    `, 'error');
+                    setStatus('❌ Erro na conexão', 'error');
+                    return;
+                }
+
+                addResultado('1️⃣ Teste de Conexão', `
+                    <strong style="color: #22c55e;">✅ SUCESSO</strong><br>
+                    Conexão com Supabase estabelecida!
+                `, 'success');
+
+                setStatus('✅ Conexão OK', 'success');
+
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                addResultado('1️⃣ Teste de Conexão', `
+                    <strong style="color: #ef4444;">❌ ERRO INESPERADO</strong><br>
+                    ${err.message}
+                `, 'error');
+                setStatus('❌ Erro inesperado', 'error');
+            }
+        }
+
+        async function buscarServicos() {
+            setStatus('🔄 Buscando serviços...', 'info');
+            limparResultados();
+
+            try {
+                console.log('📡 Iniciando busca de serviços...');
+                
+                const { data: servicesData, error: servicesError, count } = await supabase
+                    .from('services_public_safe')
+                    .select('*', { count: 'exact' })
+                    .order('created_at', { ascending: false });
+
+                console.log('📦 Resposta recebida:', { servicesData, servicesError, count });
+
+                if (servicesError) {
+                    console.error('❌ Erro ao buscar:', servicesError);
+                    addResultado('📋 Busca de Serviços', `
+                        <strong style="color: #ef4444;">❌ ERRO</strong><br>
+                        <strong>Mensagem:</strong> ${servicesError.message}<br>
+                        <strong>Código:</strong> ${servicesError.code || 'N/A'}<br>
+                        <strong>Detalhes:</strong> ${servicesError.details || 'N/A'}<br>
+                        <strong>Hint:</strong> ${servicesError.hint || 'N/A'}
+                    `, 'error');
+                    setStatus('❌ Erro ao buscar serviços', 'error');
+                    return;
+                }
+
+                if (!servicesData || servicesData.length === 0) {
+                    addResultado('📋 Busca de Serviços', `
+                        <strong style="color: #f59e0b;">⚠️ NENHUM DADO</strong><br>
+                        A tabela <code>services_public_safe</code> está vazia ou não retornou dados.<br>
+                        <strong>Total de registros:</strong> ${count || 0}
+                    `, 'info');
+                    setStatus('⚠️ Nenhum serviço encontrado', 'info');
+                    return;
+                }
+
+                addResultado('📋 Busca de Serviços', `
+                    <strong style="color: #22c55e;">✅ SUCESSO</strong><br>
+                    <strong>Total de serviços:</strong> ${servicesData.length}<br>
+                    <strong>Primeiros 3 registros:</strong>
+                    <pre>${JSON.stringify(servicesData.slice(0, 3), null, 2)}</pre>
+                `, 'success');
+
+                // Mostrar estatísticas
+                const vipCount = servicesData.filter(s => s.is_vip).length;
+                const byType = servicesData.reduce((acc, s) => {
+                    acc[s.type] = (acc[s.type] || 0) + 1;
+                    return acc;
+                }, {});
+                const byCategory = servicesData.reduce((acc, s) => {
+                    acc[s.category] = (acc[s.category] || 0) + 1;
+                    return acc;
+                }, {});
+
+                addResultado('📊 Estatísticas', `
+                    <strong>VIP:</strong> ${vipCount} (${((vipCount/servicesData.length)*100).toFixed(1)}%)<br>
+                    <strong>Por Tipo:</strong><br>
+                    <pre>${JSON.stringify(byType, null, 2)}</pre>
+                    <strong>Por Categoria (top 5):</strong><br>
+                    <pre>${JSON.stringify(Object.entries(byCategory).sort((a,b) => b[1]-a[1]).slice(0,5).reduce((acc,[k,v]) => ({...acc,[k]:v}), {}), null, 2)}</pre>
+                `, 'info');
+
+                setStatus(`✅ ${servicesData.length} serviços encontrados`, 'success');
+
+            } catch (err) {
+                console.error('❌ Erro inesperado:', err);
+                addResultado('📋 Busca de Serviços', `
+                    <strong style="color: #ef4444;">❌ ERRO INESPERADO</strong><br>
+                    ${err.message}<br>
+                    <pre>${err.stack}</pre>
+                `, 'error');
+                setStatus('❌ Erro inesperado', 'error');
+            }
+        }
+
+        async function buscarDetalhes() {
+            setStatus('🔄 Buscando detalhes...', 'info');
+            limparResultados();
+
+            try {
+                // Teste de permissões
+                addResultado('🔐 Permissões', '<div class="loading"></div> Verificando...', 'info');
+
+                // Tentar query com diferentes níveis
+                const tests = [
+                    { name: 'services_public_safe (anon)', table: 'services_public_safe' },
+                    { name: 'services_public (anon)', table: 'services_public' },
+                ];
+
+                for (const test of tests) {
+                    const { data, error } = await supabase
+                        .from(test.table)
+                        .select('*')
+                        .limit(1);
+
+                    addResultado(`🔐 ${test.name}`, `
+                        ${error ? 
+                            `<strong style="color: #ef4444;">❌ ERRO</strong><br>${error.message}` : 
+                            `<strong style="color: #22c55e;">✅ OK</strong><br>Registros: ${data?.length || 0}`
+                        }
+                    `, error ? 'error' : 'success');
+                }
+
+                setStatus('✅ Verificação completa', 'success');
+
+            } catch (err) {
+                console.error('Erro:', err);
+                setStatus('❌ Erro na verificação', 'error');
+            }
+        }
+
+        // Auto-executar ao carregar
+        window.addEventListener('load', () => {
+            console.log('🚀 Página carregada. Pronto para testes.');
+        });
+    </script>
+</body>
+</html>

@@ -13,19 +13,37 @@ export const useServices = () => {
   const { data: services = [], isLoading, error, refetch } = useQuery({
     queryKey: SERVICES_QUERY_KEY,
     queryFn: async (): Promise<ServiceData[]> => {
-      const { data: servicesData, error: servicesError } = await supabase
+      console.log('🔄 useServices: Iniciando busca de serviços...');
+      
+      const { data: servicesData, error: servicesError, count } = await supabase
         .from('services_public_safe')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false });
 
+      console.log('📦 useServices: Resposta recebida:', {
+        total: servicesData?.length || 0,
+        count,
+        hasError: !!servicesError,
+        errorDetails: servicesError
+      });
+
       if (servicesError) {
-        console.error('Error fetching services:', servicesError);
+        console.error('❌ useServices: Erro ao buscar serviços:', servicesError);
+        console.error('   - Mensagem:', servicesError.message);
+        console.error('   - Código:', servicesError.code);
+        console.error('   - Detalhes:', servicesError.details);
+        console.error('   - Hint:', servicesError.hint);
         throw servicesError;
       }
 
       if (!servicesData || servicesData.length === 0) {
+        console.warn('⚠️ useServices: Nenhum serviço encontrado na tabela services_public_safe');
+        console.warn('   - Count da query:', count);
+        console.warn('   - Dados retornados:', servicesData);
         return [];
       }
+
+      console.log('✅ useServices: Serviços encontrados:', servicesData.length);
 
       // Transform data
       const transformedServices: ServiceData[] = servicesData.map(service => ({
@@ -73,16 +91,31 @@ export const useServices = () => {
       }));
 
       // Sort VIP first
-      return transformedServices.sort((a, b) => {
+      const sorted = transformedServices.sort((a, b) => {
         if (a.isVip && !b.isVip) return -1;
         if (!a.isVip && b.isVip) return 1;
         return 0;
       });
+
+      console.log('🎯 useServices: Serviços processados e ordenados:', {
+        total: sorted.length,
+        vipCount: sorted.filter(s => s.isVip).length,
+        firstThree: sorted.slice(0, 3).map(s => ({ id: s.id, title: s.title, isVip: s.isVip }))
+      });
+
+      return sorted;
     },
     staleTime: PERFORMANCE_CONFIG.STALE_TIME,
     gcTime: PERFORMANCE_CONFIG.CACHE_TIME,
     refetchOnWindowFocus: true,
     refetchInterval: PERFORMANCE_CONFIG.REFETCH_INTERVAL,
+  });
+
+  console.log('📊 useServices: Estado atual do hook:', {
+    servicesCount: services.length,
+    isLoading,
+    hasError: !!error,
+    errorMessage: error?.message
   });
 
   // Função para invalidar cache e recarregar
