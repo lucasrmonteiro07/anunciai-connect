@@ -13,17 +13,26 @@ export const useServices = () => {
   const { data: services = [], isLoading, error, refetch } = useQuery({
     queryKey: SERVICES_QUERY_KEY,
     queryFn: async (): Promise<ServiceData[]> => {
+      console.log('🔍 Fetching services from services_public_safe...');
+      
       const { data: servicesData, error: servicesError } = await supabase
         .from('services_public_safe')
         .select('*')
         .order('created_at', { ascending: false });
 
+      console.log('📊 Services fetched:', { 
+        count: servicesData?.length || 0, 
+        error: servicesError,
+        data: servicesData 
+      });
+
       if (servicesError) {
-        console.error('Error fetching services:', servicesError);
+        console.error('❌ Error fetching services:', servicesError);
         throw servicesError;
       }
 
       if (!servicesData || servicesData.length === 0) {
+        console.warn('⚠️ No services data returned from query');
         return [];
       }
 
