@@ -81,18 +81,20 @@ const Index = () => {
       });
 
       if (error) {
-        console.error('Error checking VIP status:', error);
+        console.warn('⚠️ Edge Function check-subscription não disponível:', error.message);
+        // Não bloqueia a aplicação se a Edge Function não estiver disponível
         return;
       }
 
-      console.log('VIP Status checked:', data);
+      console.log('✅ VIP Status checked:', data);
       
       // Reload services to get updated VIP status
-      if (data.subscribed) {
+      if (data?.subscribed) {
         await refreshServices();
       }
-    } catch (error) {
-      console.error('Error checking VIP status:', error);
+    } catch (error: any) {
+      console.warn('⚠️ Erro ao verificar status VIP (não crítico):', error.message);
+      // Não propaga erro para não quebrar a aplicação
     }
   };
 

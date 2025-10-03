@@ -74,9 +74,9 @@ const GerenciarPagamento = () => {
       });
       
       if (error) {
-        console.error('Erro ao verificar assinatura:', error);
-        toast.error('Erro ao verificar status da assinatura');
-        return;
+        console.warn('⚠️ Edge Function não disponível:', error.message);
+        toast.warning('Não foi possível verificar status da assinatura. Tente novamente mais tarde.');
+        // Não retorna - continua com dados do banco
       }
 
       console.log('Subscription data received:', data);

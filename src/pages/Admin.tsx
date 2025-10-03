@@ -467,7 +467,7 @@ const Admin = () => {
                       <TableRow key={service.id}>
                         <TableCell 
                           className="font-medium cursor-pointer hover:text-primary"
-                          onClick={() => navigate(`/servico/${service.id}`)}
+                          onClick={() => navigate(`/anuncio/${service.id}`)}
                         >
                           {service.title.toUpperCase()}
                         </TableCell>
@@ -491,7 +491,7 @@ const Admin = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => navigate(`/servico/${service.id}`)}
+                              onClick={() => navigate(`/anuncio/${service.id}`)}
                               title="Ver anúncio"
                             >
                               <Eye className="h-4 w-4" />
