@@ -22,6 +22,12 @@ const Index = () => {
   const navigate = useNavigate();
   const { services, isLoading, refreshServices } = useServices();
   
+  console.log('🏠 INDEX - Estado dos serviços:', {
+    total: services.length,
+    carregando: isLoading,
+    servicos: services.slice(0, 3).map(s => ({ id: s.id, titulo: s.title }))
+  });
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -92,23 +98,6 @@ const Index = () => {
     }
   };
 
-  // Atualizar quando os dados dos serviços mudarem
-  useEffect(() => {
-    handleSearch();
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedProductType, selectedType]);
-
-  const handleManualRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await refreshServices();
-      toast.success('Dados atualizados com sucesso!');
-    } catch (error) {
-      toast.error('Erro ao atualizar dados');
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
   const handleSearch = useCallback(() => {
     let filtered = services;
 
@@ -160,6 +149,23 @@ const Index = () => {
 
     setFilteredServices(filtered);
   }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
+
+  // Atualizar quando os dados dos serviços mudarem
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshServices();
+      toast.success('Dados atualizados com sucesso!');
+    } catch (error) {
+      toast.error('Erro ao atualizar dados');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleDirectCheckout = async (planType: 'monthly' | 'annual') => {
     if (!user) {

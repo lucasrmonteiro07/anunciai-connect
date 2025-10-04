@@ -13,20 +13,32 @@ export const useServices = () => {
   const { data: services = [], isLoading, error, refetch } = useQuery({
     queryKey: SERVICES_QUERY_KEY,
     queryFn: async (): Promise<ServiceData[]> => {
+      console.log('🔄 Buscando serviços da tabela services_public...');
+      
       const { data: servicesData, error: servicesError } = await supabase
         .from('services_public')
         .select('*')
         .eq('status', 'active')
         .order('created_at', { ascending: false });
 
+      console.log('📊 Resultado da query:', {
+        total: servicesData?.length || 0,
+        temErro: !!servicesError,
+        erro: servicesError,
+        primeiros3: servicesData?.slice(0, 3).map(s => s.title)
+      });
+
       if (servicesError) {
-        console.error('Erro ao buscar serviços:', servicesError);
+        console.error('❌ Erro ao buscar serviços:', servicesError);
         throw servicesError;
       }
 
       if (!servicesData || servicesData.length === 0) {
+        console.warn('⚠️ Nenhum serviço encontrado!');
         return [];
       }
+
+      console.log('✅ Serviços encontrados:', servicesData.length);
 
       // Transform data
       const transformedServices: ServiceData[] = servicesData.map(service => ({
