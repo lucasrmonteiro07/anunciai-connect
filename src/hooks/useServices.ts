@@ -18,14 +18,13 @@ export const useServices = () => {
       const { data: servicesData, error: servicesError } = await supabase
         .from('services_public')
         .select('*')
-        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       console.log('📊 Resultado da query:', {
         total: servicesData?.length || 0,
         temErro: !!servicesError,
         erro: servicesError,
-        primeiros3: servicesData?.slice(0, 3).map(s => s.title)
+        primeiros3: servicesData?.slice(0, 3).map(s => ({ id: s?.id, title: s?.title }))
       });
 
       if (servicesError) {

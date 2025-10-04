@@ -18,54 +18,73 @@ export const DebugPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const testConnection = async () => {
-    setDebugInfo({ status: 'loading', message: 'Testando conexão...' });
+    setDebugInfo({ status: 'loading', message: 'Testando conexões...' });
 
     try {
-      console.log('🔍 Debug: Testando conexão com Supabase...');
+      console.log('🔍 Debug: Testando múltiplas fontes de dados...');
 
-      // Teste 1: Verificar conexão básica
-      const { data: testData, error: testError, count } = await supabase
+      // Teste 1: Verificar tabela services_public
+      const { data: publicData, error: publicError, count: publicCount } = await supabase
+        .from('services_public')
+        .select('*', { count: 'exact' })
+        .limit(3);
+
+      // Teste 2: Verificar view services_public_safe  
+      const { data: safeData, error: safeError, count: safeCount } = await supabase
         .from('services_public_safe')
         .select('*', { count: 'exact' })
-        .limit(5);
+        .limit(3);
 
-      if (testError) {
-        console.error('❌ Debug: Erro na conexão:', testError);
-        setDebugInfo({
-          status: 'error',
-          message: `Erro: ${testError.message}`,
-          details: {
-            code: testError.code,
-            hint: testError.hint,
-            details: testError.details
-          }
-        });
-        return;
-      }
+      // Teste 3: Verificar tabela services principal
+      const { data: mainData, error: mainError, count: mainCount } = await supabase
+        .from('services')
+        .select('*', { count: 'exact' })
+        .eq('status', 'active')
+        .limit(3);
 
-      if (!testData || testData.length === 0) {
-        console.warn('⚠️ Debug: Tabela vazia');
+      const results = {
+        services_public: {
+          count: publicCount || 0,
+          error: publicError?.message,
+          hasData: !!(publicData && publicData.length > 0),
+          sample: publicData?.slice(0, 2)
+        },
+        services_public_safe: {
+          count: safeCount || 0,
+          error: safeError?.message,
+          hasData: !!(safeData && safeData.length > 0),
+          sample: safeData?.slice(0, 2)
+        },
+        services_main: {
+          count: mainCount || 0,
+          error: mainError?.message,
+          hasData: !!(mainData && mainData.length > 0),
+          sample: mainData?.slice(0, 2)
+        }
+      };
+
+      console.log('📊 Resultados completos:', results);
+
+      // Determinar qual fonte tem dados
+      const workingSource = 
+        results.services_public.hasData ? 'services_public' :
+        results.services_public_safe.hasData ? 'services_public_safe' :
+        results.services_main.hasData ? 'services (main table)' :
+        'nenhuma fonte';
+
+      if (workingSource === 'nenhuma fonte') {
         setDebugInfo({
           status: 'empty',
-          message: 'A tabela services_public_safe está vazia',
-          details: {
-            count: count || 0,
-            message: 'Nenhum serviço cadastrado ainda'
-          }
+          message: 'Nenhuma fonte tem dados disponíveis',
+          details: results
         });
-        return;
+      } else {
+        setDebugInfo({
+          status: 'success',
+          message: `Dados encontrados em: ${workingSource}`,
+          details: results
+        });
       }
-
-      console.log('✅ Debug: Conexão OK. Dados:', testData);
-      setDebugInfo({
-        status: 'success',
-        message: `Conexão OK! ${testData.length} serviços encontrados`,
-        details: {
-          total: count,
-          sample: testData.slice(0, 3),
-          vipCount: testData.filter(s => s.is_vip).length
-        }
-      });
 
     } catch (err: any) {
       console.error('❌ Debug: Erro inesperado:', err);
@@ -160,7 +179,8 @@ export const DebugPanel = () => {
 
               <div className="text-xs text-muted-foreground border-t pt-2">
                 <p><strong>Supabase URL:</strong> wkchztcfbwnbukpqejix.supabase.co</p>
-                <p><strong>Tabela:</strong> services_public_safe</p>
+                <p><strong>Fontes testadas:</strong> services_public, services_public_safe, services</p>
+                <p><strong>Hook usando:</strong> services_public</p>
                 <p><strong>Timestamp:</strong> {new Date().toLocaleString('pt-BR')}</p>
               </div>
             </CardContent>
