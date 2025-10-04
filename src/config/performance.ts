@@ -1,9 +1,9 @@
 // Configurações de performance para a aplicação
 
 export const PERFORMANCE_CONFIG = {
-  // Cache durations (React Query) - Reduzido temporariamente para debug
-  STALE_TIME: 5 * 1000, // 5 segundos - dados considerados frescos
-  CACHE_TIME: 30 * 1000, // 30 segundos - tempo que dados ficam em cache
+  // Cache durations (React Query) - Configuração estável
+  STALE_TIME: 2 * 60 * 1000, // 2 minutos - dados considerados frescos
+  CACHE_TIME: 10 * 60 * 1000, // 10 minutos - tempo que dados ficam em cache
   
   // Retry settings
   MAX_RETRIES: 2,

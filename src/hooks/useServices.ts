@@ -20,13 +20,6 @@ export const useServices = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('📊 Resultado da query:', {
-        total: servicesData?.length || 0,
-        temErro: !!servicesError,
-        erro: servicesError,
-        primeiros3: servicesData?.slice(0, 3).map(s => ({ id: s?.id, title: s?.title }))
-      });
-
       if (servicesError) {
         console.error('❌ Erro ao buscar serviços:', servicesError);
         throw servicesError;
@@ -37,63 +30,72 @@ export const useServices = () => {
         return [];
       }
 
-      console.log('✅ Serviços encontrados:', servicesData.length);
+      console.log(`✅ ${servicesData.length} serviços encontrados e sendo processados...`);
 
-      // Transform data
-      const transformedServices: ServiceData[] = servicesData.map(service => ({
-        id: service.id || '',
-        title: service.title || '',
-        description: service.description || '',
-        category: service.category || '',
-        type: (service.type as 'prestador' | 'empreendimento') || 'prestador',
-        location: { 
-          city: service.city || '', 
-          uf: service.uf || '',
-          latitude: service.latitude ? Number(service.latitude) : undefined,
-          longitude: service.longitude ? Number(service.longitude) : undefined,
-          address: undefined
-        },
-        contact: { 
-          phone: '', 
-          email: '',
-          whatsapp: undefined
-        },
-        logo: service.logo_url && service.logo_url.trim() !== '' 
-          ? service.logo_url 
-          : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
-        images: (service.images && Array.isArray(service.images)) 
-          ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
-          : [],
-        isVip: service.is_vip || false,
-        denomination: service.denomination || '',
-        ownerName: '',
-        valor: service.valor || undefined,
-        product_type: (service.product_type as 'service' | 'product') || 'service',
-        price: service.price || undefined,
-        condition: service.condition || undefined,
-        brand: service.brand || undefined,
-        model: service.model || undefined,
-        warranty_months: service.warranty_months || undefined,
-        delivery_available: service.delivery_available || false,
-        stock_quantity: service.stock_quantity || undefined,
-        userId: service.user_id || undefined,
-        socialMedia: {
-          instagram: service.instagram || undefined,
-          facebook: service.facebook || undefined,
-          website: service.website || undefined
-        }
-      }));
+      // Transform data - com validação melhorada
+      const transformedServices: ServiceData[] = servicesData
+        .filter(service => service && service.id) // Filtrar dados inválidos
+        .map(service => ({
+          id: service.id,
+          title: service.title || 'Título não informado',
+          description: service.description || '',
+          category: service.category || 'Categoria não informada',
+          type: (service.type as 'prestador' | 'empreendimento') || 'prestador',
+          location: { 
+            city: service.city || '', 
+            uf: service.uf || '',
+            latitude: service.latitude ? Number(service.latitude) : undefined,
+            longitude: service.longitude ? Number(service.longitude) : undefined,
+            address: service.address || undefined
+          },
+          contact: { 
+            phone: service.phone || '', 
+            email: service.email || '',
+            whatsapp: service.whatsapp || undefined
+          },
+          logo: service.logo_url && service.logo_url.trim() !== '' 
+            ? service.logo_url 
+            : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+          images: (service.images && Array.isArray(service.images)) 
+            ? service.images.filter(img => img && typeof img === 'string' && img.trim() !== '')
+            : [],
+          isVip: Boolean(service.is_vip),
+          denomination: service.denomination || '',
+          ownerName: service.owner_name || '',
+          valor: service.valor || undefined,
+          product_type: (service.product_type as 'service' | 'product') || 'service',
+          price: service.price || undefined,
+          condition: service.condition || undefined,
+          brand: service.brand || undefined,
+          model: service.model || undefined,
+          warranty_months: service.warranty_months || undefined,
+          delivery_available: Boolean(service.delivery_available),
+          stock_quantity: service.stock_quantity || undefined,
+          userId: service.user_id || undefined,
+          socialMedia: {
+            instagram: service.instagram || undefined,
+            facebook: service.facebook || undefined,
+            website: service.website || undefined
+          }
+        }));
 
       // Sort VIP first
-      return transformedServices.sort((a, b) => {
+      const sortedServices = transformedServices.sort((a, b) => {
         if (a.isVip && !b.isVip) return -1;
         if (!a.isVip && b.isVip) return 1;
         return 0;
       });
+
+      console.log(`🎯 Retornando ${sortedServices.length} serviços processados (${sortedServices.filter(s => s.isVip).length} VIP)`);
+      return sortedServices;
     },
-    staleTime: PERFORMANCE_CONFIG.STALE_TIME,
-    gcTime: PERFORMANCE_CONFIG.CACHE_TIME,
+    staleTime: 5 * 60 * 1000, // 5 minutos - dados considerados frescos
+    gcTime: 10 * 60 * 1000, // 10 minutos - tempo que dados ficam em cache
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // Não refetch ao montar se já tem dados em cache
+    refetchOnReconnect: false, // Não refetch ao reconectar
+    retry: 1, // Apenas 1 tentativa em caso de erro
+    retryDelay: 2000, // 2 segundos entre tentativas
   });
 
   // Função para invalidar cache e recarregar

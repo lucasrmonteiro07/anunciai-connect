@@ -14,8 +14,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User, Session } from '@supabase/supabase-js';
 import { useServices } from '@/hooks/useServices';
-import DebugPanel from '@/components/DebugPanel';
-import SimpleDebug from '@/components/SimpleDebug';
+// import DebugPanel from '@/components/DebugPanel';
+// import SimpleDebug from '@/components/SimpleDebug';
 
 // Service categories and trusted community indicators remain
 
@@ -23,18 +23,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { services, isLoading, refreshServices } = useServices();
   
-  console.log('🏠 INDEX - Estado completo:', {
-    total: services.length,
-    carregando: isLoading,
-    servicos: services.slice(0, 3).map(s => ({ 
-      id: s.id, 
-      titulo: s.title,
-      categoria: s.category,
-      cidade: s.location?.city,
-      vip: s.isVip
-    })),
-    todosServicos: services.map(s => s.title)
-  });
+  console.log('🏠 INDEX - Serviços carregados:', services.length, isLoading ? '(carregando...)' : '(pronto)');
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -107,15 +96,6 @@ const Index = () => {
   };
 
   const handleSearch = useCallback(() => {
-    console.log('🔍 INDEX - Iniciando busca:', {
-      servicosOriginais: services.length,
-      termo: searchTerm,
-      categoria: selectedCategory,
-      localizacao: selectedLocation,
-      tipo: selectedType,
-      tipoProduto: selectedProductType
-    });
-    
     let filtered = services;
 
     if (searchTerm.trim()) {
@@ -164,20 +144,13 @@ const Index = () => {
       return 0;
     });
 
-    console.log('✅ INDEX - Busca finalizada:', {
-      servicosFiltrados: filtered.length,
-      vipCount: filtered.filter(s => s.isVip).length,
-      primeiros3: filtered.slice(0, 3).map(s => s.title)
-    });
-
     setFilteredServices(filtered);
   }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
 
   // Atualizar quando os dados dos serviços mudarem
   useEffect(() => {
-    console.log('🔄 INDEX - Executando handleSearch, serviços disponíveis:', services.length);
+    console.log('🔄 INDEX - Executando handleSearch. Serviços disponíveis:', services.length);
     handleSearch();
-    console.log('✅ INDEX - handleSearch concluído, serviços filtrados:', filteredServices.length);
   }, [handleSearch]);
 
   const handleManualRefresh = async () => {
@@ -594,9 +567,7 @@ const Index = () => {
       <Footer />
       </main>
       
-      {/* Debug Panel - Temporário para diagnosticar problema */}
-      <DebugPanel />
-      <SimpleDebug />
+      {/* Debug components removidos temporariamente */}
     </div>
   );
 };
