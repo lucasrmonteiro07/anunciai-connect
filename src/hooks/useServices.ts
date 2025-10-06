@@ -18,6 +18,7 @@ export const useServices = () => {
       const { data: servicesData, error: servicesError } = await supabase
         .from('services_public')
         .select('*')
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       if (servicesError) {
@@ -89,13 +90,13 @@ export const useServices = () => {
       console.log(`🎯 Retornando ${sortedServices.length} serviços processados (${sortedServices.filter(s => s.isVip).length} VIP)`);
       return sortedServices;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutos - dados considerados frescos
-    gcTime: 10 * 60 * 1000, // 10 minutos - tempo que dados ficam em cache
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
-    refetchOnMount: true, // ATIVAR refetch ao montar
-    refetchOnReconnect: true, // ATIVAR refetch ao reconectar
-    retry: 1, // Apenas 1 tentativa em caso de erro
-    retryDelay: 2000, // 2 segundos entre tentativas
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   // Função para invalidar cache e recarregar
