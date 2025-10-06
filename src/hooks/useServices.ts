@@ -61,7 +61,7 @@ export const useServices = () => {
             : [],
           isVip: Boolean(service.is_vip),
           denomination: service.denomination || '',
-          ownerName: service.owner_name || '',
+          ownerName: '',
           valor: service.valor || undefined,
           product_type: (service.product_type as 'service' | 'product') || 'service',
           price: service.price || undefined,
