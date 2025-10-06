@@ -95,8 +95,9 @@ const Index = () => {
     }
   };
 
-  const handleSearch = useCallback(() => {
-    let filtered = services;
+  // Filtrar serviços - sem useCallback para evitar problemas
+  useEffect(() => {
+    let filtered = [...services];
 
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
@@ -144,14 +145,9 @@ const Index = () => {
       return 0;
     });
 
+    console.log('📊 Serviços filtrados:', filtered.length, 'de', services.length);
     setFilteredServices(filtered);
   }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
-
-  // Atualizar quando os dados dos serviços mudarem
-  useEffect(() => {
-    console.log('🔄 INDEX - Executando handleSearch. Serviços disponíveis:', services.length);
-    handleSearch();
-  }, [handleSearch]);
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
@@ -434,7 +430,7 @@ const Index = () => {
             setSelectedType={setSelectedType}
             selectedProductType={selectedProductType}
             setSelectedProductType={setSelectedProductType}
-            onSearch={handleSearch}
+            onSearch={() => {}} 
             services={services}
           />
         </div>
