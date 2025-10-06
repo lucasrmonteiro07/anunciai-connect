@@ -151,7 +151,7 @@ const Index = () => {
   useEffect(() => {
     console.log('🔄 INDEX - Executando handleSearch. Serviços disponíveis:', services.length);
     handleSearch();
-  }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
+  }, [handleSearch]);
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
