@@ -92,8 +92,8 @@ export const useServices = () => {
     staleTime: 5 * 60 * 1000, // 5 minutos - dados considerados frescos
     gcTime: 10 * 60 * 1000, // 10 minutos - tempo que dados ficam em cache
     refetchOnWindowFocus: false,
-    refetchOnMount: false, // Não refetch ao montar se já tem dados em cache
-    refetchOnReconnect: false, // Não refetch ao reconectar
+    refetchOnMount: true, // ATIVAR refetch ao montar
+    refetchOnReconnect: true, // ATIVAR refetch ao reconectar
     retry: 1, // Apenas 1 tentativa em caso de erro
     retryDelay: 2000, // 2 segundos entre tentativas
   });
