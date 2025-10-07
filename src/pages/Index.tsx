@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import Footer from '@/components/ui/footer';
@@ -31,7 +31,6 @@ const Index = () => {
   const [selectedCity, setSelectedCity] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [selectedProductType, setSelectedProductType] = useState('all');
-  const [filteredServices, setFilteredServices] = useState<ServiceData[]>([]);
   const [showMap, setShowMap] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -95,8 +94,8 @@ const Index = () => {
     }
   };
 
-  // Filtrar serviços - sem useCallback para evitar problemas
-  useEffect(() => {
+  // Use useMemo to avoid infinite re-render loops
+  const filteredServices = useMemo(() => {
     let filtered = [...services];
 
     if (searchTerm.trim()) {
@@ -146,7 +145,7 @@ const Index = () => {
     });
 
     console.log('📊 Serviços filtrados:', filtered.length, 'de', services.length);
-    setFilteredServices(filtered);
+    return filtered;
   }, [services, searchTerm, selectedCategory, selectedLocation, selectedCity, selectedType, selectedProductType]);
 
   const handleManualRefresh = async () => {
@@ -548,7 +547,6 @@ const Index = () => {
                       setSelectedCategory('all');
                       setSelectedLocation('all');
                       setSelectedCity('all');
-                      setFilteredServices(services);
                     }}
                   >
                     Limpar Filtros
