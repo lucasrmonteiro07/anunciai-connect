@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceData } from '@/components/ui/service-card';
 import { PERFORMANCE_CONFIG } from '@/config/performance';
+import { errorHandler } from '@/utils/errorHandler';
 
 // Query key for services
 export const SERVICES_QUERY_KEY = ['services'];
@@ -22,6 +23,7 @@ export const useServices = () => {
         .order('created_at', { ascending: false });
 
       if (servicesError) {
+        errorHandler.log(servicesError, 'useServices - Fetch Error');
         console.error('❌ Erro ao buscar serviços:', servicesError);
         throw servicesError;
       }
@@ -90,13 +92,13 @@ export const useServices = () => {
       console.log(`🎯 Retornando ${sortedServices.length} serviços processados (${sortedServices.filter(s => s.isVip).length} VIP)`);
       return sortedServices;
     },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 10 * 60 * 1000, // 10 minutos
+    gcTime: 30 * 60 * 1000, // 30 minutos
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
+    refetchOnMount: false, // Evita requisições desnecessárias
     refetchOnReconnect: true,
-    retry: 2,
-    retryDelay: 1000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Função para invalidar cache e recarregar
