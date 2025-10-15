@@ -114,12 +114,21 @@ const Admin = () => {
 
   const updateVipStatus = async (userId: string, currentVip: boolean) => {
     try {
-      const { error } = await supabase
+      // Update profile
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ is_vip: !currentVip })
         .eq('id', userId);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
+
+      // Update all services from this user
+      const { error: servicesError } = await supabase
+        .from('services')
+        .update({ is_vip: !currentVip })
+        .eq('user_id', userId);
+
+      if (servicesError) throw servicesError;
 
       // Log admin action
       await supabase.rpc('log_admin_action', {
